@@ -14,9 +14,10 @@ import (
 	"stb-library/app/storage/internal/data"
 	"stb-library/app/storage/internal/server"
 	"stb-library/app/storage/internal/service"
+	"stb-library/app/storage/internal/sgin"
 )
 
 // initApp init kratos application.
 func initApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, sgin.ProviderSet, newApp))
 }
