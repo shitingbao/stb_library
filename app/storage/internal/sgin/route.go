@@ -26,7 +26,7 @@ func NewSgin(b *biz.GreeterUsecase, logger log.Logger) *gin.Engine {
 }
 
 func (s *Sgin) setRoute() {
-	rg := s.g.Group("/stb").Use()
+	rg := s.g.Group("/stb")
 	{
 		rg.GET("/h", s.helloworld)
 	}

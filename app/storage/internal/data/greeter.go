@@ -27,3 +27,7 @@ func (r *greeterRepo) CreateGreeter(ctx context.Context, g *biz.Greeter) error {
 func (r *greeterRepo) UpdateGreeter(ctx context.Context, g *biz.Greeter) error {
 	return nil
 }
+
+func (r *greeterRepo) SayHello(ctx context.Context, g *biz.Greeter) (string, error) {
+	return g.Hello + " stb", nil
+}

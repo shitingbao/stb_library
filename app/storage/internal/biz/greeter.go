@@ -7,12 +7,13 @@ import (
 )
 
 type Greeter struct {
-	Hello string
+	Hello string `form:"hello" json:"hello"`
 }
 
 type GreeterRepo interface {
 	CreateGreeter(context.Context, *Greeter) error
 	UpdateGreeter(context.Context, *Greeter) error
+	helloRepo
 }
 
 type GreeterUsecase struct {
