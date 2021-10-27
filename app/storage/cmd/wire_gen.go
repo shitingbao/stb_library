@@ -14,6 +14,7 @@ import (
 	"stb-library/app/storage/internal/data"
 	"stb-library/app/storage/internal/server"
 	"stb-library/app/storage/internal/service"
+	"stb-library/app/storage/internal/sgin"
 )
 
 // Injectors from wire.go:
@@ -26,8 +27,9 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	}
 	greeterRepo := data.NewGreeterRepo(dataData, logger)
 	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
+	engine := sgin.NewSgin(greeterUsecase, logger)
+	httpServer := server.NewHTTPServer(confServer, engine, logger)
 	greeterService := service.NewGreeterService(greeterUsecase, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
 	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
 	app := newApp(logger, httpServer, grpcServer)
 	return app, func() {

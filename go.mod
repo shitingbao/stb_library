@@ -3,6 +3,7 @@ module stb-library
 go 1.17
 
 require (
+	github.com/gin-gonic/gin v1.7.4
 	github.com/go-kratos/kratos/v2 v2.1.1
 	github.com/google/wire v0.5.0
 	google.golang.org/genproto v0.0.0-20211020151524-b7c3a969101a
@@ -13,8 +14,6 @@ require (
 require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.7.4 // indirect
-	github.com/go-kratos/gin v0.1.0 // indirect
 	github.com/go-playground/form/v4 v4.2.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect

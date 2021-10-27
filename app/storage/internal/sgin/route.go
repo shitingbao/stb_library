@@ -1,32 +1,32 @@
 package sgin
 
 import (
-	"stb-library/app/storage/internal/service"
+	"stb-library/app/storage/internal/biz"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 type Sgin struct {
-	gServer *service.GreeterService
-	log     *log.Helper
-	g       *gin.Engine
+	bg  *biz.GreeterUsecase
+	log *log.Helper
+	g   *gin.Engine
 }
 
 // sgin 只作路由对应
-func NewSgin(gs *service.GreeterService, logger *log.Helper) *Sgin {
+func NewSgin(b *biz.GreeterUsecase, logger log.Logger) *gin.Engine {
 	ginModel := gin.Default()
 	s := &Sgin{
-		gServer: gs,
-		log:     logger,
-		g:       ginModel,
+		bg:  b,
+		log: log.NewHelper(logger),
+		g:   ginModel,
 	}
-	s.setRoute(ginModel)
-	return s
+	s.setRoute()
+	return s.g
 }
 
-func (s *Sgin) setRoute(g *gin.Engine) {
-	rg := g.Group("/stb").Use()
+func (s *Sgin) setRoute() {
+	rg := s.g.Group("/stb").Use()
 	{
 		rg.GET("/h", s.helloworld)
 	}

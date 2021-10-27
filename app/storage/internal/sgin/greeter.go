@@ -7,6 +7,7 @@ import (
 )
 
 func (s *Sgin) helloworld(ctx *gin.Context) {
+	// s.gServer.SayHello()
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 10000,
 		"msg":  "ok",
