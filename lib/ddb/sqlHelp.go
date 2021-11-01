@@ -1,16 +1,20 @@
 package ddb
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-//SQLOpen sqlopen
-func SQLOpen(isLog bool) *gorm.DB {
-	var err error
-	db, err := gorm.Open("mysql", "root:123456@(127.0.0.1:3306)/ep?charset=utf8&parseTime=True&loc=Local")
+func OpenDb(source string) (dao *gorm.DB, err error) {
+	d, err := gorm.Open(mysql.Open(source), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	db.LogMode(isLog)
-	return db
+	db, err := d.DB()
+	if err != nil {
+		return nil, err
+	}
+	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(30)
+	return
 }
