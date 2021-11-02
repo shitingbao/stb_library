@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"stbweb/lib/images"
+	"stb-library/lib/images"
 )
 
 var appcode = "13c126d6576b4209a8c781db06c0c1c0"                    //appcode,接口身份唯一标识

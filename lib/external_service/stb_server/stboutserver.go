@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"stbweb/lib/external_service/stbserver"
+	"stb-library/lib/external_service/stbserver"
 	"sync"
 
 	"github.com/sirupsen/logrus"

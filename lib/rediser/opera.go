@@ -16,17 +16,17 @@ const (
 	dealTime = 15 //用户过期时间
 )
 
-//Open 打开redis连接
-func Open(addr, pwd string, dbevel int) *redis.Client {
+//OpenRedisClient 打开redis连接
+func OpenRedisClient(addr, pwd string, dbevel int) (*redis.Client, error) {
 	// redis.NewClient(&redis.Options{Addr: "127.0.0.1:6379", Password: "", DB: 0})
 	rds := redis.NewClient(&redis.Options{Addr: addr, Password: pwd, DB: dbevel})
 	_, err := rds.Ping().Result()
 	if err != nil {
-		logrus.WithFields(logrus.Fields{"connect": err}).Error("redis")
-		panic(err)
+		// logrus.WithFields(logrus.Fields{"connect": err}).Error("redis")
+		return nil, err
 	}
-	logrus.WithFields(logrus.Fields{"connect": addr}).Info("redis")
-	return rds
+	// logrus.WithFields(logrus.Fields{"connect": addr}).Info("redis")
+	return rds, nil
 }
 
 // GetOnlineMember 获取所有在线成员

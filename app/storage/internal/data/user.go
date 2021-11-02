@@ -30,7 +30,28 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 	}
 }
 
-func (u *userRepo) Login(ctx context.Context, b *biz.User) error {
+func (u *userRepo) Login(ctx context.Context, pa *biz.User) error {
+	if pa.Name == "" {
+		// core.SendJSON(p.Res, http.StatusOK, "必填内容不能为空")
+		return nil
+	}
+	isExis, err := u.IsExistUser(pa.Name)
+	if err != nil { // core.SendJSON(p.Res, http.StatusOK, "用户不存在")
+		return err
+	}
+	if isExis {
+		return errors.New("")
+	}
+	// usr, err := u.GetUser(pa.Name)
+	// if err != nil {
+	// 	return err
+	// }
+	// if u.Equal( pa.Pwd,pa.Salt,) {
+	// 	token := uuid.NewUUID().String()
+	// 	// rediser.RegisterUser(core.Rds, token, pa.Name)
+	// 	return nil
+	// }
+
 	return errors.New("")
 }
 

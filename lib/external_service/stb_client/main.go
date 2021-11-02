@@ -5,7 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
-	"stbweb/lib/external_service/stbserver"
+	"stb-library/lib/external_service/stbserver"
 	"strconv"
 	"time"
 

@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func OpenDb(source string) (dao *gorm.DB, err error) {
+func OpenMysqlClient(source string) (dao *gorm.DB, err error) {
 	d, err := gorm.Open(mysql.Open(source), &gorm.Config{})
 	if err != nil {
 		return nil, err

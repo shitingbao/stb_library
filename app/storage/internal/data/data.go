@@ -3,8 +3,10 @@ package data
 import (
 	"stb-library/app/storage/internal/conf"
 	"stb-library/lib/ddb"
+	"stb-library/lib/rediser"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis"
 	"github.com/google/wire"
 	"gorm.io/gorm"
 )
@@ -15,20 +17,27 @@ var ProviderSet = wire.NewSet(NewData, NewGreeterRepo)
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	db *gorm.DB
+	db  *gorm.DB
+	rds *redis.Client
 }
 
 // NewData .
 func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
-	d, err := ddb.OpenDb(c.Database.Source)
+	d, err := ddb.OpenMysqlClient(c.Database.Source)
 	if err != nil {
 		return nil, nil, err
 	}
-	cleanup := func() {
-		// no thing to close
-		log.NewHelper(logger).Info("closing the data resources")
+	r, err := rediser.OpenRedisClient(c.Redis.Addr, c.Redis.Password, int(c.Redis.Level))
+	if err != nil {
+		return nil, nil, err
 	}
-	return &Data{
-		db: d,
-	}, cleanup, nil
+	da := &Data{
+		db:  d,
+		rds: r,
+	}
+	return da, da.cleanup, nil
+}
+
+func (d *Data) cleanup() {
+	d.rds.Close()
 }
