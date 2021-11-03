@@ -78,9 +78,8 @@ func MaintainActivity(rd *redis.Client, userkey string) error {
 	return nil
 }
 
-//RegisterUser 设置用户信息，userkey就是对应header中的token
-func RegisterUser(rd *redis.Client, userkey, username string) {
-
+//SaveUser 设置用户信息，userkey就是对应header中的token
+func SaveUser(rd *redis.Client, userkey, username string) {
 	if err := rd.Set(userkey, username, time.Minute*dealTime).Err(); err != nil { //设置字符串key
 		logrus.WithFields(logrus.Fields{"set": err}).Error("redisErr")
 	}

@@ -50,7 +50,11 @@ func (u *userRepo) IsExistUser(username string) (bool, error) {
 	return num > 0, nil
 }
 
-// RegisterUser 注册保存用户信息状态
-func (u *userRepo) RegisterUser(token, username string) {
-	rediser.RegisterUser(u.data.rds, token, username)
+// SaveUser 注册保存用户信息状态
+func (u *userRepo) SaveUser(token, username string) {
+	rediser.SaveUser(u.data.rds, token, username)
+}
+
+func (u *userRepo) InsertUser(user *biz.User) error {
+	return u.data.db.Create(user).Error
 }

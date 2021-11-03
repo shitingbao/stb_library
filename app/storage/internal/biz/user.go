@@ -42,8 +42,9 @@ type ArgUser struct {
 type UserRepo interface {
 	GetUser(username string) (*User, error)
 	IsExistUser(username string) (bool, error)
-	RegisterUser(token, username string)
+	SaveUser(token, username string)
 	DelUser(ctx context.Context, token string)
+	InsertUser(user *User) error
 	// Login(context.Context, *ArgUser) error
 	// Logout(context.Context, *User) error
 }
@@ -83,7 +84,7 @@ func (u *UserUseCase) Login(ctx context.Context, pa *ArgUser) (string, error) {
 		return "", errors.New("password have error")
 	}
 	token := uuid.NewUUID().String()
-	u.repo.RegisterUser(token, pa.UserName)
+	u.repo.SaveUser(token, pa.UserName)
 	return token, nil
 }
 
@@ -121,4 +122,28 @@ func (u *UserUseCase) BuildIserSalt(user string) string {
 	rand.Seed(time.Now().UnixNano())
 	sl := rand.Intn(len(user))
 	return user[sl:] + base64.RawURLEncoding.EncodeToString(uuid.NewUUID())
+}
+
+func (u *UserUseCase) UserRegister(ctx context.Context, pa *ArgUser) error {
+	if pa.UserName == "" || pa.Password == "" {
+		return errors.New("必填内容不能为空")
+	}
+	isExist, err := u.repo.IsExistUser(pa.UserName)
+	if err != nil {
+		return err
+	}
+	if isExist {
+		return errors.New("this user have exists")
+	}
+	//两次加密一次解密，双向加单向
+	salt := u.BuildIserSalt(pa.UserName)
+	bPwd, err := u.buildPas(pa.Password, salt)
+	if err != nil {
+		return err
+	}
+	user := &User{}
+	user.UserBase = pa.UserBase
+	user.Password = bPwd
+
+	return u.repo.InsertUser(user)
 }

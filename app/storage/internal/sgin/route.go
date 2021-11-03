@@ -29,10 +29,6 @@ func NewSgin(b *biz.GreeterUsecase, logger log.Logger) *gin.Engine {
 func (s *Sgin) setRoute() {
 	rg := s.g.Group("/basic-api")
 	{
-		rg.GET("/h", s.helloworld)
+		rg.GET("/login", s.login)
 	}
-}
-
-func (s *Sgin) GetGin() *gin.Engine {
-	return s.g
 }

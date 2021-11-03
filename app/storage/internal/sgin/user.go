@@ -20,3 +20,17 @@ func (s *Sgin) login(ctx *gin.Context) {
 	}
 	response.JsonOK(ctx, nil, token)
 }
+
+func (s *Sgin) register(ctx *gin.Context) {
+	user := &biz.ArgUser{}
+	if err := ctx.Bind(user); err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+
+	if err := s.user.UserRegister(ctx, user); err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+	response.JsonOK(ctx, nil, nil)
+}

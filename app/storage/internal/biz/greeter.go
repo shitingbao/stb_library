@@ -13,7 +13,6 @@ type Greeter struct {
 type GreeterRepo interface {
 	CreateGreeter(context.Context, *Greeter) error
 	UpdateGreeter(context.Context, *Greeter) error
-	helloRepo
 }
 
 type GreeterUsecase struct {
