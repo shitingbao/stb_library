@@ -38,6 +38,7 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 	return da, da.cleanup, nil
 }
 
+// clear close all connect
 func (d *Data) cleanup() {
 	d.rds.Close()
 }

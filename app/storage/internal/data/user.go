@@ -1,19 +1,12 @@
 package data
 
 import (
-	"bytes"
 	"context"
-	"encoding/base64"
-	"encoding/hex"
 	"errors"
-	"math/rand"
 	"stb-library/app/storage/internal/biz"
-	"time"
+	"stb-library/lib/rediser"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/pborman/uuid"
-	"github.com/sirupsen/logrus"
-	"golang.org/x/crypto/scrypt"
 )
 
 var _ biz.UserRepo = (*userRepo)(nil)
@@ -30,43 +23,21 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 	}
 }
 
-func (u *userRepo) Login(ctx context.Context, pa *biz.User) error {
-	if pa.Name == "" {
-		// core.SendJSON(p.Res, http.StatusOK, "必填内容不能为空")
-		return nil
-	}
-	isExis, err := u.IsExistUser(pa.Name)
-	if err != nil { // core.SendJSON(p.Res, http.StatusOK, "用户不存在")
-		return err
-	}
-	if isExis {
-		return errors.New("")
-	}
-	// usr, err := u.GetUser(pa.Name)
-	// if err != nil {
-	// 	return err
-	// }
-	// if u.Equal( pa.Pwd,pa.Salt,) {
-	// 	token := uuid.NewUUID().String()
-	// 	// rediser.RegisterUser(core.Rds, token, pa.Name)
-	// 	return nil
-	// }
-
-	return errors.New("")
+func (u *userRepo) DelUser(ctx context.Context, token string) {
+	rediser.DelUser(u.data.rds, token)
 }
 
-func (u *userRepo) Logout(ctx context.Context, b *biz.User) error {
-	return errors.New("")
-}
-
-//GetUser 获取一个user
+//GetUser 获取一个user，不存在反馈 err
 func (u *userRepo) GetUser(username string) (*biz.User, error) {
-	ur := biz.User{}
-	if err := u.data.db.Table("user").Where("name = ?", username).Scan(&u).Error; err != nil {
+	ur := []*biz.User{}
+	if err := u.data.db.Table("user").Where("name = ?", username).Scan(&ur).Error; err != nil {
 		// logrus.WithFields(logrus.Fields{"get user": err}).Error("user")
 		return nil, err
 	}
-	return &ur, nil
+	if len(ur) == 0 {
+		return nil, errors.New("no exists this user")
+	}
+	return ur[0], nil
 }
 
 //IsExistUser 判断用户是否存在，存在为true
@@ -79,38 +50,7 @@ func (u *userRepo) IsExistUser(username string) (bool, error) {
 	return num > 0, nil
 }
 
-//前端的hex字符串
-func (u *userRepo) huexEncode(md5Pwd string) []byte {
-	decoded, err := hex.DecodeString(md5Pwd)
-	if err != nil {
-		logrus.WithFields(logrus.Fields{"decode": err}).Error("hex")
-	}
-	return decoded
-}
-
-//BuildIserSalt 随机获取用户中一段+uuid生成随机盐，防止代码泄密密码生成过程被破解
-func (u *userRepo) BuildIserSalt(user string) string {
-	rand.Seed(time.Now().UnixNano())
-	sl := rand.Intn(len(user))
-	return user[sl:] + base64.RawURLEncoding.EncodeToString(uuid.NewUUID())
-}
-
-//buildUserPassword 根据密码文本和盐生成密文
-func (u *userRepo) buildUserPassword(pwdMd5, salt []byte) ([]byte, error) {
-	return scrypt.Key(pwdMd5, salt, 16384, 8, 1, 32)
-}
-
-//Equal 密文验证
-func (u *userRepo) Equal(pwd, salt string, uPwd []byte) bool {
-	bPwd := u.BuildPas(pwd, salt)
-	return bytes.Equal(bPwd, uPwd)
-}
-
-//BuildPas 解析前端的hex密码文本，并调用密文生成函数
-func (u *userRepo) BuildPas(pwd, salt string) []byte {
-	bPwd, err := u.buildUserPassword(u.huexEncode(pwd), []byte(salt))
-	if err != nil {
-		// logrus.WithFields(logrus.Fields{"pwd": err}).Error("validPwdMd5")
-	}
-	return bPwd
+// RegisterUser 注册保存用户信息状态
+func (u *userRepo) RegisterUser(token, username string) {
+	rediser.RegisterUser(u.data.rds, token, username)
 }
