@@ -8,9 +8,10 @@ import (
 )
 
 type Sgin struct {
-	bg  *biz.GreeterUsecase
-	log *log.Helper
-	g   *gin.Engine
+	bg   *biz.GreeterUsecase
+	user *biz.UserUseCase
+	log  *log.Helper
+	g    *gin.Engine
 }
 
 // sgin 只作路由对应
@@ -26,7 +27,7 @@ func NewSgin(b *biz.GreeterUsecase, logger log.Logger) *gin.Engine {
 }
 
 func (s *Sgin) setRoute() {
-	rg := s.g.Group("/stb")
+	rg := s.g.Group("/basic-api")
 	{
 		rg.GET("/h", s.helloworld)
 	}
