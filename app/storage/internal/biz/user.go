@@ -16,18 +16,18 @@ import (
 )
 
 type UserBase struct {
-	UserName   string
-	Avatar     string
-	Email      string
-	Phone      string
-	Salt       string
-	CreateTime string
+	UserName string `form:"user_name" json:"user_name"`
+	Avatar   string `form:"avatar" json:"avatar"`
+	Email    string `form:"email" json:"email"`
+	Phone    string `form:"phone" json:"phone"`
 }
 
 //User 用户对象
 type User struct {
 	UserBase
 	Password []byte //对应mysql的varbinary,末尾不会填充，不能使用binary，因为不足会使用ox0填充导致取出的时候多18位的0
+	Salt     string `form:"salt" json:"salt"`
+	// CreateTime string `form:"create_time" json:"create_time"`
 }
 
 func (User) TableName() string {
@@ -36,7 +36,7 @@ func (User) TableName() string {
 
 type ArgUser struct {
 	UserBase
-	Password string
+	Password string `form:"password" json:"password"`
 }
 
 type UserRepo interface {
@@ -52,6 +52,10 @@ type UserRepo interface {
 type UserUseCase struct {
 	repo UserRepo
 	log  *log.Helper
+}
+
+func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
+	return &UserUseCase{repo: repo, log: log.NewHelper(logger)}
 }
 
 func (u *UserUseCase) LoginOut(ctx context.Context, token string) error {
@@ -76,7 +80,7 @@ func (u *UserUseCase) Login(ctx context.Context, pa *ArgUser) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	isExists, err := u.equal(pa.Password, pa.Salt, usr.Password)
+	isExists, err := u.equal(pa.Password, usr.Salt, usr.Password)
 	if err != nil {
 		return "", err
 	}

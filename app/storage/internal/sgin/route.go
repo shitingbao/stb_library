@@ -15,12 +15,13 @@ type Sgin struct {
 }
 
 // sgin 只作路由对应
-func NewSgin(b *biz.GreeterUsecase, logger log.Logger) *gin.Engine {
+func NewSgin(b *biz.GreeterUsecase, u *biz.UserUseCase, logger log.Logger) *gin.Engine {
 	ginModel := gin.Default()
 	s := &Sgin{
-		bg:  b,
-		log: log.NewHelper(logger),
-		g:   ginModel,
+		bg:   b,
+		user: u,
+		log:  log.NewHelper(logger),
+		g:    ginModel,
 	}
 	s.setRoute()
 	return s.g
@@ -29,6 +30,7 @@ func NewSgin(b *biz.GreeterUsecase, logger log.Logger) *gin.Engine {
 func (s *Sgin) setRoute() {
 	rg := s.g.Group("/basic-api")
 	{
-		rg.GET("/login", s.login)
+		rg.POST("/login", s.login)
+		rg.POST("/register", s.register)
 	}
 }

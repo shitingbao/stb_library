@@ -18,7 +18,7 @@ func (s *Sgin) login(ctx *gin.Context) {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	response.JsonOK(ctx, nil, token)
+	response.JsonOK(ctx, token)
 }
 
 func (s *Sgin) register(ctx *gin.Context) {
@@ -27,10 +27,9 @@ func (s *Sgin) register(ctx *gin.Context) {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-
 	if err := s.user.UserRegister(ctx, user); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	response.JsonOK(ctx, nil, nil)
+	response.JsonOK(ctx, nil)
 }
