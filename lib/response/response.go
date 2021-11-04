@@ -7,9 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	success = iota
+	faile
+)
+
 func JsonOK(ctx *gin.Context, data interface{}) {
 	ctx.JSON(http.StatusOK, gin.H{
-		"code": 10000,
+		"code": success,
+		"msg":  "",
 		"data": data,
 	})
 }
@@ -19,7 +25,7 @@ func JsonErr(ctx *gin.Context, err error, data interface{}) {
 		err = errors.New("")
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"code": 10001,
+		"code": faile,
 		"msg":  err.Error(),
 		"data": data,
 	})
