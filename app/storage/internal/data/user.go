@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/rediser"
@@ -51,8 +52,12 @@ func (u *userRepo) IsExistUser(username string) (bool, error) {
 }
 
 // SaveUser 注册保存用户信息状态
-func (u *userRepo) SaveUser(token, username string) {
-	rediser.SaveUser(u.data.rds, token, username)
+func (u *userRepo) SaveUser(token string, val biz.UserResult) error {
+	b, err := json.Marshal(val)
+	if err != nil {
+		return err
+	}
+	return rediser.SaveUser(u.data.rds, token, string(b))
 }
 
 func (u *userRepo) InsertUser(user *biz.User) error {
@@ -65,4 +70,16 @@ func (u *userRepo) GetRoles(id int) ([]biz.Role, error) {
 		return roles, err
 	}
 	return roles, nil
+}
+
+func (u *userRepo) GetUserInfo(token string) (*biz.UserResult, error) {
+	model := &biz.UserResult{}
+	uInfo, err := rediser.GetUserInfo(u.data.rds, token)
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal([]byte(uInfo), model); err != nil {
+		return model, err
+	}
+	return model, nil
 }

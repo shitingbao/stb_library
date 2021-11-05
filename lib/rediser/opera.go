@@ -79,13 +79,20 @@ func MaintainActivity(rd *redis.Client, userkey string) error {
 }
 
 //SaveUser 设置用户信息，userkey就是对应header中的token
-func SaveUser(rd *redis.Client, userkey, username string) {
-	if err := rd.Set(userkey, username, time.Minute*dealTime).Err(); err != nil { //设置字符串key
-		logrus.WithFields(logrus.Fields{"set": err}).Error("redisErr")
+func SaveUser(rd *redis.Client, userkey string, val interface{}) error {
+	if err := rd.Set(userkey, val, time.Minute*dealTime).Err(); err != nil { //设置字符串key
+		logrus.WithFields(logrus.Fields{"SaveUser set": err}).Error("redisErr")
+		return err
 	}
-	if err := rd.HSet(UserMerber, userkey, username).Err(); err != nil { //设置字符串key
-		logrus.WithFields(logrus.Fields{"RegisterUserlist": err}).Error("redisErr")
+	if err := rd.HSet(UserMerber, userkey, val).Err(); err != nil { //设置字符串key
+		logrus.WithFields(logrus.Fields{"SaveUser": err}).Error("redisErr")
+		return err
 	}
+	return nil
+}
+
+func GetUserInfo(rd *redis.Client, token string) (string, error) {
+	return rd.Get(token).Result()
 }
 
 //DelUser 删除一个用户，需要删除对应key和用户列表中的数据

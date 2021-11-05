@@ -43,3 +43,17 @@ func (s *Sgin) register(ctx *gin.Context) {
 	}
 	response.JsonOK(ctx, nil)
 }
+
+func (s *Sgin) getUserInfo(ctx *gin.Context) {
+	user := &biz.UserResult{}
+	if err := ctx.Bind(user); err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+	res, err := s.user.GetUserInfo(ctx, user.Token)
+	if err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+	response.JsonOK(ctx, res)
+}

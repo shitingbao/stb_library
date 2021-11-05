@@ -56,10 +56,12 @@ type ArgUser struct {
 type UserRepo interface {
 	GetUser(username string) (*User, error)
 	IsExistUser(username string) (bool, error)
-	SaveUser(token, username string)
+	SaveUser(token string, val UserResult) error
 	DelUser(ctx context.Context, token string)
 	InsertUser(user *User) error
 	GetRoles(id int) ([]Role, error)
+
+	GetUserInfo(token string) (*UserResult, error)
 	// Login(context.Context, *ArgUser) error
 	// Logout(context.Context, *User) error
 }
@@ -105,7 +107,6 @@ func (u *UserUseCase) Login(ctx context.Context, pa *ArgUser) (UserResult, error
 	}
 
 	token := uuid.NewUUID().String()
-	u.repo.SaveUser(token, pa.UserName)
 
 	roles, err := u.repo.GetRoles(usr.ID)
 	if err != nil {
@@ -114,6 +115,11 @@ func (u *UserUseCase) Login(ctx context.Context, pa *ArgUser) (UserResult, error
 	userModel.UserBase = usr.UserBase
 	userModel.Token = token
 	userModel.Roles = roles
+
+	if err := u.repo.SaveUser(token, userModel); err != nil {
+		return userModel, err
+	}
+
 	return userModel, nil
 }
 
@@ -176,4 +182,8 @@ func (u *UserUseCase) UserRegister(ctx context.Context, pa *ArgUser) error {
 	user.Password = bPwd
 
 	return u.repo.InsertUser(user)
+}
+
+func (u *UserUseCase) GetUserInfo(ctx context.Context, token string) (*UserResult, error) {
+	return u.repo.GetUserInfo(token)
 }

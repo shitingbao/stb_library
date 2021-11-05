@@ -33,5 +33,8 @@ func (s *Sgin) setRoute() {
 		rg.POST("/login", s.login)
 		rg.GET("/logout", s.logout)
 		rg.POST("/register", s.register)
+
+		rg.GET("/userinfo", s.getUserInfo)
+
 	}
 }
