@@ -58,3 +58,11 @@ func (u *userRepo) SaveUser(token, username string) {
 func (u *userRepo) InsertUser(user *biz.User) error {
 	return u.data.db.Create(user).Error
 }
+
+func (u *userRepo) GetRoles(id int) ([]biz.Role, error) {
+	roles := []biz.Role{}
+	if err := u.data.db.Table("role").Where("user_id = ?", id).Scan(&roles).Error; err != nil {
+		return roles, err
+	}
+	return roles, nil
+}

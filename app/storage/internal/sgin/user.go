@@ -13,12 +13,12 @@ func (s *Sgin) login(ctx *gin.Context) {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	token, err := s.user.Login(ctx, user)
+	userModel, err := s.user.Login(ctx, user)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	response.JsonOK(ctx, token)
+	response.JsonOK(ctx, userModel)
 }
 
 func (s *Sgin) register(ctx *gin.Context) {

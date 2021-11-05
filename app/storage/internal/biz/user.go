@@ -17,13 +17,21 @@ import (
 
 type UserBase struct {
 	UserName string `form:"user_name" json:"user_name"`
+	RealName string `form:"real_name" json:"real_name"`
 	Avatar   string `form:"avatar" json:"avatar"`
 	Email    string `form:"email" json:"email"`
 	Phone    string `form:"phone" json:"phone"`
+	HomePath string `form:"home_path" json:"home_path"`
+}
+
+type Role struct {
+	RoleName string `json:"role_name"`
+	Value    string `json:"value"`
 }
 
 //User 用户对象
 type User struct {
+	ID int `json:"salt"`
 	UserBase
 	Password []byte //对应mysql的varbinary,末尾不会填充，不能使用binary，因为不足会使用ox0填充导致取出的时候多18位的0
 	Salt     string `form:"salt" json:"salt"`
@@ -32,6 +40,12 @@ type User struct {
 
 func (User) TableName() string {
 	return "user"
+}
+
+type UserResult struct {
+	User
+	Token string `json:"token"`
+	Roles []Role `json:"roles"`
 }
 
 type ArgUser struct {
@@ -45,6 +59,7 @@ type UserRepo interface {
 	SaveUser(token, username string)
 	DelUser(ctx context.Context, token string)
 	InsertUser(user *User) error
+	GetRoles(id int) ([]Role, error)
 	// Login(context.Context, *ArgUser) error
 	// Logout(context.Context, *User) error
 }
@@ -72,24 +87,34 @@ func (u *UserUseCase) equal(pwd, salt string, uPwd []byte) (bool, error) {
 	return bytes.Equal(bPwd, uPwd), nil
 }
 
-func (u *UserUseCase) Login(ctx context.Context, pa *ArgUser) (string, error) {
+func (u *UserUseCase) Login(ctx context.Context, pa *ArgUser) (UserResult, error) {
+	userModel := UserResult{}
 	if pa.UserName == "" || pa.Password == "" {
-		return "", errors.New("name or password cant not nil")
+		return userModel, errors.New("UserName or Password cant not nil")
 	}
 	usr, err := u.repo.GetUser(pa.UserName)
 	if err != nil {
-		return "", err
+		return userModel, err
 	}
 	isExists, err := u.equal(pa.Password, usr.Salt, usr.Password)
 	if err != nil {
-		return "", err
+		return userModel, err
 	}
 	if !isExists {
-		return "", errors.New("password have error")
+		return userModel, errors.New("password have error")
 	}
+
 	token := uuid.NewUUID().String()
 	u.repo.SaveUser(token, pa.UserName)
-	return token, nil
+
+	roles, err := u.repo.GetRoles(usr.ID)
+	if err != nil {
+		return userModel, err
+	}
+	userModel.UserBase = usr.UserBase
+	userModel.Token = token
+	userModel.Roles = roles
+	return userModel, nil
 }
 
 //前端的hex字符串
@@ -147,6 +172,7 @@ func (u *UserUseCase) UserRegister(ctx context.Context, pa *ArgUser) error {
 	}
 	user := &User{}
 	user.UserBase = pa.UserBase
+	user.Salt = salt
 	user.Password = bPwd
 
 	return u.repo.InsertUser(user)
