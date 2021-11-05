@@ -31,6 +31,7 @@ func (s *Sgin) setRoute() {
 	rg := s.g.Group("/basic-api")
 	{
 		rg.POST("/login", s.login)
+		rg.GET("/logout", s.logout)
 		rg.POST("/register", s.register)
 	}
 }

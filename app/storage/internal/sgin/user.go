@@ -7,6 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (s *Sgin) logout(ctx *gin.Context) {
+	user := &biz.UserResult{}
+	if err := ctx.Bind(user); err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+	s.user.LoginOut(ctx, user.Token)
+	response.JsonOK(ctx, nil)
+}
+
 func (s *Sgin) login(ctx *gin.Context) {
 	user := &biz.ArgUser{}
 	if err := ctx.Bind(user); err != nil {

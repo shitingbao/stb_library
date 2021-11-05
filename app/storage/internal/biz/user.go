@@ -31,7 +31,7 @@ type Role struct {
 
 //User 用户对象
 type User struct {
-	ID int `json:"salt"`
+	ID int `json:"id"`
 	UserBase
 	Password []byte //对应mysql的varbinary,末尾不会填充，不能使用binary，因为不足会使用ox0填充导致取出的时候多18位的0
 	Salt     string `form:"salt" json:"salt"`
@@ -44,7 +44,7 @@ func (User) TableName() string {
 
 type UserResult struct {
 	User
-	Token string `json:"token"`
+	Token string `form:"token" json:"token"`
 	Roles []Role `json:"roles"`
 }
 
