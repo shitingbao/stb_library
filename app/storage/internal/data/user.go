@@ -72,14 +72,18 @@ func (u *userRepo) GetRoles(id int) ([]biz.Role, error) {
 	return roles, nil
 }
 
+// GetUserInfo 反馈用户信息，key 为空或者 err 都反馈游客信息
 func (u *userRepo) GetUserInfo(token string) (*biz.UserResult, error) {
+	if token == "" {
+		return &biz.Visitor, nil
+	}
 	model := &biz.UserResult{}
 	uInfo, err := rediser.GetUserInfo(u.data.rds, token)
 	if err != nil {
-		return nil, err
+		return &biz.Visitor, err
 	}
 	if err := json.Unmarshal([]byte(uInfo), model); err != nil {
-		return model, err
+		return &biz.Visitor, err
 	}
 	return model, nil
 }

@@ -48,6 +48,22 @@ type UserResult struct {
 	Roles []Role `json:"roles"`
 }
 
+var Visitor = UserResult{
+	User: User{
+		UserBase: UserBase{
+			UserName: "visitor",
+			RealName: "visitor",
+			HomePath: "/dashboard/analysis",
+		},
+	},
+	Roles: []Role{
+		{
+			RoleName: "visitor",
+			Value:    "visitor",
+		},
+	},
+}
+
 type ArgUser struct {
 	UserBase
 	Password string `form:"password" json:"password"`
