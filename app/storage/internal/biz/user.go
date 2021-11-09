@@ -56,6 +56,7 @@ var Visitor = UserResult{
 			HomePath: "/dashboard/analysis",
 		},
 	},
+	Token: "visitor",
 	Roles: []Role{
 		{
 			RoleName: "visitor",
