@@ -16,22 +16,22 @@ import (
 )
 
 type UserBase struct {
-	UserName string `form:"user_name" json:"user_name"`
-	RealName string `form:"real_name" json:"real_name"`
+	UserName string `form:"username" json:"username"`
+	RealName string `form:"realName" json:"realName"`
 	Avatar   string `form:"avatar" json:"avatar"`
 	Email    string `form:"email" json:"email"`
 	Phone    string `form:"phone" json:"phone"`
-	HomePath string `form:"home_path" json:"home_path"`
+	HomePath string `form:"homePath" json:"homePath"`
 }
 
 type Role struct {
-	RoleName string `json:"role_name"`
+	RoleName string `json:"roleName"`
 	Value    string `json:"value"`
 }
 
 //User 用户对象
 type User struct {
-	ID int `json:"id"`
+	ID int `json:"userId"`
 	UserBase
 	Password []byte //对应mysql的varbinary,末尾不会填充，不能使用binary，因为不足会使用ox0填充导致取出的时候多18位的0
 	Salt     string `form:"salt" json:"salt"`
@@ -53,7 +53,7 @@ var Visitor = UserResult{
 		UserBase: UserBase{
 			UserName: "visitor",
 			RealName: "visitor",
-			HomePath: "/dashboard/analysis",
+			HomePath: "/tools",
 		},
 	},
 	Token: "visitor",
