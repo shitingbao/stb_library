@@ -39,7 +39,7 @@ func (t *TransformUseCase) Transform(ctx context.Context, r *http.Request) ([]st
 	for _, fileHand := range fileHands {
 		filePath, err := base.SaveFile(DefaultFilePath, fileHand)
 		if err != nil {
-			return outFileList, nil
+			return outFileList, err
 		}
 		outFileList = append(outFileList, filePath)
 	}

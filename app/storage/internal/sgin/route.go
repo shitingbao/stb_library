@@ -36,7 +36,7 @@ func (s *Sgin) setRoute() {
 		rg.POST("/register", s.register)
 
 		rg.GET("/userinfo", s.getUserInfo)
-		rg.GET("/upload", s.upload)
+		rg.POST("/upload", s.upload)
 
 	}
 }
