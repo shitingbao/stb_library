@@ -8,10 +8,11 @@ import (
 )
 
 type Sgin struct {
-	bg   *biz.GreeterUsecase
-	user *biz.UserUseCase
-	log  *log.Helper
-	g    *gin.Engine
+	bg        *biz.GreeterUsecase
+	user      *biz.UserUseCase
+	transform *biz.TransformUseCase
+	log       *log.Helper
+	g         *gin.Engine
 }
 
 // sgin 只作路由对应
@@ -35,6 +36,7 @@ func (s *Sgin) setRoute() {
 		rg.POST("/register", s.register)
 
 		rg.GET("/userinfo", s.getUserInfo)
+		rg.GET("/upload", s.upload)
 
 	}
 }
