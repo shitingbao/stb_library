@@ -85,7 +85,9 @@ func getAllFormFiles(r *http.Request) []*multipart.FileHeader {
 		return []*multipart.FileHeader{}
 	}
 	for _, v := range r.MultipartForm.File {
-		files = append(files, v[0])
+		for _, f := range v {
+			files = append(files, f)
+		}
 	}
 	return files
 }
