@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"math/rand"
+	centralV1 "stb-library/api/central/v1"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -84,12 +85,13 @@ type UserRepo interface {
 }
 
 type UserUseCase struct {
-	repo UserRepo
-	log  *log.Helper
+	repo    UserRepo
+	central centralV1.GreeterClient
+	log     *log.Helper
 }
 
-func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
-	return &UserUseCase{repo: repo, log: log.NewHelper(logger)}
+func NewUserUseCase(repo UserRepo, cg centralV1.GreeterClient, logger log.Logger) *UserUseCase {
+	return &UserUseCase{repo: repo, central: cg, log: log.NewHelper(logger)}
 }
 
 func (u *UserUseCase) LoginOut(ctx context.Context, token string) error {

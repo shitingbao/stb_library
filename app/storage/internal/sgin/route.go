@@ -1,6 +1,8 @@
 package sgin
 
 import (
+	"net/http"
+	"os"
 	"stb-library/app/storage/internal/biz"
 
 	"github.com/gin-gonic/gin"
@@ -24,11 +26,15 @@ func NewSgin(b *biz.GreeterUsecase, u *biz.UserUseCase, logger log.Logger) *gin.
 		log:  log.NewHelper(logger),
 		g:    ginModel,
 	}
-	s.setRoute()
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	s.setRoute(dir)
 	return s.g
 }
 
-func (s *Sgin) setRoute() {
+func (s *Sgin) setRoute(dir string) {
 	rg := s.g.Group("/basic-api")
 	{
 		rg.POST("/login", s.login)
@@ -39,4 +45,6 @@ func (s *Sgin) setRoute() {
 		rg.POST("/upload", s.upload)
 
 	}
+
+	s.g.StaticFS("assets", http.Dir(dir))
 }

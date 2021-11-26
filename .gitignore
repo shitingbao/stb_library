@@ -15,3 +15,10 @@
 # vendor/
 
 config.yaml
+
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+
+app/storage/cmd/cmd
