@@ -9,32 +9,34 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/app/storage/internal/conf"
 	"stb-library/app/storage/internal/data"
 	"stb-library/app/storage/internal/server"
-	"stb-library/app/storage/internal/service"
 	"stb-library/app/storage/internal/sgin"
 )
 
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
+func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Data, logger log.Logger, tracerProvider *trace.TracerProvider) (*kratos.App, func(), error) {
+	engine := sgin.NewGinEngine()
+	httpServer := server.NewHTTPServer(confServer, engine, logger)
+	discovery := data.NewDiscovery(registry)
+	centralClient := data.NewCentralGrpcClient(discovery, tracerProvider)
+	dataData, cleanup, err := data.NewData(confData, logger, centralClient)
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
 	userRepo := data.NewUserRepo(dataData, logger)
-	greeterClient := data.NewCentralGrpcClient()
-	userUseCase := biz.NewUserUseCase(userRepo, greeterClient, logger)
-	engine := sgin.NewSgin(greeterUsecase, userUseCase, logger)
-	httpServer := server.NewHTTPServer(confServer, engine, logger)
-	greeterService := service.NewGreeterService(greeterUsecase, logger)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	app := newApp(logger, httpServer, grpcServer)
+	userUseCase := biz.NewUserUseCase(userRepo, logger)
+	centralRepo := data.NewCentralRepo(dataData, logger)
+	centralUseCase := biz.NewCentralUseCase(centralRepo, logger)
+	sginSgin := sgin.NewSgin(engine, userUseCase, centralUseCase, logger)
+	grpcServer := server.NewGRPCServer(confServer, logger, tracerProvider, sginSgin)
+	registrar := data.NewRegistrar(registry)
+	app := newApp(logger, httpServer, grpcServer, registrar)
 	return app, func() {
 		cleanup()
 	}, nil

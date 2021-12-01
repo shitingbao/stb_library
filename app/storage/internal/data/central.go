@@ -1,25 +1,25 @@
 package data
 
 import (
-	"context"
-	centralV1 "stb-library/api/central/v1"
+	"stb-library/app/storage/internal/biz"
 
-	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
-// NewCentralGrpcClient 这里嵌入 consule 连接，待定
-func NewCentralGrpcClient() centralV1.GreeterClient {
-	conn, err := grpc.DialInsecure(
-		context.Background(),
-		// grpc.WithEndpoint("discovery:///beer.user.service"),
-		// grpc.WithDiscovery(r),
-		// grpc.WithMiddleware(
-		// 	tracing.Client(tracing.WithTracerProvider(tp)),
-		// 	recovery.Recovery(),
-		// ),
-	)
-	if err != nil {
-		panic(err)
+var _ biz.CentralRepo = (*centralRepo)(nil)
+
+type centralRepo struct {
+	data *Data
+	log  *log.Helper
+}
+
+func NewCentralRepo(da *Data, lg log.Logger) biz.CentralRepo {
+	return &centralRepo{
+		data: da,
+		log:  log.NewHelper(log.With(lg, "module", "data/user")),
 	}
-	return centralV1.NewGreeterClient(conn)
+}
+
+func (c *centralRepo) SayHello(name string) (string, error) {
+	return "hello:" + name, nil
 }

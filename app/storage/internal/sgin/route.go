@@ -1,8 +1,10 @@
 package sgin
 
 import (
+	"context"
 	"net/http"
 	"os"
+	v1 "stb-library/api/storage/v1"
 	"stb-library/app/storage/internal/biz"
 
 	"github.com/gin-gonic/gin"
@@ -10,28 +12,32 @@ import (
 )
 
 type Sgin struct {
-	bg        *biz.GreeterUsecase
+	v1.UnimplementedStorageServer
 	user      *biz.UserUseCase
 	transform *biz.TransformUseCase
+	center    *biz.CentralUseCase
 	log       *log.Helper
 	g         *gin.Engine
 }
 
+func NewGinEngine() *gin.Engine {
+	return gin.Default()
+}
+
 // sgin 只作路由对应
-func NewSgin(b *biz.GreeterUsecase, u *biz.UserUseCase, logger log.Logger) *gin.Engine {
-	ginModel := gin.Default()
+func NewSgin(ginModel *gin.Engine, u *biz.UserUseCase, c *biz.CentralUseCase, logger log.Logger) *Sgin {
 	s := &Sgin{
-		bg:   b,
-		user: u,
-		log:  log.NewHelper(logger),
-		g:    ginModel,
+		user:   u,
+		center: c,
+		log:    log.NewHelper(logger),
+		g:      ginModel,
 	}
 	dir, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
 	s.setRoute(dir)
-	return s.g
+	return s
 }
 
 func (s *Sgin) setRoute(dir string) {
@@ -47,4 +53,10 @@ func (s *Sgin) setRoute(dir string) {
 	}
 
 	s.g.StaticFS("assets", http.Dir(dir))
+}
+
+func (s *Sgin) SayHello(ctx context.Context, req *v1.HelloRequest) (*v1.HelloReply, error) {
+	return &v1.HelloReply{
+		Message: req.GetName(),
+	}, nil
 }

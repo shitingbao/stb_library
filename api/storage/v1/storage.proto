@@ -1,20 +1,20 @@
 syntax = "proto3";
 
-package helloworld.v1;
+package storage.v1;
 
 import "google/api/annotations.proto";
 
-option go_package = "storage/api/helloworld/v1;v1";
+option go_package = "storage/api/storage/v1;v1";
 option java_multiple_files = true;
-option java_package = "dev.kratos.api.helloworld.v1";
+option java_package = "dev.kratos.api.storage.v1";
 option java_outer_classname = "HelloWorldProtoV1";
 
 // The greeting service definition.
-service Greeter {
+service storage {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply)  {
         option (google.api.http) = {
-            get: "/helloworld/{name}"
+            get: "/storage/{name}"
         };
     }
 }

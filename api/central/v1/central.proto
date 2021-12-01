@@ -10,7 +10,7 @@ option java_package = "dev.kratos.api.central.v1";
 option java_outer_classname = "HelloWorldProtoV1";
 
 // The greeting service definition.
-service Greeter {
+service Central {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply)  {
         option (google.api.http) = {
