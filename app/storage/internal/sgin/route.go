@@ -1,11 +1,11 @@
 package sgin
 
 import (
-	"context"
 	"net/http"
 	"os"
 	v1 "stb-library/api/storage/v1"
 	"stb-library/app/storage/internal/biz"
+	"stb-library/lib/response"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/log"
@@ -50,13 +50,30 @@ func (s *Sgin) setRoute(dir string) {
 		rg.GET("/userinfo", s.getUserInfo)
 		rg.POST("/upload", s.upload)
 
+		rg.GET("/central", s.sayHello)
 	}
 
 	s.g.StaticFS("assets", http.Dir(dir))
 }
 
-func (s *Sgin) SayHello(ctx context.Context, req *v1.HelloRequest) (*v1.HelloReply, error) {
-	return &v1.HelloReply{
-		Message: req.GetName(),
-	}, nil
+func (s *Sgin) sayHello(ctx *gin.Context) {
+	user := &biz.UserResult{}
+	if err := ctx.Bind(user); err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+
+	n, err := s.center.SayHello(user.UserName)
+
+	if err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+	response.JsonOK(ctx, n)
 }
+
+// func (s *Sgin) SayHello(ctx context.Context, req *v1.HelloRequest) (*v1.HelloReply, error) {
+// 	return &v1.HelloReply{
+// 		Message: req.GetName(),
+// 	}, nil
+// }

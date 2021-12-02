@@ -17,3 +17,7 @@ type CentralUseCase struct {
 func NewCentralUseCase(repo CentralRepo, logger log.Logger) *CentralUseCase {
 	return &CentralUseCase{repo: repo, log: log.NewHelper(logger)}
 }
+
+func (c *CentralUseCase) SayHello(name string) (string, error) {
+	return c.repo.SayHello(name)
+}

@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package helloworld.v1;
+package storage.v1;
 import "errors/errors.proto";
 
-option go_package = "storage/api/helloworld/v1;v1";
+option go_package = "storage/api/storage/v1;v1";
 option java_multiple_files = true;
-option java_package = "helloworld.v1.errors";
+option java_package = "storage.v1.errors";
 option objc_class_prefix = "APIHelloworldErrors";
 
 enum ErrorReason {

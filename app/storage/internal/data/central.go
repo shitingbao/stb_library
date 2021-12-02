@@ -1,6 +1,8 @@
 package data
 
 import (
+	"context"
+	v1 "stb-library/api/central/v1"
 	"stb-library/app/storage/internal/biz"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -21,5 +23,6 @@ func NewCentralRepo(da *Data, lg log.Logger) biz.CentralRepo {
 }
 
 func (c *centralRepo) SayHello(name string) (string, error) {
-	return "hello:" + name, nil
+	res, err := c.data.ce.SayHello(context.TODO(), &v1.HelloRequest{Name: name})
+	return res.Message, err
 }
