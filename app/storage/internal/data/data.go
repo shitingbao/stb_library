@@ -90,7 +90,7 @@ func (d *Data) cleanup() {
 func NewCentralGrpcClient(r registry.Discovery, tp *tracesdk.TracerProvider) centralV1.CentralClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		grpc.WithEndpoint("discovery:///stb.central.service"),
+		grpc.WithEndpoint("discovery:///central.service"),
 		grpc.WithDiscovery(r),
 		grpc.WithMiddleware(
 			tracing.Client(tracing.WithTracerProvider(tp)),
