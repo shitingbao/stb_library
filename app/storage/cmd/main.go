@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	Log "log"
 	"os"
 	"stb-library/app/storage/internal/conf"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
@@ -75,22 +75,23 @@ func main() {
 		panic(err)
 	}
 
-	var rc *conf.Registry
-	if err := c.Scan(rc); err != nil {
+	var rc conf.Registry
+	if err := c.Scan(&rc); err != nil {
+		Log.Println("Registry err:", err)
 		panic(err)
 	}
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(bc.Trace.Endpoint)))
-	if err != nil {
-		panic(err)
-	}
+	// exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(bc.Trace.Endpoint)))
+	// if err != nil {
+	// 	panic(err)
+	// }
 	tp := tracesdk.NewTracerProvider(
-		tracesdk.WithBatcher(exp),
+		// tracesdk.WithBatcher(exp),
 		tracesdk.WithResource(resource.NewSchemaless(
 			semconv.ServiceNameKey.String(Name),
 		)),
 	)
 
-	app, cleanup, err := initApp(bc.Server, rc, bc.Data, logger, tp)
+	app, cleanup, err := initApp(bc.Server, &rc, bc.Data, logger, tp)
 	if err != nil {
 		panic(err)
 	}

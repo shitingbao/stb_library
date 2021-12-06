@@ -23,6 +23,9 @@ func NewCentralRepo(da *Data, lg log.Logger) biz.CentralRepo {
 }
 
 func (c *centralRepo) SayHello(name string) (string, error) {
-	res, err := c.data.ce.SayHello(context.TODO(), &v1.HelloRequest{Name: name})
+	res, err := c.data.ce.SayHello(context.Background(), &v1.HelloRequest{Name: name})
+	if err != nil {
+		return "", err
+	}
 	return res.Message, err
 }
