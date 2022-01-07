@@ -22,3 +22,4 @@ config.yaml
 *.pdf
 
 app/storage/cmd/cmd
+app/central/cmd/cmd

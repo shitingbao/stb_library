@@ -17,6 +17,14 @@ service Central {
             get: "/central/{name}"
         };
     }
+  
+  // Healthy
+  rpc Healthy (HelloRequest) returns (HelloReply)  {
+        option (google.api.http) = {
+            post: "/health"
+            body:"*"
+        };
+    }
 }
 
 // The request message containing the user's name.

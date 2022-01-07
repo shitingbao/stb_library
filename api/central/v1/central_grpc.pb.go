@@ -20,6 +20,8 @@ const _ = grpc.SupportPackageIsVersion7
 type CentralClient interface {
 	// Sends a greeting
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
+	// Healthy
+	Healthy(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 }
 
 type centralClient struct {
@@ -39,12 +41,23 @@ func (c *centralClient) SayHello(ctx context.Context, in *HelloRequest, opts ...
 	return out, nil
 }
 
+func (c *centralClient) Healthy(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error) {
+	out := new(HelloReply)
+	err := c.cc.Invoke(ctx, "/central.v1.Central/Healthy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CentralServer is the server API for Central service.
 // All implementations must embed UnimplementedCentralServer
 // for forward compatibility
 type CentralServer interface {
 	// Sends a greeting
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
+	// Healthy
+	Healthy(context.Context, *HelloRequest) (*HelloReply, error)
 	mustEmbedUnimplementedCentralServer()
 }
 
@@ -54,6 +67,9 @@ type UnimplementedCentralServer struct {
 
 func (UnimplementedCentralServer) SayHello(context.Context, *HelloRequest) (*HelloReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+}
+func (UnimplementedCentralServer) Healthy(context.Context, *HelloRequest) (*HelloReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Healthy not implemented")
 }
 func (UnimplementedCentralServer) mustEmbedUnimplementedCentralServer() {}
 
@@ -86,6 +102,24 @@ func _Central_SayHello_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Central_Healthy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HelloRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentralServer).Healthy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/central.v1.Central/Healthy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentralServer).Healthy(ctx, req.(*HelloRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Central_ServiceDesc is the grpc.ServiceDesc for Central service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -96,6 +130,10 @@ var Central_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SayHello",
 			Handler:    _Central_SayHello_Handler,
+		},
+		{
+			MethodName: "Healthy",
+			Handler:    _Central_Healthy_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
