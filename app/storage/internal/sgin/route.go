@@ -3,6 +3,7 @@ package sgin
 import (
 	"net/http"
 	"os"
+	"path"
 	v1 "stb-library/api/storage/v1"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
@@ -53,7 +54,7 @@ func (s *Sgin) setRoute(dir string) {
 		rg.GET("/central", s.sayHello)
 	}
 
-	s.g.StaticFS("assets", http.Dir(dir))
+	s.g.StaticFS("assets", http.Dir(path.Join(dir, "assets")))
 }
 
 func (s *Sgin) sayHello(ctx *gin.Context) {
