@@ -42,6 +42,7 @@ func NewSgin(ginModel *gin.Engine, u *biz.UserUseCase, c *biz.CentralUseCase, lo
 }
 
 func (s *Sgin) setRoute(dir string) {
+	s.g.Use(cross)
 	rg := s.g.Group("/basic-api")
 	{
 		rg.POST("/login", s.login)
@@ -73,8 +74,7 @@ func (s *Sgin) sayHello(ctx *gin.Context) {
 	response.JsonOK(ctx, n)
 }
 
-// func (s *Sgin) SayHello(ctx context.Context, req *v1.HelloRequest) (*v1.HelloReply, error) {
-// 	return &v1.HelloReply{
-// 		Message: req.GetName(),
-// 	}, nil
-// }
+func cross(ctx *gin.Context) {
+	ctx.Writer.Header().Set("Access-Control-Allow-Origin", "127.0.0.1,124.70.156.31,socket1.cn") //设置允许跨域的请求地址
+	ctx.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+}
