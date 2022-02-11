@@ -43,7 +43,7 @@ func NewSgin(ginModel *gin.Engine, u *biz.UserUseCase, c *biz.CentralUseCase, lo
 
 func (s *Sgin) setRoute(dir string) {
 	s.g.Use(cross)
-	rg := s.g.Group("/basic-api")
+	rg := s.g.Group("/api")
 	{
 		rg.POST("/login", s.login)
 		rg.GET("/logout", s.logout)
