@@ -74,7 +74,12 @@ func (s *Sgin) sayHello(ctx *gin.Context) {
 	response.JsonOK(ctx, n)
 }
 
-func cross(ctx *gin.Context) {
-	ctx.Writer.Header().Set("Access-Control-Allow-Origin", "127.0.0.1,124.70.156.31,http://socket1.cn") //设置允许跨域的请求地址
-	ctx.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+func cross(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "127.0.0.1,124.70.156.31,http://socket1.cn")
+	c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
+	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+	c.Header("Access-Control-Allow-Credentials", "true")
+	c.Next()
+
 }
