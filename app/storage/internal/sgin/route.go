@@ -75,6 +75,6 @@ func (s *Sgin) sayHello(ctx *gin.Context) {
 }
 
 func cross(ctx *gin.Context) {
-	ctx.Writer.Header().Set("Access-Control-Allow-Origin", "127.0.0.1,124.70.156.31,socket1.cn") //设置允许跨域的请求地址
+	ctx.Writer.Header().Set("Access-Control-Allow-Origin", "127.0.0.1,124.70.156.31,http://socket1.cn") //设置允许跨域的请求地址
 	ctx.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 }
