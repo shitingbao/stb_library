@@ -14,17 +14,17 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-type ExportUseCase struct {
+type FormatConversionUseCase struct {
 	log            *log.Helper
 	defaultFileDir DefaultFileDir
 }
 
-func NewExportCase(d DefaultFileDir, logger log.Logger) *ExportUseCase {
-	return &ExportUseCase{defaultFileDir: d, log: log.NewHelper(logger)}
+func NewExportCase(d DefaultFileDir, logger log.Logger) *FormatConversionUseCase {
+	return &FormatConversionUseCase{defaultFileDir: d, log: log.NewHelper(logger)}
 }
 
 // FileChange file to csv or excel
-func (e *ExportUseCase) FileChange(ctx *gin.Context) (string, error) {
+func (e *FormatConversionUseCase) FileChange(ctx *gin.Context) (string, error) {
 	multipartForm, err := ctx.MultipartForm()
 	if multipartForm == nil || err != nil {
 		return "", errors.New("file form have errr :" + err.Error())
@@ -85,7 +85,7 @@ func getFormValues(multipartForm map[string][]string) (sep, createSep, createFil
 
 //isGBK true标识使用gbk解析,isCreateGBK标识生成的csv是否用gbk，true代表使用,createSep标识生成文件的间隔符
 //只能解析xlsx , csv , txt三种文件，都生成csv
-func (e *ExportUseCase) fileToCsv(fileURL, sep, createSep string, isGBK, isCreateGBK bool) (string, error) {
+func (e *FormatConversionUseCase) fileToCsv(fileURL, sep, createSep string, isGBK, isCreateGBK bool) (string, error) {
 	fileData := [][]string{}
 	switch path.Ext(fileURL) {
 	case ".xlsx":
@@ -116,7 +116,7 @@ func (e *ExportUseCase) fileToCsv(fileURL, sep, createSep string, isGBK, isCreat
 	return fileAdree, nil
 }
 
-func (e *ExportUseCase) fileToExcel(fileURL, sep string, isGBK bool) (string, error) {
+func (e *FormatConversionUseCase) fileToExcel(fileURL, sep string, isGBK bool) (string, error) {
 	ftype := path.Ext(fileURL)
 	if ftype != ".csv" && ftype != ".txt" {
 		return "", errors.New("file type error")
@@ -133,7 +133,7 @@ func (e *ExportUseCase) fileToExcel(fileURL, sep string, isGBK bool) (string, er
 }
 
 //获取表单中的文件，保存至默认路径并反馈保存的文件名
-func (e *ExportUseCase) getUpdateFile(file *multipart.FileHeader) (string, error) {
+func (e *FormatConversionUseCase) getUpdateFile(file *multipart.FileHeader) (string, error) {
 	f, err := file.Open()
 	if err != nil {
 		return "", err

@@ -14,13 +14,13 @@ import (
 
 type Sgin struct {
 	v1.UnimplementedStorageServer
-	center     *biz.CentralUseCase
-	export     *biz.ExportUseCase
-	comparison *biz.ComparisonUseCase
-	transform  *biz.TransformUseCase
-	image      *biz.ImageWordUseCase
-	qrcode     *biz.QrcodeUseCase
-	user       *biz.UserUseCase
+	center           *biz.CentralUseCase
+	formatConversion *biz.FormatConversionUseCase
+	comparison       *biz.ComparisonUseCase
+	transform        *biz.TransformUseCase
+	image            *biz.ImageWordUseCase
+	qrcode           *biz.QrcodeUseCase
+	user             *biz.UserUseCase
 
 	log *log.Helper
 	g   *gin.Engine
@@ -44,24 +44,21 @@ func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
 
 // sgin 只作路由对应
 func NewSgin(ginModel *gin.Engine, logger log.Logger,
-	ex *biz.ExportUseCase, cmp *biz.ComparisonUseCase, trans *biz.TransformUseCase,
+	ex *biz.FormatConversionUseCase, cmp *biz.ComparisonUseCase, trans *biz.TransformUseCase,
 	img *biz.ImageWordUseCase, q *biz.QrcodeUseCase, u *biz.UserUseCase, c *biz.CentralUseCase,
 ) *Sgin {
 	ginModel.MaxMultipartMemory = 20 << 20 // 为了 form 提交文件做前提
-	if err := os.MkdirAll("", os.ModePerm); err != nil {
-		panic(err)
-	}
 
 	s := &Sgin{
-		center:     c,
-		export:     ex,
-		comparison: cmp,
-		transform:  trans,
-		image:      img,
-		qrcode:     q,
-		user:       u,
-		log:        log.NewHelper(logger),
-		g:          ginModel,
+		center:           c,
+		comparison:       cmp,
+		transform:        trans,
+		formatConversion: ex,
+		image:            img,
+		qrcode:           q,
+		user:             u,
+		log:              log.NewHelper(logger),
+		g:                ginModel,
 	}
 	dir, err := os.Getwd()
 	if err != nil {
@@ -71,21 +68,15 @@ func NewSgin(ginModel *gin.Engine, logger log.Logger,
 	return s
 }
 
-func (s *Sgin) setRoute(dir string) {
-	s.g.Use(cross)
-	rg := s.g.Group("/api")
-	{
-		rg.POST("/login", s.login)
-		rg.GET("/logout", s.logout)
-		rg.POST("/register", s.register)
+func cross(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	// c.Header("Access-Control-Allow-Origin", "http://127.0.0.1,http://124.70.156.31,http://socket1.cn")
+	c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
+	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+	c.Header("Access-Control-Allow-Credentials", "true")
+	c.Next()
 
-		rg.GET("/userinfo", s.getUserInfo)
-		rg.POST("/upload", s.upload)
-
-		rg.GET("/central", s.sayHello)
-	}
-
-	s.g.StaticFS("assets", http.Dir(path.Join(dir, "assets")))
 }
 
 func (s *Sgin) sayHello(ctx *gin.Context) {
@@ -104,13 +95,19 @@ func (s *Sgin) sayHello(ctx *gin.Context) {
 	response.JsonOK(ctx, n)
 }
 
-func cross(c *gin.Context) {
-	c.Header("Access-Control-Allow-Origin", "*")
-	// c.Header("Access-Control-Allow-Origin", "http://127.0.0.1,http://124.70.156.31,http://socket1.cn")
-	c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
-	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
-	c.Header("Access-Control-Allow-Credentials", "true")
-	c.Next()
+func (s *Sgin) setRoute(dir string) {
+	s.g.Use(cross)
+	rg := s.g.Group("/api")
+	{
+		rg.POST("/login", s.login)
+		rg.GET("/logout", s.logout)
+		rg.POST("/register", s.register)
 
+		rg.GET("/userinfo", s.getUserInfo)
+		rg.POST("/upload", s.upload)
+
+		rg.GET("/central", s.sayHello)
+	}
+
+	s.g.StaticFS("assets", http.Dir(path.Join(dir, "assets")))
 }
