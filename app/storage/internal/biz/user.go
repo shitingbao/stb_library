@@ -88,7 +88,7 @@ type UserUseCase struct {
 	log  *log.Helper
 }
 
-func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
+func NewUserCase(repo UserRepo, logger log.Logger) *UserUseCase {
 	return &UserUseCase{repo: repo, log: log.NewHelper(logger)}
 }
 

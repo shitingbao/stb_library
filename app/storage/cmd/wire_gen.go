@@ -23,6 +23,14 @@ import (
 func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Data, logger log.Logger, tracerProvider *trace.TracerProvider) (*kratos.App, func(), error) {
 	engine := sgin.NewGinEngine()
 	httpServer := server.NewHTTPServer(confServer, engine, logger)
+	defaultFileDir, err := sgin.ConstructorDefaultDir()
+	if err != nil {
+		return nil, nil, err
+	}
+	exportUseCase := biz.NewExportCase(defaultFileDir, logger)
+	comparisonUseCase := biz.NewFileComparisonCase(defaultFileDir, logger)
+	transformUseCase := biz.NewTransformCase(defaultFileDir, logger)
+	imageWordUseCase := biz.NewImageToWordCase(defaultFileDir, logger)
 	discovery := data.NewDiscovery(registry)
 	centralClient := data.NewCentralGrpcClient(discovery, tracerProvider)
 	dataData, cleanup, err := data.NewData(confData, logger, centralClient)
@@ -30,10 +38,11 @@ func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 		return nil, nil, err
 	}
 	userRepo := data.NewUserRepo(dataData, logger)
-	userUseCase := biz.NewUserUseCase(userRepo, logger)
+	qrcodeUseCase := biz.NewQrcodeCase(userRepo, logger)
+	userUseCase := biz.NewUserCase(userRepo, logger)
 	centralRepo := data.NewCentralRepo(dataData, logger)
 	centralUseCase := biz.NewCentralUseCase(centralRepo, logger)
-	sginSgin := sgin.NewSgin(engine, userUseCase, centralUseCase, logger)
+	sginSgin := sgin.NewSgin(engine, logger, exportUseCase, comparisonUseCase, transformUseCase, imageWordUseCase, qrcodeUseCase, userUseCase, centralUseCase)
 	grpcServer := server.NewGRPCServer(confServer, logger, tracerProvider, sginSgin)
 	registrar := data.NewRegistrar(registry)
 	app := newApp(logger, httpServer, grpcServer, registrar)

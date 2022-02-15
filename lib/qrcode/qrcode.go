@@ -53,7 +53,7 @@ func GenerateQR(message string, opts ...Option) (string, error) {
 		return "", err
 	}
 	opt := &qrOptions{
-		filePath: dir,
+		filePath: path.Join(dir, "assets"),
 		fileName: uuid.New(),
 		size:     250,
 	}

@@ -4,7 +4,15 @@ import "github.com/google/wire"
 
 // ProviderSet is biz providers.
 var ProviderSet = wire.NewSet(
-	NewUserUseCase,
-	NewTransformUseCase,
 	NewCentralUseCase,
+	NewExportCase,
+	NewFileComparisonCase,
+	NewTransformCase,
+	NewImageToWordCase,
+	NewQrcodeCase,
+	NewUserCase,
 )
+
+type DefaultFileDir struct {
+	DefaultFilePath string
+}

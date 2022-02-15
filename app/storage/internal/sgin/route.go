@@ -14,24 +14,54 @@ import (
 
 type Sgin struct {
 	v1.UnimplementedStorageServer
-	user      *biz.UserUseCase
-	transform *biz.TransformUseCase
-	center    *biz.CentralUseCase
-	log       *log.Helper
-	g         *gin.Engine
+	center     *biz.CentralUseCase
+	export     *biz.ExportUseCase
+	comparison *biz.ComparisonUseCase
+	transform  *biz.TransformUseCase
+	image      *biz.ImageWordUseCase
+	qrcode     *biz.QrcodeUseCase
+	user       *biz.UserUseCase
+
+	log *log.Helper
+	g   *gin.Engine
 }
 
 func NewGinEngine() *gin.Engine {
 	return gin.Default()
 }
 
+// ConstructorDefaultDir 默认当前路径下放资源目录
+func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
+	defaultDir := biz.DefaultFileDir{
+		DefaultFilePath: "./assets",
+	}
+
+	if err := os.MkdirAll(defaultDir.DefaultFilePath, os.ModePerm); err != nil {
+		return defaultDir, err
+	}
+	return defaultDir, nil
+}
+
 // sgin 只作路由对应
-func NewSgin(ginModel *gin.Engine, u *biz.UserUseCase, c *biz.CentralUseCase, logger log.Logger) *Sgin {
+func NewSgin(ginModel *gin.Engine, logger log.Logger,
+	ex *biz.ExportUseCase, cmp *biz.ComparisonUseCase, trans *biz.TransformUseCase,
+	img *biz.ImageWordUseCase, q *biz.QrcodeUseCase, u *biz.UserUseCase, c *biz.CentralUseCase,
+) *Sgin {
+	ginModel.MaxMultipartMemory = 20 << 20 // 为了 form 提交文件做前提
+	if err := os.MkdirAll("", os.ModePerm); err != nil {
+		panic(err)
+	}
+
 	s := &Sgin{
-		user:   u,
-		center: c,
-		log:    log.NewHelper(logger),
-		g:      ginModel,
+		center:     c,
+		export:     ex,
+		comparison: cmp,
+		transform:  trans,
+		image:      img,
+		qrcode:     q,
+		user:       u,
+		log:        log.NewHelper(logger),
+		g:          ginModel,
 	}
 	dir, err := os.Getwd()
 	if err != nil {
