@@ -21,6 +21,8 @@ var (
 
 type Ffmpeg interface {
 	MovToMp4() error
+	// DefaultTransform 默认转化，传入需要转化的文件路径，输出转化后的文件地址
+	DefaultTransform(string) (string, error)
 }
 
 type (
@@ -102,9 +104,32 @@ func (f *ffmpeg) MovToMp4() error {
 	return nil
 }
 
+func (f *ffmpeg) DefaultTransform(filePath string) (string, error) {
+	fullPath := fileExtension(filePath)
+	fullFileName := fullPath + f.targetType
+
+	cmd := exec.Command(f.order, "-i", filePath, "-qscale", "0", fullFileName) //ffmpeg -i input.mov -qscale 0 output.mp4
+	if err := cmd.Run(); err != nil {
+		return "", err
+	}
+
+	return fullFileName, nil
+}
+
+// 去除文件后缀
+func fileExtension(fullFilename string) string {
+	basePath := path.Dir(fullFilename)            //获取当前目录，"/Users/itfanr/Documents"
+	filenameWithSuffix := path.Base(fullFilename) //获取文件名带后缀(test.txt)
+	fileSuffix := path.Ext(fullFilename)          //获取文件后缀(.txt)
+
+	filenameOnly := strings.TrimSuffix(filenameWithSuffix, fileSuffix) //获取文件名(test)
+	return path.Join(basePath, filenameOnly)
+}
+
+// WithFfmpegOrder ffmpeg所在的目录
 func WithFfmpegOrder(od string) Option {
 	return func(o *options) {
-		o.Order = od
+		o.Order = path.Join(od, "ffmpeg")
 	}
 }
 

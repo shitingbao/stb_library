@@ -9,7 +9,7 @@ import (
 	"github.com/pborman/uuid"
 )
 
-// SaveFile 传入文件句柄
+// SaveFile 传入文件句柄,文件名加上随机字符串片段
 func SaveFile(fileDir string, fileHand *multipart.FileHeader) (string, error) {
 	baseFile, err := fileHand.Open()
 	if err != nil {

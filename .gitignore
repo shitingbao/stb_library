@@ -22,4 +22,8 @@ config.yaml
 *.pdf
 
 app/storage/cmd/cmd
+app/storage/cmd/ffmpeg
 app/central/cmd/cmd
+
+.DS_store
+

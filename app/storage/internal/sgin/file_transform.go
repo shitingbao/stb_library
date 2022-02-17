@@ -7,7 +7,7 @@ import (
 )
 
 func (s *Sgin) upload(ctx *gin.Context) {
-	list, err := s.transform.Transform(ctx, ctx.Request)
+	list, err := s.transform.Transform(ctx)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return

@@ -32,8 +32,13 @@ func NewGinEngine() *gin.Engine {
 
 // ConstructorDefaultDir 默认当前路径下放资源目录
 func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return biz.DefaultFileDir{}, err
+	}
 	defaultDir := biz.DefaultFileDir{
-		DefaultFilePath: "./assets",
+		DefaultFileBasePath: dir,
+		DefaultFilePath:     path.Join(dir, "assets"),
 	}
 
 	if err := os.MkdirAll(defaultDir.DefaultFilePath, os.ModePerm); err != nil {
