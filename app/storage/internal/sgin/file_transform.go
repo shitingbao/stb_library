@@ -28,15 +28,15 @@ func (s *Sgin) downloadFileService(ctx *gin.Context) {
 	arg := fileModel{}
 	ctx.Bind(&arg)
 
-	ctx.Header("Content-Type", "video/mpeg4")
-	ctx.Header("Content-Disposition", "attachment; filename="+path.Join(s.defaultFileDir.DefaultAssetsPath, arg.FileName))
+	ctx.Header("Content-Type", "application/octet-stream")
+	ctx.Header("Content-Disposition", "attachment; filename="+arg.FileName)
 	ctx.Header("Content-Transfer-Encoding", "binary")
 	b, err := os.ReadFile(path.Join(s.defaultFileDir.DefaultAssetsPath, arg.FileName))
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-
-	ctx.Data(http.StatusOK, "", b)
+	e := path.Ext(arg.FileName)
+	ctx.Data(http.StatusOK, e[1:], b)
 	response.JsonOK(ctx)
 }
