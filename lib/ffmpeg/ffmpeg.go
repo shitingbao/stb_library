@@ -21,7 +21,7 @@ var (
 
 type Ffmpeg interface {
 	MovToMp4() error
-	// DefaultTransform 默认转化，传入需要转化的文件路径，输出转化后的文件地址
+	// DefaultTransform 默认转化，传入需要转化的文件路径，输出转化后的文名称
 	DefaultTransform(string) (string, error)
 }
 
@@ -112,8 +112,8 @@ func (f *ffmpeg) DefaultTransform(filePath string) (string, error) {
 	if err := cmd.Run(); err != nil {
 		return "", err
 	}
-
-	return fullFileName, nil
+	filename := path.Base(fullFileName) //获取文件名带后缀(test.txt)
+	return filename, nil
 }
 
 // 去除文件后缀

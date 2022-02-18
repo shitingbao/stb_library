@@ -1,7 +1,6 @@
 package sgin
 
 import (
-	"net/http"
 	"os"
 	"path"
 	v1 "stb-library/api/storage/v1"
@@ -22,8 +21,9 @@ type Sgin struct {
 	qrcode           *biz.QrcodeUseCase
 	user             *biz.UserUseCase
 
-	log *log.Helper
-	g   *gin.Engine
+	log            *log.Helper
+	g              *gin.Engine
+	defaultFileDir biz.DefaultFileDir
 }
 
 func NewGinEngine() *gin.Engine {
@@ -37,18 +37,18 @@ func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
 		return biz.DefaultFileDir{}, err
 	}
 	defaultDir := biz.DefaultFileDir{
-		DefaultFileBasePath: dir,
-		DefaultFilePath:     path.Join(dir, "assets"),
+		DefaultAssetsPath: path.Join(dir, "assets"),
+		DefaultDirPath:    dir,
 	}
 
-	if err := os.MkdirAll(defaultDir.DefaultFilePath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(defaultDir.DefaultAssetsPath, os.ModePerm); err != nil {
 		return defaultDir, err
 	}
 	return defaultDir, nil
 }
 
 // sgin 只作路由对应
-func NewSgin(ginModel *gin.Engine, logger log.Logger,
+func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine, logger log.Logger,
 	ex *biz.FormatConversionUseCase, cmp *biz.ComparisonUseCase, trans *biz.TransformUseCase,
 	img *biz.ImageWordUseCase, q *biz.QrcodeUseCase, u *biz.UserUseCase, c *biz.CentralUseCase,
 ) *Sgin {
@@ -64,12 +64,9 @@ func NewSgin(ginModel *gin.Engine, logger log.Logger,
 		user:             u,
 		log:              log.NewHelper(logger),
 		g:                ginModel,
+		defaultFileDir:   dir,
 	}
-	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	s.setRoute(dir)
+	s.setRoute()
 	return s
 }
 
@@ -100,7 +97,7 @@ func (s *Sgin) sayHello(ctx *gin.Context) {
 	response.JsonOK(ctx, n)
 }
 
-func (s *Sgin) setRoute(dir string) {
+func (s *Sgin) setRoute() {
 	s.g.Use(cross)
 	rg := s.g.Group("/api")
 	{
@@ -112,7 +109,11 @@ func (s *Sgin) setRoute(dir string) {
 		rg.POST("/upload", s.upload)
 
 		rg.GET("/central", s.sayHello)
+		rg.GET("/downfile", s.downloadFileService)
 	}
 
-	s.g.StaticFS("assets", http.Dir(path.Join(dir, "assets")))
+	// s.g.StaticFS("assets", http.Dir(s.defaultFileDir.DefaultAssetsPath))// 直接播放视频
+	// s.g.StaticFile("assets", s.defaultFileDir.DefaultAssetsPath)
+
+	s.g.Static("assets", s.defaultFileDir.DefaultAssetsPath)
 }

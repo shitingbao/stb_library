@@ -12,11 +12,15 @@ const (
 	faile
 )
 
-func JsonOK(ctx *gin.Context, data interface{}) {
+func JsonOK(ctx *gin.Context, data ...interface{}) {
+	var res interface{}
+	if len(data) > 0 {
+		res = data[0]
+	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": success,
 		"msg":  "",
-		"data": data,
+		"data": res,
 	})
 }
 

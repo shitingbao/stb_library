@@ -14,6 +14,6 @@ var ProviderSet = wire.NewSet(
 )
 
 type DefaultFileDir struct {
-	DefaultFilePath     string // 资源目录
-	DefaultFileBasePath string // 执行基本目录
+	DefaultAssetsPath string // 资源目录
+	DefaultDirPath    string // 执行基本目录
 }

@@ -27,7 +27,7 @@ func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 	if err != nil {
 		return nil, nil, err
 	}
-	exportUseCase := biz.NewExportCase(defaultFileDir, logger)
+	formatConversionUseCase := biz.NewExportCase(defaultFileDir, logger)
 	comparisonUseCase := biz.NewFileComparisonCase(defaultFileDir, logger)
 	transformUseCase := biz.NewTransformCase(defaultFileDir, logger)
 	imageWordUseCase := biz.NewImageToWordCase(defaultFileDir, logger)
@@ -42,7 +42,7 @@ func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 	userUseCase := biz.NewUserCase(userRepo, logger)
 	centralRepo := data.NewCentralRepo(dataData, logger)
 	centralUseCase := biz.NewCentralUseCase(centralRepo, logger)
-	sginSgin := sgin.NewSgin(engine, logger, exportUseCase, comparisonUseCase, transformUseCase, imageWordUseCase, qrcodeUseCase, userUseCase, centralUseCase)
+	sginSgin := sgin.NewSgin(defaultFileDir, engine, logger, formatConversionUseCase, comparisonUseCase, transformUseCase, imageWordUseCase, qrcodeUseCase, userUseCase, centralUseCase)
 	grpcServer := server.NewGRPCServer(confServer, logger, tracerProvider, sginSgin)
 	registrar := data.NewRegistrar(registry)
 	app := newApp(logger, httpServer, grpcServer, registrar)

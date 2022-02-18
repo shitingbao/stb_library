@@ -51,7 +51,7 @@ func (im *ImageWordUseCase) getFileHands(ctx *gin.Context) ([]string, error) {
 		if err != nil {
 			return imageURLs, err
 		}
-		imageURL, err := images.ByteToImage(im.defaultFileDir.DefaultFilePath, file)
+		imageURL, err := images.ByteToImage(im.defaultFileDir.DefaultAssetsPath, file)
 		if err != nil {
 			return imageURLs, err
 		}

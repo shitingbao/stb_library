@@ -35,7 +35,7 @@ func (t *TransformUseCase) Transform(ctx *gin.Context) ([]string, error) {
 		fileHandList = append(fileHandList, fileHands...)
 	}
 	for _, fileHand := range fileHandList {
-		filePath, err := base.SaveFile(t.defaultFileDir.DefaultFilePath, fileHand)
+		filePath, err := base.SaveFile(t.defaultFileDir.DefaultAssetsPath, fileHand)
 		if err != nil {
 			return outFileList, err
 		}
@@ -50,7 +50,7 @@ func (t *TransformUseCase) Transform(ctx *gin.Context) ([]string, error) {
 
 func (t *TransformUseCase) createTransformFiles(fileType, filePath string) (string, error) {
 	fmg := ffmpeg.NewFfmpeg(
-		ffmpeg.WithFfmpegOrder(t.defaultFileDir.DefaultFileBasePath),
+		ffmpeg.WithFfmpegOrder(t.defaultFileDir.DefaultDirPath),
 		ffmpeg.WithFfmpegTargetType(fileType),
 	)
 	return fmg.DefaultTransform(filePath)

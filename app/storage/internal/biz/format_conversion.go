@@ -102,7 +102,7 @@ func (e *FormatConversionUseCase) fileToCsv(fileURL, sep, createSep string, isGB
 	fileName := strings.TrimSuffix(path.Base(fileURL), path.Ext(fileURL))
 	fileName = strings.Replace(fileName, " ", "-", -1)
 	fileName = strings.Replace(fileName, "_", "-", -1)
-	fileAdree := path.Join(e.defaultFileDir.DefaultFilePath, fileName+".csv")
+	fileAdree := path.Join(e.defaultFileDir.DefaultAssetsPath, fileName+".csv")
 	switch {
 	case isCreateGBK:
 		if err := excel.CreateGBKCsvFile(fileAdree, createSep, fileData); err != nil {
@@ -125,7 +125,7 @@ func (e *FormatConversionUseCase) fileToExcel(fileURL, sep string, isGBK bool) (
 	fileName := strings.TrimSuffix(path.Base(fileURL), path.Ext(fileURL))
 	fileName = strings.Replace(fileName, " ", "-", -1)
 	fileName = strings.Replace(fileName, "_", "-", -1)
-	fileAdree := path.Join(e.defaultFileDir.DefaultFilePath, fileName+".xlsx")
+	fileAdree := path.Join(e.defaultFileDir.DefaultAssetsPath, fileName+".xlsx")
 	if err := excel.CreateExcel(fileAdree, fileData); err != nil {
 		return "", err
 	}
@@ -140,7 +140,7 @@ func (e *FormatConversionUseCase) getUpdateFile(file *multipart.FileHeader) (str
 	}
 	defer f.Close()
 
-	fileAdree := path.Join(e.defaultFileDir.DefaultFilePath, file.Filename)
+	fileAdree := path.Join(e.defaultFileDir.DefaultAssetsPath, file.Filename)
 	fl, err := os.Create(fileAdree)
 	if err != nil {
 		return "", err

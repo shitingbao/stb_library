@@ -101,10 +101,10 @@ func (f *ComparisonUseCase) getSaveFilePath(ctx *gin.Context, fileName string) (
 	}
 	defer fileHead.Close()
 	ft := path.Ext(file.Filename)
-	if err := os.MkdirAll(f.defaultFileDir.DefaultFilePath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(f.defaultFileDir.DefaultAssetsPath, os.ModePerm); err != nil {
 		return "", err
 	}
-	fileAdree := path.Join(f.defaultFileDir.DefaultFilePath, uuid.NewUUID().String()+ft)
+	fileAdree := path.Join(f.defaultFileDir.DefaultAssetsPath, uuid.NewUUID().String()+ft)
 	fl, err := os.Create(fileAdree)
 	if err != nil {
 		return "", err

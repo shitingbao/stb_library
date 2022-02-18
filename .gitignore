@@ -27,3 +27,6 @@ app/central/cmd/cmd
 
 .DS_store
 
+*.mp4
+*.avi
+*.mpg
