@@ -1,6 +1,7 @@
 package ffmpeg
 
 import (
+	"errors"
 	"log"
 	"os"
 	"os/exec"
@@ -108,9 +109,9 @@ func (f *ffmpeg) DefaultTransform(filePath string) (string, error) {
 	fullPath := fileExtension(filePath)
 	fullFileName := fullPath + f.targetType
 
-	cmd := exec.Command(f.order, "-i", filePath, "-qscale", "0", fullFileName) //ffmpeg -i input.mov -qscale 0 output.mp4
+	cmd := exec.Command(f.order, "-i", filePath, "-qscale", "10", fullFileName) //ffmpeg -i input.mov -qscale 0 output.mp4
 	if err := cmd.Run(); err != nil {
-		return "", err
+		return "", errors.New("转化文件出错-" + err.Error())
 	}
 	filename := path.Base(fullFileName) //获取文件名带后缀(test.txt)
 	return filename, nil
