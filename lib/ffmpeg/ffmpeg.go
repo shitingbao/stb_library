@@ -74,12 +74,10 @@ func (f *ffmpeg) MovToMp4() error {
 	}
 	fds, err := os.ReadDir(f.inPath)
 	if err != nil {
-		// log.Println("read file path have err:", err)
 		return err
 	}
 	wholePath := path.Join(rootPath, f.outPath+strconv.Itoa(int(time.Now().Unix())))
 	if err := os.MkdirAll(wholePath, os.ModePerm); err != nil {
-		log.Println("mkdir:", err)
 		return err
 	}
 	for _, v := range fds {

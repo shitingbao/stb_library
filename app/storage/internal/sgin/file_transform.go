@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Sgin) upload(ctx *gin.Context) {
+func (s *Sgin) fileTransform(ctx *gin.Context) {
 	list, err := s.transform.Transform(ctx)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)

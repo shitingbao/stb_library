@@ -62,7 +62,6 @@ func getFileList(dir string) ([]string, error) {
 	fileList := []string{}
 	for _, v := range fList {
 		fileList = append(fileList, v.Name())
-		// log.Println(v.Name())
 	}
 	return fileList, nil
 }

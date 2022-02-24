@@ -39,7 +39,6 @@ func GetOnlineMember(rd *redis.Client) []string {
 		logrus.WithFields(logrus.Fields{"getAlluser": err}).Error("redisErr")
 		return []string{}
 	}
-	// log.Println(um)
 	userList := []string{}
 	for k, v := range um {
 		if rd.Get(k).Val() == "" {

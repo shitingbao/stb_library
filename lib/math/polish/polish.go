@@ -149,10 +149,6 @@ func isLower(top string, newTop string) bool {
 	return false
 }
 
-// func main() {
-// 	log.Println(calculate([]string{}))
-// }
-
 func calculate(tokens []string) int {
 	if len(tokens) == 0 {
 		return 0

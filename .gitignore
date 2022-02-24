@@ -20,12 +20,13 @@ config.yaml
 *.jpeg
 *.gif
 *.pdf
-
+*.png
 app/storage/cmd/cmd
 app/storage/cmd/ffmpeg
 app/central/cmd/cmd
 
 .DS_store
+launch.json
 
 *.mp4
 *.avi

@@ -2,9 +2,7 @@ package biz
 
 import (
 	"errors"
-	"mime/multipart"
 	"stb-library/lib/ffmpeg"
-	base "stb-library/lib/file_base"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/log"
@@ -25,20 +23,12 @@ func (t *TransformUseCase) Transform(ctx *gin.Context) ([]string, error) {
 	if fileType == "" {
 		return []string{}, errors.New("file type have nil")
 	}
-	formFiles, err := ctx.MultipartForm()
+	filePaths, err := getAllFormFile(ctx, t.defaultFileDir.DefaultAssetsPath)
 	if err != nil {
 		return nil, err
 	}
 	outFileList := []string{}
-	fileHandList := []*multipart.FileHeader{}
-	for _, fileHands := range formFiles.File {
-		fileHandList = append(fileHandList, fileHands...)
-	}
-	for _, fileHand := range fileHandList {
-		filePath, err := base.SaveFile(t.defaultFileDir.DefaultAssetsPath, fileHand)
-		if err != nil {
-			return outFileList, err
-		}
+	for _, filePath := range filePaths {
 		outFilePath, err := t.createTransformFiles(fileType, filePath)
 		if err != nil {
 			return outFileList, err

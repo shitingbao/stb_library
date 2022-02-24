@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"image/jpeg"
 	"image/png"
-	"log"
 	"os"
 	"strings"
 	"time"
@@ -22,7 +21,6 @@ func base64ToPngimage(imagebase64 string) error {
 
 	image, err := png.Decode(bt)
 	if err != nil {
-		log.Println("png 编辑出错")
 		return err
 	}
 	f, err := os.OpenFile("./file/"+getUniqueFileName()+".png", os.O_WRONLY|os.O_CREATE, 0777) //等待拆分
@@ -45,7 +43,6 @@ func base64ToJpgimage(imagebase64 string) error {
 
 	image, err := jpeg.Decode(bt)
 	if err != nil {
-		log.Println("jpeg 编辑出错")
 		return err
 	}
 	f, err := os.OpenFile("./file/"+getUniqueFileName()+".jpeg", os.O_WRONLY|os.O_CREATE, 0777) //等待拆分

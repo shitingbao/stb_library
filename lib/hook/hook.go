@@ -4,7 +4,6 @@ package hook
 // 资料参考 https://github.com/sohlich/elogrus
 import (
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -89,7 +88,6 @@ func syncFireFunc(host string, entry *logrus.Entry, client *gorm.DB) error {
 	da, _ := json.Marshal(entry.Data)
 	m := messgae{LogTime: entry.Time, Mes: entry.Message, Data: string(da), Host: host}
 	if err := client.Table("log").Select("log_time", "mes", "data", "host").Create(&m).Error; err != nil {
-		log.Println("into sql:", err)
 		return err
 	}
 	return nil

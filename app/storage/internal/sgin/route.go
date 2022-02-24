@@ -106,7 +106,8 @@ func (s *Sgin) setRoute() {
 		rg.POST("/register", s.register)
 
 		rg.GET("/userinfo", s.getUserInfo)
-		rg.POST("/upload", s.upload)
+		rg.POST("/transform", s.fileTransform)
+		rg.POST("/qrcode", s.qrcodeDecoder)
 
 		rg.GET("/central", s.sayHello)
 		rg.GET("/downfile", s.downloadFileService)

@@ -31,6 +31,7 @@ func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 	comparisonUseCase := biz.NewFileComparisonCase(defaultFileDir, logger)
 	transformUseCase := biz.NewTransformCase(defaultFileDir, logger)
 	imageWordUseCase := biz.NewImageToWordCase(defaultFileDir, logger)
+	qrcodeUseCase := biz.NewQrcodeCase(defaultFileDir, logger)
 	discovery := data.NewDiscovery(registry)
 	centralClient := data.NewCentralGrpcClient(discovery, tracerProvider)
 	dataData, cleanup, err := data.NewData(confData, logger, centralClient)
@@ -38,7 +39,6 @@ func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 		return nil, nil, err
 	}
 	userRepo := data.NewUserRepo(dataData, logger)
-	qrcodeUseCase := biz.NewQrcodeCase(userRepo, logger)
 	userUseCase := biz.NewUserCase(userRepo, logger)
 	centralRepo := data.NewCentralRepo(dataData, logger)
 	centralUseCase := biz.NewCentralUseCase(centralRepo, logger)

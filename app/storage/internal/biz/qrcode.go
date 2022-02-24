@@ -1,28 +1,47 @@
 package biz
 
 import (
-	"context"
 	"stb-library/lib/qrcode"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 type QrcodeUseCase struct {
-	log *log.Helper
+	defaultFileDir DefaultFileDir
+	log            *log.Helper
 }
 
-func NewQrcodeCase(repo UserRepo, logger log.Logger) *QrcodeUseCase {
-	return &QrcodeUseCase{log: log.NewHelper(logger)}
+func NewQrcodeCase(defaultDir DefaultFileDir, logger log.Logger) *QrcodeUseCase {
+	return &QrcodeUseCase{defaultFileDir: defaultDir, log: log.NewHelper(logger)}
 }
 
-func (u *QrcodeUseCase) QrcodeEncoder(ctx context.Context, mes string) (string, error) {
+func (q *QrcodeUseCase) qrcodeEncoder(mes string) (string, error) {
 	return qrcode.GenerateQR(mes)
 }
 
-func (u *QrcodeUseCase) QrcodeDecoder(ctx context.Context, imageURL string) (string, error) {
-	q, err := qrcode.Decode(imageURL)
+func (q *QrcodeUseCase) qrcodeDecoder(imageURL string) (string, error) {
+	code, err := qrcode.Decode(imageURL)
 	if err != nil {
 		return "", err
 	}
-	return q.Content, nil
+	return code.Content, nil
+}
+
+// QrcodeDecoder 对纯数字的二维码内容无法解析，反馈为乱码
+func (q *QrcodeUseCase) QrcodeDecoder(ctx *gin.Context) ([]string, error) {
+	filePaths, err := getAllFormFile(ctx, q.defaultFileDir.DefaultAssetsPath)
+	if err != nil {
+		return nil, err
+	}
+	contents := []string{}
+	for _, filePath := range filePaths {
+		content, err := q.qrcodeDecoder(filePath)
+		if err != nil {
+			return contents, err
+		}
+
+		contents = append(contents, content)
+	}
+	return contents, nil
 }
