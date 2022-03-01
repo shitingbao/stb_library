@@ -47,7 +47,6 @@ func (f *ComparisonUseCase) FileComparsion(ctx *gin.Context) (comparison.Parison
 //首字母‘l’代表left，左侧文件，参数说明：lsep 分隔符标识，默认为‘,’ listitle 是否首行是标题，默认为true,首行是标题 lisgbk 当是文本格式文件，标识是否是gbk，默认为utf8
 //右侧文件同上
 func (f *ComparisonUseCase) getFormFile(ctx *gin.Context) (comparison.ParisonFileObject, comparison.ParisonFileObject, error) {
-	ctx.Request.ParseMultipartForm(20 << 20)
 	leftObject, rightObject := comparison.ParisonFileObject{}, comparison.ParisonFileObject{}
 	if ctx.Request.MultipartForm == nil {
 		return leftObject, rightObject, errors.New("form is nil")

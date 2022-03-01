@@ -17,7 +17,7 @@ func NewTransformCase(defaultDir DefaultFileDir, logger log.Logger) *TransformUs
 	return &TransformUseCase{defaultFileDir: defaultDir, log: log.NewHelper(logger)}
 }
 
-// ftype 参数为完整的文件后缀 .txt
+// Transform 视频文件类型转换 ftype 参数为完整的文件后缀 .mp4
 func (t *TransformUseCase) Transform(ctx *gin.Context) ([]string, error) {
 	fileType := ctx.Request.FormValue("ftype")
 	if fileType == "" {
