@@ -1,8 +1,8 @@
 package biz
 
 import (
-	"errors"
 	"io"
+	"mime/multipart"
 	"os"
 	"path"
 	"stb-library/lib/comparison"
@@ -15,11 +15,6 @@ import (
 type ComparisonUseCase struct {
 	log            *log.Helper
 	defaultFileDir DefaultFileDir
-}
-
-type comparisonParam struct {
-	CompareFile comparison.ParisonFileObject
-	AimFile     comparison.ParisonFileObject
 }
 
 func NewFileComparisonCase(d DefaultFileDir, logger log.Logger) *ComparisonUseCase {
@@ -48,10 +43,12 @@ func (f *ComparisonUseCase) FileComparsion(ctx *gin.Context) (comparison.Parison
 //右侧文件同上
 func (f *ComparisonUseCase) getFormFile(ctx *gin.Context) (comparison.ParisonFileObject, comparison.ParisonFileObject, error) {
 	leftObject, rightObject := comparison.ParisonFileObject{}, comparison.ParisonFileObject{}
-	if ctx.Request.MultipartForm == nil {
-		return leftObject, rightObject, errors.New("form is nil")
+
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		return leftObject, rightObject, err
 	}
-	for k, v := range ctx.Request.MultipartForm.Value { //获取表单字段
+	for k, v := range form.Value { //获取表单字段
 		switch k {
 		case "lsep":
 			leftObject.Sep = v[0]
@@ -75,35 +72,34 @@ func (f *ComparisonUseCase) getFormFile(ctx *gin.Context) (comparison.ParisonFil
 			}
 		}
 	}
-	ladree, err := f.getSaveFilePath(ctx, "left")
-	if err != nil {
-		return leftObject, rightObject, err
+	for filekey, filehandle := range form.File {
+		adress, err := f.getSaveFilePath(filehandle[0])
+		if err != nil {
+			return leftObject, rightObject, err
+		}
+		if filekey == "left" {
+			leftObject.FileName = adress
+		}
+		if filekey == "right" {
+			rightObject.FileName = adress
+		}
 	}
-	leftObject.FileName = ladree
-	radree, err := f.getSaveFilePath(ctx, "right")
-	if err != nil {
-		return leftObject, rightObject, err
-	}
-	rightObject.FileName = radree
+
 	return leftObject, rightObject, nil
 }
 
 //获取表单中的文件，保存至默认路径并反馈保存的文件路径
-func (f *ComparisonUseCase) getSaveFilePath(ctx *gin.Context, fileName string) (string, error) {
-	_, file, err := ctx.Request.FormFile(fileName)
-	if err != nil {
-		return "", err
-	}
-	fileHead, err := file.Open()
+func (f *ComparisonUseCase) getSaveFilePath(mfile *multipart.FileHeader) (string, error) {
+	fileHead, err := mfile.Open()
 	if err != nil {
 		return "", err
 	}
 	defer fileHead.Close()
-	ft := path.Ext(file.Filename)
+
 	if err := os.MkdirAll(f.defaultFileDir.DefaultAssetsPath, os.ModePerm); err != nil {
 		return "", err
 	}
-	fileAdree := path.Join(f.defaultFileDir.DefaultAssetsPath, uuid.NewUUID().String()+ft)
+	fileAdree := path.Join(f.defaultFileDir.DefaultAssetsPath, uuid.NewUUID().String()+mfile.Filename)
 	fl, err := os.Create(fileAdree)
 	if err != nil {
 		return "", err

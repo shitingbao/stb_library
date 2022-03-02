@@ -29,7 +29,8 @@ func (s *Sgin) setRoute() {
 		rg.GET("/userinfo", s.getUserInfo)
 		rg.POST("/transform", s.fileTransform)
 		rg.POST("/qrcode", s.qrcodeDecoder)
-		rg.POST("/comparsion", s.fileComparsion)
+
+		rg.POST("/comparison", s.fileComparsion)
 
 		rg.GET("/central", s.sayHello)
 		rg.GET("/downfile", s.downloadFileService)

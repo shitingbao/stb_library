@@ -31,3 +31,5 @@ launch.json
 *.mp4
 *.avi
 *.mpg
+*.txt
+*.csv
