@@ -4,16 +4,15 @@ import (
 	"stb-library/lib/qrcode"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 type QrcodeUseCase struct {
+	slog           *SlogUseCase
 	defaultFileDir DefaultFileDir
-	log            *log.Helper
 }
 
-func NewQrcodeCase(defaultDir DefaultFileDir, logger log.Logger) *QrcodeUseCase {
-	return &QrcodeUseCase{defaultFileDir: defaultDir, log: log.NewHelper(logger)}
+func NewQrcodeCase(defaultDir DefaultFileDir, s *SlogUseCase) *QrcodeUseCase {
+	return &QrcodeUseCase{defaultFileDir: defaultDir, slog: s}
 }
 
 func (q *QrcodeUseCase) qrcodeEncoder(mes string) (string, error) {

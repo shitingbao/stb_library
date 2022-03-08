@@ -8,17 +8,16 @@ import (
 	"stb-library/lib/comparison"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/pborman/uuid"
 )
 
 type ComparisonUseCase struct {
-	log            *log.Helper
+	slog           *SlogUseCase
 	defaultFileDir DefaultFileDir
 }
 
-func NewFileComparisonCase(d DefaultFileDir, logger log.Logger) *ComparisonUseCase {
-	return &ComparisonUseCase{defaultFileDir: d, log: log.NewHelper(logger)}
+func NewFileComparisonCase(d DefaultFileDir, s *SlogUseCase) *ComparisonUseCase {
+	return &ComparisonUseCase{defaultFileDir: d, slog: s}
 }
 
 //post中分api请求比对和表单比对

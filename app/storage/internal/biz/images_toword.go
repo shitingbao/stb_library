@@ -8,12 +8,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 //ImageWord 业务类
 type ImageWordUseCase struct {
-	log             *log.Helper
+	slog            *SlogUseCase
 	accessToken     string
 	accessTokenDate string
 	baidubceAddress string
@@ -21,8 +20,8 @@ type ImageWordUseCase struct {
 	defaultFileDir DefaultFileDir
 }
 
-func NewImageToWordCase(defaultDir DefaultFileDir, logger log.Logger) *ImageWordUseCase {
-	return &ImageWordUseCase{defaultFileDir: defaultDir, log: log.NewHelper(logger)}
+func NewImageToWordCase(defaultDir DefaultFileDir, s *SlogUseCase) *ImageWordUseCase {
+	return &ImageWordUseCase{defaultFileDir: defaultDir, slog: s}
 }
 
 //Post 图片转文字

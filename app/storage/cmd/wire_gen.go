@@ -8,7 +8,6 @@ package main
 
 import (
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/app/storage/internal/conf"
@@ -20,32 +19,35 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Data, logger log.Logger, tracerProvider *trace.TracerProvider) (*kratos.App, func(), error) {
+func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Data, tracerProvider *trace.TracerProvider) (*kratos.App, func(), error) {
 	engine := sgin.NewGinEngine()
-	httpServer := server.NewHTTPServer(confServer, engine, logger)
+	httpServer := server.NewHTTPServer(confServer, engine)
 	defaultFileDir, err := sgin.ConstructorDefaultDir()
 	if err != nil {
 		return nil, nil, err
 	}
-	formatConversionUseCase := biz.NewExportCase(defaultFileDir, logger)
-	comparisonUseCase := biz.NewFileComparisonCase(defaultFileDir, logger)
-	transformUseCase := biz.NewTransformCase(defaultFileDir, logger)
-	imageWordUseCase := biz.NewImageToWordCase(defaultFileDir, logger)
-	qrcodeUseCase := biz.NewQrcodeCase(defaultFileDir, logger)
 	discovery := data.NewDiscovery(registry)
+	slogClient := data.NewSlogServiceClient(discovery, tracerProvider)
 	centralClient := data.NewCentralGrpcClient(discovery, tracerProvider)
-	dataData, cleanup, err := data.NewData(confData, logger, centralClient)
+	dataData, cleanup, err := data.NewData(confData, slogClient, centralClient)
 	if err != nil {
 		return nil, nil, err
 	}
-	userRepo := data.NewUserRepo(dataData, logger)
-	userUseCase := biz.NewUserCase(userRepo, logger)
-	centralRepo := data.NewCentralRepo(dataData, logger)
-	centralUseCase := biz.NewCentralUseCase(centralRepo, logger)
-	sginSgin := sgin.NewSgin(defaultFileDir, engine, logger, formatConversionUseCase, comparisonUseCase, transformUseCase, imageWordUseCase, qrcodeUseCase, userUseCase, centralUseCase)
-	grpcServer := server.NewGRPCServer(confServer, logger, tracerProvider, sginSgin)
+	slogRepo := data.NewLogServerHandleRepo(dataData)
+	slogUseCase := biz.NewSlogUseCase(slogRepo)
+	formatConversionUseCase := biz.NewExportCase(defaultFileDir, slogUseCase)
+	comparisonUseCase := biz.NewFileComparisonCase(defaultFileDir, slogUseCase)
+	transformUseCase := biz.NewTransformCase(defaultFileDir, slogUseCase)
+	imageWordUseCase := biz.NewImageToWordCase(defaultFileDir, slogUseCase)
+	qrcodeUseCase := biz.NewQrcodeCase(defaultFileDir, slogUseCase)
+	userRepo := data.NewUserRepo(dataData)
+	userUseCase := biz.NewUserCase(userRepo, slogUseCase)
+	centralRepo := data.NewCentralRepo(dataData)
+	centralUseCase := biz.NewCentralUseCase(centralRepo, slogUseCase)
+	sginSgin := sgin.NewSgin(defaultFileDir, engine, formatConversionUseCase, comparisonUseCase, transformUseCase, imageWordUseCase, qrcodeUseCase, userUseCase, centralUseCase)
+	grpcServer := server.NewGRPCServer(confServer, tracerProvider, sginSgin)
 	registrar := data.NewRegistrar(registry)
-	app := newApp(logger, httpServer, grpcServer, registrar)
+	app := newApp(httpServer, grpcServer, registrar)
 	return app, func() {
 		cleanup()
 	}, nil

@@ -7,7 +7,6 @@ import (
 	"stb-library/app/storage/internal/biz"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 )
 
@@ -28,7 +27,6 @@ type Sgin struct {
 	qrcode           *biz.QrcodeUseCase
 	user             *biz.UserUseCase
 
-	log            *log.Helper
 	g              *gin.Engine
 	defaultFileDir biz.DefaultFileDir
 }
@@ -55,7 +53,7 @@ func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
 }
 
 // sgin 只作路由对应
-func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine, logger log.Logger,
+func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine,
 	ex *biz.FormatConversionUseCase, cmp *biz.ComparisonUseCase, trans *biz.TransformUseCase,
 	img *biz.ImageWordUseCase, q *biz.QrcodeUseCase, u *biz.UserUseCase, c *biz.CentralUseCase,
 ) *Sgin {
@@ -69,7 +67,6 @@ func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine, logger log.Logger,
 		image:            img,
 		qrcode:           q,
 		user:             u,
-		log:              log.NewHelper(logger),
 		g:                ginModel,
 		defaultFileDir:   dir,
 	}

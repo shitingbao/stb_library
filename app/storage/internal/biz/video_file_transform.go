@@ -5,16 +5,16 @@ import (
 	"stb-library/lib/ffmpeg"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 type TransformUseCase struct {
+	slog *SlogUseCase
+
 	defaultFileDir DefaultFileDir
-	log            *log.Helper
 }
 
-func NewTransformCase(defaultDir DefaultFileDir, logger log.Logger) *TransformUseCase {
-	return &TransformUseCase{defaultFileDir: defaultDir, log: log.NewHelper(logger)}
+func NewTransformCase(defaultDir DefaultFileDir, s *SlogUseCase) *TransformUseCase {
+	return &TransformUseCase{defaultFileDir: defaultDir, slog: s}
 }
 
 // Transform 视频文件类型转换 ftype 参数为完整的文件后缀 .mp4

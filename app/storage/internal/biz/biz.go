@@ -11,6 +11,7 @@ var ProviderSet = wire.NewSet(
 	NewImageToWordCase,
 	NewQrcodeCase,
 	NewUserCase,
+	NewSlogUseCase,
 )
 
 type DefaultFileDir struct {

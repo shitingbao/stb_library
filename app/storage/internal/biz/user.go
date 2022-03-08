@@ -9,7 +9,6 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/pborman/uuid"
 
 	"golang.org/x/crypto/scrypt"
@@ -84,12 +83,13 @@ type UserRepo interface {
 }
 
 type UserUseCase struct {
+	slog *SlogUseCase
+
 	repo UserRepo
-	log  *log.Helper
 }
 
-func NewUserCase(repo UserRepo, logger log.Logger) *UserUseCase {
-	return &UserUseCase{repo: repo, log: log.NewHelper(logger)}
+func NewUserCase(repo UserRepo, s *SlogUseCase) *UserUseCase {
+	return &UserUseCase{repo: repo, slog: s}
 }
 
 func (u *UserUseCase) LoginOut(ctx context.Context, token string) error {

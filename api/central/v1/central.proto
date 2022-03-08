@@ -6,8 +6,6 @@ import "google/api/annotations.proto";
 
 option go_package = "stb-library/api/central/v1;v1";
 option java_multiple_files = true;
-option java_package = "dev.kratos.api.central.v1";
-option java_outer_classname = "HelloWorldProtoV1";
 
 // The greeting service definition.
 service Central {

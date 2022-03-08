@@ -32,17 +32,17 @@ func (s *Sgin) setRoute() {
 
 		rg.POST("/comparison", s.fileComparsion)
 
-		rg.GET("/central", s.sayHello)
 		rg.GET("/downfile", s.downloadFileService)
 	}
 
 	// s.g.StaticFS("assets", http.Dir(s.defaultFileDir.DefaultAssetsPath))// 直接播放视频
 	// s.g.StaticFile("assets", s.defaultFileDir.DefaultAssetsPath)
 
+	s.g.GET("/health", s.health)
 	s.g.Static("assets", s.defaultFileDir.DefaultAssetsPath)
 }
 
-func (s *Sgin) sayHello(ctx *gin.Context) {
+func (s *Sgin) health(ctx *gin.Context) {
 	user := &biz.UserResult{}
 	if err := ctx.Bind(user); err != nil {
 		response.JsonErr(ctx, err, nil)

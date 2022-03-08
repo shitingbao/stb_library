@@ -1,23 +1,21 @@
 package biz
 
-import (
-	"github.com/go-kratos/kratos/v2/log"
-)
+import "errors"
 
 type CentralRepo interface {
 	SayHello(string) (string, error)
 }
 
 type CentralUseCase struct {
+	slog *SlogUseCase
 	repo CentralRepo
-
-	log *log.Helper
 }
 
-func NewCentralUseCase(repo CentralRepo, logger log.Logger) *CentralUseCase {
-	return &CentralUseCase{repo: repo, log: log.NewHelper(logger)}
+func NewCentralUseCase(repo CentralRepo, s *SlogUseCase) *CentralUseCase {
+	return &CentralUseCase{repo: repo, slog: s}
 }
 
 func (c *CentralUseCase) SayHello(name string) (string, error) {
-	return c.repo.SayHello(name)
+	return "hello", c.slog.repo.SendOneLog("test", errors.New("test"))
+	// return c.repo.SayHello(name)
 }

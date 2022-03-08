@@ -11,16 +11,15 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 type FormatConversionUseCase struct {
-	log            *log.Helper
+	slog           *SlogUseCase
 	defaultFileDir DefaultFileDir
 }
 
-func NewExportCase(d DefaultFileDir, logger log.Logger) *FormatConversionUseCase {
-	return &FormatConversionUseCase{defaultFileDir: d, log: log.NewHelper(logger)}
+func NewExportCase(d DefaultFileDir, s *SlogUseCase) *FormatConversionUseCase {
+	return &FormatConversionUseCase{defaultFileDir: d, slog: s}
 }
 
 // FileChange file to csv or excel

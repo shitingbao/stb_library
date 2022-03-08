@@ -7,7 +7,9 @@ import (
 	"stb-library/lib/ddb"
 	"stb-library/lib/rediser"
 
-	"github.com/go-kratos/kratos/v2/log"
+	slog "stb-library/api/slog/v1"
+
+	consul "github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
@@ -16,8 +18,6 @@ import (
 	"github.com/google/wire"
 	consulAPI "github.com/hashicorp/consul/api"
 	"gorm.io/gorm"
-
-	consul "github.com/go-kratos/kratos/contrib/registry/consul/v2"
 
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 )
@@ -29,18 +29,22 @@ var ProviderSet = wire.NewSet(
 	NewRegistrar,
 	NewCentralGrpcClient,
 	NewUserRepo,
-	NewCentralRepo)
+	NewCentralRepo,
+	NewSlogServiceClient,
+	NewLogServerHandleRepo,
+)
 
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	db  *gorm.DB
-	rds *redis.Client
-	ce  centralV1.CentralClient
+	db   *gorm.DB
+	rds  *redis.Client
+	ce   centralV1.CentralClient
+	slog slog.LogServerClient
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger, central centralV1.CentralClient) (*Data, func(), error) {
+func NewData(c *conf.Data, l slog.LogServerClient, central centralV1.CentralClient) (*Data, func(), error) {
 	d, err := ddb.OpenMysqlClient(c.Database.Source)
 	if err != nil {
 		return nil, nil, err
@@ -50,10 +54,12 @@ func NewData(c *conf.Data, logger log.Logger, central centralV1.CentralClient) (
 		return nil, nil, err
 	}
 	da := &Data{
-		db:  d,
-		rds: r,
-		ce:  central,
+		db:   d,
+		rds:  r,
+		ce:   central,
+		slog: l,
 	}
+
 	return da, da.cleanup, nil
 }
 

@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -94,7 +95,7 @@ type Hub struct {
 // A goroutine running writePump is started for each connection. The
 // application ensures that there is at most one writer to a connection by
 // executing all writes from this goroutine.
-func (c *Client) writePump() {
+func (c *Client) writePump(ctx context.Context) {
 	ticker := time.NewTicker(pingPeriod) //设置定时
 	defer func() {
 		ticker.Stop()
@@ -125,6 +126,8 @@ func (c *Client) writePump() {
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				return
 			}
+		case <-ctx.Done():
+			return
 		}
 	}
 }
@@ -164,11 +167,12 @@ func (c *Client) readPump() {
 				break
 			}
 		}
+
 	}
 }
 
 //Run 开始消息读写队列，无限循环，应该用go func的方式调用
-func (h *Hub) Run() {
+func (h *Hub) Run(ctx context.Context) {
 	for {
 		select {
 		case client := <-h.register: //客户端有新的连接就加入一个
@@ -214,6 +218,8 @@ func (h *Hub) Run() {
 					delete(h.clients, client) //删除连接
 				}
 			}
+		case <-ctx.Done():
+			return
 		}
 	}
 }
@@ -224,7 +230,7 @@ func (h *Hub) Len() int {
 }
 
 // ServeWs handles websocket requests from the peer.
-func ServeWs(user string, hub *Hub, w http.ResponseWriter, r *http.Request) {
+func ServeWs(ctx context.Context, user string, hub *Hub, w http.ResponseWriter, r *http.Request) {
 	h := http.Header{}
 	pro := r.Header.Get("Sec-WebSocket-Protocol")
 	h.Add("Sec-WebSocket-Protocol", pro)   //带有websocket的Protocol子header需要传入对应header，不然会有1006错误
@@ -236,7 +242,7 @@ func ServeWs(user string, hub *Hub, w http.ResponseWriter, r *http.Request) {
 	//生成一个client，里面包含用户信息连接信息等信息
 	client := &Client{hub: hub, name: user, conn: conn, send: make(chan []byte, 256)}
 	client.hub.register <- client //将这个连接放入注册，在run中会加一个
-	go client.writePump()         //新开一个写入，因为有一个用户连接就新开一个，相互不影响，在内部实现心跳包检测连接，详细看函数内部
+	go client.writePump(ctx)      //新开一个写入，因为有一个用户连接就新开一个，相互不影响，在内部实现心跳包检测连接，详细看函数内部
 	client.readPump()             //读取websocket中的信息，详细看函数内部
 
 }
