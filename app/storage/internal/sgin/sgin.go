@@ -1,10 +1,13 @@
 package sgin
 
 import (
+	"context"
+	"encoding/json"
 	"os"
 	"path"
 	v1 "stb-library/api/storage/v1"
 	"stb-library/app/storage/internal/biz"
+	"stb-library/lib/ws"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
@@ -15,6 +18,7 @@ var ProviderSet = wire.NewSet(
 	NewGinEngine,
 	NewSgin,
 	ConstructorDefaultDir,
+	NewChatSocketfunc,
 )
 
 type Sgin struct {
@@ -26,9 +30,9 @@ type Sgin struct {
 	image            *biz.ImageWordUseCase
 	qrcode           *biz.QrcodeUseCase
 	user             *biz.UserUseCase
-
-	g              *gin.Engine
-	defaultFileDir biz.DefaultFileDir
+	hub              *ws.Hub
+	g                *gin.Engine
+	defaultFileDir   biz.DefaultFileDir
 }
 
 func NewGinEngine() *gin.Engine {
@@ -56,6 +60,7 @@ func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
 func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine,
 	ex *biz.FormatConversionUseCase, cmp *biz.ComparisonUseCase, trans *biz.TransformUseCase,
 	img *biz.ImageWordUseCase, q *biz.QrcodeUseCase, u *biz.UserUseCase, c *biz.CentralUseCase,
+	h *ws.Hub,
 ) *Sgin {
 	ginModel.MaxMultipartMemory = 20 << 20 // 为了 form 提交文件做前提
 
@@ -68,8 +73,23 @@ func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine,
 		qrcode:           q,
 		user:             u,
 		g:                ginModel,
+		hub:              h,
 		defaultFileDir:   dir,
 	}
 	s.setRoute()
 	return s
+}
+
+func NewChatSocketfunc() *ws.Hub {
+	h := ws.NewHub(func(data []byte, hub *ws.Hub) error {
+		msg := ws.Message{}
+		if err := json.Unmarshal(data, &msg); err != nil {
+			return err
+		}
+		//原样消息发公告
+		hub.Broadcast <- msg
+		return nil
+	})
+	go h.Run(context.TODO())
+	return h
 }
