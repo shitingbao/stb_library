@@ -32,6 +32,7 @@ var ProviderSet = wire.NewSet(
 	NewCentralRepo,
 	NewSlogServiceClient,
 	NewLogServerHandleRepo,
+	NewHealthRepo,
 )
 
 // Data .
@@ -75,6 +76,7 @@ func NewDiscovery(conf *conf.Registry) registry.Discovery {
 	return r
 }
 
+// NewRegistrar 服务注册，对应了 main 里面的 server name
 func NewRegistrar(conf *conf.Registry) registry.Registrar {
 	c := consulAPI.DefaultConfig()
 	c.Address = conf.Consul.Address

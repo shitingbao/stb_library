@@ -35,8 +35,8 @@ func NewLogServerHandleRepo(d *Data) biz.SlogRepo {
 func NewSlogServiceClient(r registry.Discovery, tp *tracesdk.TracerProvider) slog.LogServerClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		// grpc.WithEndpoint("discovery:///stb-library.slog.service"),
-		grpc.WithEndpoint(address),
+		// grpc.WithEndpoint("discovery:///stb-library.slog.service"),// 相同项目连接
+		grpc.WithEndpoint(address), // 第三方地址连接
 		grpc.WithDiscovery(r),
 		grpc.WithMiddleware(
 			tracing.Client(tracing.WithTracerProvider(tp)),
