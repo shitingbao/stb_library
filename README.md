@@ -1,54 +1,48 @@
-# Kratos Project Template
+# 一个以 Kratos 为基础的项目例子
 
-## Install Kratos
-```
-go get -u github.com/go-kratos/kratos/cmd/kratos/v2@latest
-```
-## Create a service
-```
-# Create a template project
-kratos new server
+## 功能包含
 
-cd server
-# Add a proto template
-kratos proto add api/server/server.proto
-# Generate the proto code
-kratos proto client api/server/server.proto
-# Generate the source code of service by proto file
-kratos proto server api/server/server.proto -t internal/service
+### 1. 多服务之间的架构分类  
 
-go generate ./...
-go build -o ./bin/ ./...
-./bin/server -conf ./configs
-```
-## Generate other auxiliary files by Makefile
-```
-# Download and update dependencies
-make init
-# Generate API swagger json files by proto file
-make swagger
-# Generate API files (include: pb.go, http, grpc, validate, swagger) by proto file
-make api
-# Generate all files
-make all
-```
-## Automated Initialization (wire)
-```
-# install wire
-go get github.com/google/wire/cmd/wire
+  多个服务项目目录以及对应 proto 结构划分
 
-# generate wire
-cd cmd/server
-wire
-```
+  --api（所有服务的 protoc）  
+    --项目 a 对应 protoc  
+    --项目 b 对应 protoc  
+  --app（项目目录）  
+    --项目 a  
+    --项目 b  
+  --lib（功能目录）
 
-## Docker
-```bash
-# build
-docker build -t <your-docker-image-name> .
+### 2. http ，rpc ，路由，websocket
 
-# run
-docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf <your-docker-image-name>
-```
+#### 2.1 protoc api路由
 
-# consulAPI config
+    central 项目，路由定义在 api/central/v1/central.proto 中，使用 google api 定义了 SayHello 和 Healthy
+
+#### 2.2 gin 路由兼容
+
+    storage/internal/sgin 定义了 gin 核心，类似（service），这里为了方便重命名一个文件夹，也可以放在 service 中；
+
+#### 2.3 websocket
+
+    在 http 加载的时候写入。storage/internal/server/http.go 中加入了 websocket 路由，具体的方法封装在 lib/ws 中；
+
+### 3. 服务发现
+
+  1.kratos 项目的 grpc 调用 和 2.其他项目的服务调用，也就是说调用不使用 kratos 的项目的 rpc 通讯。
+
+#### 3.1 调用 kratos 对应的服务
+
+    kratos使用了 consul 来进行注册和发现，需要先下载开启，并且在 config 中写入地址。 app/storage/internal/data.go 中定义了服务的注册和发现基本组件 NewDiscovery 和 NewRegistrar，对应了服务的注册和发现。
+  建立一个 grpc 连接，相同 kratos 中的服务 NewCentralGrpcClient ，其中 WithEndpoint 写入对应的规则（与 main 中定义的 Name 变量对应）
+  
+#### 3.2 调用第三方的 grpc
+
+    进行连接，也就是不是使用 kratos 写的，同时也不注册在这些服务列表内。
+  app/storage/internal/slog.go 中的 NewSlogServiceClient 连接了一个外部的服务，只需要将 grpc.WithEndpoint 中的内容改为 ip+port 即可；
+
+### 4.自定义log
+
+kratos 中带的 logger ，只要实现了对应的 Log(level Level, keyvals ...interface{}) error 方法即可；  
+这里本项目中不使用本地收集的方法（因为官方例子中都有），我这里用了把日志发送到第三方服务的方式来收集；
