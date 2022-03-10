@@ -1,6 +1,8 @@
 package biz
 
-import "errors"
+import (
+	"errors"
+)
 
 type CentralRepo interface {
 	SayHello(string) (string, error)
@@ -16,6 +18,8 @@ func NewCentralUseCase(repo CentralRepo, s *SlogUseCase) *CentralUseCase {
 }
 
 func (c *CentralUseCase) SayHello(name string) (string, error) {
+	c.slog.logger.Info("this is info")
+	c.slog.logger.Error("this is error")
+	// c.slog.logger.WithFields(logrus.Fields{"hello": "panic"}).Panic("logger panic")
 	return "hello", c.slog.repo.SendOneLog("test", errors.New("test"))
-	// return c.repo.SayHello(name)
 }

@@ -35,7 +35,7 @@ func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 		return nil, nil, err
 	}
 	slogRepo := data.NewLogServerHandleRepo(dataData)
-	slogUseCase := biz.NewSlogUseCase(slogRepo)
+	slogUseCase := biz.NewSlogUseCase(defaultFileDir, slogRepo)
 	formatConversionUseCase := biz.NewExportCase(defaultFileDir, slogUseCase)
 	comparisonUseCase := biz.NewFileComparisonCase(defaultFileDir, slogUseCase)
 	transformUseCase := biz.NewTransformCase(defaultFileDir, slogUseCase)
