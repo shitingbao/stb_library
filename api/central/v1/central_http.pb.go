@@ -24,7 +24,7 @@ type CentralHTTPServer interface {
 
 func RegisterCentralHTTPServer(s *http.Server, srv CentralHTTPServer) {
 	r := s.Route("/")
-	r.GET("/central/{name}", _Central_SayHello0_HTTP_Handler(srv))
+	r.GET("/central/hello", _Central_SayHello0_HTTP_Handler(srv))
 	r.POST("/health", _Central_Healthy0_HTTP_Handler(srv))
 }
 
@@ -32,9 +32,6 @@ func _Central_SayHello0_HTTP_Handler(srv CentralHTTPServer) func(ctx http.Contex
 	return func(ctx http.Context) error {
 		var in HelloRequest
 		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, "/central.v1.Central/SayHello")
@@ -97,7 +94,7 @@ func (c *CentralHTTPClientImpl) Healthy(ctx context.Context, in *HelloRequest, o
 
 func (c *CentralHTTPClientImpl) SayHello(ctx context.Context, in *HelloRequest, opts ...http.CallOption) (*HelloReply, error) {
 	var out HelloReply
-	pattern := "/central/{name}"
+	pattern := "/central/hello"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation("/central.v1.Central/SayHello"))
 	opts = append(opts, http.PathTemplate(pattern))
