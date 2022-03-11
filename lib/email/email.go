@@ -7,7 +7,7 @@ import (
 
 var (
 	// https://mail.qq.com/cgi-bin/frame_html?sid=8j93veUohGokHS5O&r=8de5618177b9f4b48ea3fb4855412278
-	mailSmtpPas  = "xqeyhlzuzmjbbfha" // 邮箱的授权码，去邮箱自己获取
+	mailSmtpPas  = "****" // 邮箱的授权码，去邮箱自己获取
 	mailSmtpPort = ":587"
 	fromEmail    = "871258317@qq.com"
 	mailSmtpHost = "smtp.qq.com" // 此处填写SMTP服务器
