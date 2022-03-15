@@ -7,7 +7,7 @@ import (
 )
 
 func (s *Sgin) imageZoom(ctx *gin.Context) {
-	list, err := s.image.ImageToWords(ctx)
+	list, err := s.imgZoom.ImageZoom(ctx)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
