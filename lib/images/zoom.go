@@ -98,5 +98,5 @@ func (i *Images) ImageZoom(url, assetsURL string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return fname, jpeg.Encode(f, m, &jpeg.Options{Quality: i.Quality})
+	return info.Name(), jpeg.Encode(f, m, &jpeg.Options{Quality: i.Quality})
 }
