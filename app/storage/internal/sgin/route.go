@@ -31,6 +31,7 @@ func (s *Sgin) setRoute() {
 		rg.POST("/qrcode", s.qrcodeDecoder)
 
 		rg.POST("/comparison", s.fileComparsion)
+		rg.POST("/imagezoom", s.imageZoom)
 
 		rg.GET("/downfile", s.downloadFileService)
 	}

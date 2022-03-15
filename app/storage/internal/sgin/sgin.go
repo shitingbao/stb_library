@@ -30,6 +30,7 @@ type Sgin struct {
 	image            *biz.ImageWordUseCase
 	qrcode           *biz.QrcodeUseCase
 	user             *biz.UserUseCase
+	imgZoom          *biz.ImageZoomUseCase
 	hub              *ws.Hub
 	g                *gin.Engine
 	defaultFileDir   biz.DefaultFileDir
