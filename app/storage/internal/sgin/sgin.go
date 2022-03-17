@@ -63,7 +63,7 @@ func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine,
 	img *biz.ImageWordUseCase, q *biz.QrcodeUseCase, u *biz.UserUseCase, c *biz.CentralUseCase,
 	imgzoom *biz.ImageZoomUseCase, h *ws.Hub,
 ) *Sgin {
-	ginModel.MaxMultipartMemory = 20 << 20 // 为了 form 提交文件做前提
+	ginModel.MaxMultipartMemory = 100 << 20 // 为了 form 提交文件做前提
 
 	s := &Sgin{
 		center:           c,
