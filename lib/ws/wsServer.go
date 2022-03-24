@@ -40,7 +40,7 @@ var (
 type Message struct {
 	User     string
 	Data     interface{}
-	DateTime time.Time
+	DateTime string
 }
 
 //NewHub 分配一个新的Hub，使用前先获取这个hub对象
@@ -238,7 +238,7 @@ func ServeWs(ctx context.Context, hub *Hub, w http.ResponseWriter, r *http.Reque
 	h.Add("Sec-WebSocket-Protocol", pro)   //带有websocket的Protocol子header需要传入对应header，不然会有1006错误
 	conn, err := upgrader.Upgrade(w, r, h) //返回一个websocket连接
 	if err != nil || pro == "" {
-		logrus.WithFields(logrus.Fields{"connect": err}).Info("websocket")
+		logrus.WithFields(logrus.Fields{"connect or Protocol is nil": err}).Info("websocket")
 		return
 	}
 	//生成一个client，里面包含用户信息连接信息等信息
