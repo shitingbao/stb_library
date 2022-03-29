@@ -15,7 +15,7 @@ const (
 	writeWait = 10 * time.Second
 
 	// Time allowed to read the next pong message from the peer.
-	pongWait = 5 * time.Minute
+	pongWait = 15 * time.Minute
 
 	// Send pings to peer with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * 9) / 10
@@ -40,17 +40,26 @@ var (
 type Message struct {
 	User     string
 	Data     interface{}
+	DataType WebSocketOption
 	DateTime string
 }
+
+type WebSocketOption int
+
+const (
+	MessageErr = iota // 事件数据类型
+	MessageVideo
+)
 
 //NewHub 分配一个新的Hub，使用前先获取这个hub对象
 func NewHub(onEvent OnMessageFunc) *Hub {
 	return &Hub{
-		Broadcast:  make(chan Message),     //包含要想向前台传递的数据，内部使用chan通道传输
-		register:   make(chan *Client),     //有新的连接，将放入这里
-		unregister: make(chan *Client),     //断开连接加入这
-		clients:    make(map[*Client]bool), //包含所有的client连接信息
-		OnMessage:  onEvent,
+		Broadcast:     make(chan Message),     //包含要想向前台传递的数据，内部使用chan通道传输
+		BroadcastUser: make(chan Message),     // 单独用户的通道
+		register:      make(chan *Client),     //有新的连接，将放入这里
+		unregister:    make(chan *Client),     //断开连接加入这
+		clients:       make(map[*Client]bool), //包含所有的client连接信息
+		OnMessage:     onEvent,
 	}
 }
 

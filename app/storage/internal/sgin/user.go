@@ -45,12 +45,7 @@ func (s *Sgin) register(ctx *gin.Context) {
 }
 
 func (s *Sgin) getUserInfo(ctx *gin.Context) {
-	user := &biz.UserResult{}
-	if err := ctx.Bind(user); err != nil {
-		response.JsonErr(ctx, err, nil)
-		return
-	}
-	res, err := s.user.GetUserInfo(ctx, user.Token)
+	res, err := s.user.GetUserInfo(s.GetUser().Token)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return

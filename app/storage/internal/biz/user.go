@@ -14,6 +14,8 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
+var UserVisitor = "visitor"
+
 type UserBase struct {
 	UserName string `form:"username" json:"username"`
 	RealName string `form:"realName" json:"realName"`
@@ -201,6 +203,6 @@ func (u *UserUseCase) UserRegister(ctx context.Context, pa *ArgUser) error {
 	return u.repo.InsertUser(user)
 }
 
-func (u *UserUseCase) GetUserInfo(ctx context.Context, token string) (*UserResult, error) {
+func (u *UserUseCase) GetUserInfo(token string) (*UserResult, error) {
 	return u.repo.GetUserInfo(token)
 }

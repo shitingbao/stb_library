@@ -4,18 +4,20 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"stb-library/lib/context"
 	"stb-library/lib/response"
 
 	"github.com/gin-gonic/gin"
 )
 
+// 上传视频
 func (s *Sgin) fileTransform(ctx *gin.Context) {
-	list, err := s.transform.Transform(ctx)
+	err := s.transform.Transform(context.New(ctx, s.GetUser().UserName))
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	response.JsonOK(ctx, list)
+	response.JsonOK(ctx)
 }
 
 type fileModel struct {

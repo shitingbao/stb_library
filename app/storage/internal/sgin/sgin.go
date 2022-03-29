@@ -23,6 +23,7 @@ var ProviderSet = wire.NewSet(
 
 type Sgin struct {
 	v1.UnimplementedStorageServer
+	userInfo         *biz.UserResult
 	center           *biz.CentralUseCase
 	formatConversion *biz.FormatConversionUseCase
 	comparison       *biz.ComparisonUseCase
@@ -31,9 +32,9 @@ type Sgin struct {
 	qrcode           *biz.QrcodeUseCase
 	user             *biz.UserUseCase
 	imgZoom          *biz.ImageZoomUseCase
-	hub              *ws.Hub
-	g                *gin.Engine
-	defaultFileDir   biz.DefaultFileDir
+
+	g              *gin.Engine
+	defaultFileDir biz.DefaultFileDir
 }
 
 func NewGinEngine() *gin.Engine {
@@ -61,7 +62,7 @@ func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
 func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine,
 	ex *biz.FormatConversionUseCase, cmp *biz.ComparisonUseCase, trans *biz.TransformUseCase,
 	img *biz.ImageWordUseCase, q *biz.QrcodeUseCase, u *biz.UserUseCase, c *biz.CentralUseCase,
-	imgzoom *biz.ImageZoomUseCase, h *ws.Hub,
+	imgzoom *biz.ImageZoomUseCase,
 ) *Sgin {
 	ginModel.MaxMultipartMemory = 100 << 20 // 为了 form 提交文件做前提
 
@@ -76,7 +77,6 @@ func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine,
 		user:             u,
 		g:                ginModel,
 
-		hub:            h,
 		defaultFileDir: dir,
 	}
 	s.setRoute()
@@ -95,4 +95,8 @@ func NewChatSocketfunc() *ws.Hub {
 	})
 	go h.Run(context.TODO())
 	return h
+}
+
+func (s *Sgin) GetUser() *biz.UserResult {
+	return s.userInfo
 }

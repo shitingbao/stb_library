@@ -2,10 +2,9 @@ package biz
 
 import (
 	"errors"
+	"stb-library/lib/context"
 	"stb-library/lib/images"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
 type ImageZoomUseCase struct {
@@ -18,12 +17,12 @@ func NewImageZoomCase(defaultDir DefaultFileDir, s *SlogUseCase) *ImageZoomUseCa
 	return &ImageZoomUseCase{defaultFileDir: defaultDir, slog: s}
 }
 
-func getFormValue(ctx *gin.Context, content string) (int, error) {
+func getFormValue(ctx *context.GContext, content string) (int, error) {
 	val := ctx.Request.FormValue(content)
 	return strconv.Atoi(val)
 }
 
-func getOptionParam(ctx *gin.Context) (int, int, int, error) {
+func getOptionParam(ctx *context.GContext) (int, int, int, error) {
 
 	width, err := getFormValue(ctx, "width")
 	if err != nil {
@@ -43,7 +42,7 @@ func getOptionParam(ctx *gin.Context) (int, int, int, error) {
 }
 
 // Transform 视频文件类型转换 ftype 参数为完整的文件后缀 .mp4
-func (t *ImageZoomUseCase) ImageZoom(ctx *gin.Context) ([]string, error) {
+func (t *ImageZoomUseCase) ImageZoom(ctx *context.GContext) ([]string, error) {
 	height, width, quality, err := getOptionParam(ctx)
 	if err != nil {
 		return nil, err

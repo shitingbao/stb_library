@@ -1,9 +1,8 @@
 package biz
 
 import (
+	"stb-library/lib/context"
 	"stb-library/lib/qrcode"
-
-	"github.com/gin-gonic/gin"
 )
 
 type QrcodeUseCase struct {
@@ -28,7 +27,7 @@ func (q *QrcodeUseCase) qrcodeDecoder(imageURL string) (string, error) {
 }
 
 // QrcodeDecoder 对纯数字的二维码内容无法解析，反馈为乱码
-func (q *QrcodeUseCase) QrcodeDecoder(ctx *gin.Context) ([]string, error) {
+func (q *QrcodeUseCase) QrcodeDecoder(ctx *context.GContext) ([]string, error) {
 	filePaths, err := getAllFormFile(ctx, q.defaultFileDir.DefaultAssetsPath)
 	if err != nil {
 		return nil, err

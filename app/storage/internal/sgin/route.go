@@ -7,15 +7,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func cross(c *gin.Context) {
-	c.Header("Access-Control-Allow-Origin", "*")
-	// c.Header("Access-Control-Allow-Origin", "http://127.0.0.1,http://124.70.156.31,http://socket1.cn")
-	c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
-	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
-	c.Header("Access-Control-Allow-Credentials", "true")
-	c.Next()
+var (
+	tokenKey = "Authorization"
+)
 
+func cross(ctx *gin.Context) {
+	// ctx.Header("Access-Control-Allow-Origin", "*")
+	ctx.Header("Access-Control-Allow-Origin", "localhost,http://127.0.0.1,http://124.70.156.31,http://socket1.cn")
+	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
+	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+	ctx.Header("Access-Control-Allow-Credentials", "true")
+	ctx.Next()
+}
+
+func (s *Sgin) verification(ctx *gin.Context) {
+	info, err := s.user.GetUserInfo(ctx.GetHeader(tokenKey))
+	if err != nil || info.UserName == "" {
+		ctx.Abort()
+		response.JsonErr(ctx, err, nil)
+	}
+	s.userInfo = info
+	ctx.Next()
+	return
 }
 
 func (s *Sgin) setRoute() {
@@ -25,15 +39,17 @@ func (s *Sgin) setRoute() {
 		rg.POST("/login", s.login)
 		rg.GET("/logout", s.logout)
 		rg.POST("/register", s.register)
+		dataRout := rg.Group("/").Use(s.verification)
+		{
+			dataRout.GET("/userinfo", s.getUserInfo)
+			dataRout.POST("/transform", s.fileTransform)
+			dataRout.POST("/qrcode", s.qrcodeDecoder)
 
-		rg.GET("/userinfo", s.getUserInfo)
-		rg.POST("/transform", s.fileTransform)
-		rg.POST("/qrcode", s.qrcodeDecoder)
+			dataRout.POST("/comparison", s.fileComparsion)
+			dataRout.POST("/imagezoom", s.imageZoom)
 
-		rg.POST("/comparison", s.fileComparsion)
-		rg.POST("/imagezoom", s.imageZoom)
-
-		rg.GET("/downfile", s.downloadFileService)
+			dataRout.GET("/downfile", s.downloadFileService)
+		}
 	}
 
 	// s.g.StaticFS("assets", http.Dir(s.defaultFileDir.DefaultAssetsPath))// 直接播放视频
