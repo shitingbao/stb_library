@@ -2,7 +2,6 @@ package sgin
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"os"
 	"path"
@@ -14,13 +13,11 @@ import (
 
 // 上传视频
 func (s *Sgin) fileTransform(ctx *gin.Context) {
-	log.Println("into transform start")
 	err := s.transform.Transform(context.New(ctx, s.GetUser().UserName))
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	log.Println("out transform stop")
 	response.JsonOK(ctx)
 }
 

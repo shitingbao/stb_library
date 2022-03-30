@@ -41,7 +41,7 @@ func (s *Sgin) setRoute() {
 		rg.POST("/register", s.register)
 
 		rg.GET("/downfile", s.downloadFileService)
-		dataRout := rg.Group("/").Use(s.verification)
+		dataRout := rg.Group("/app").Use(s.verification)
 		{
 			dataRout.GET("/userinfo", s.getUserInfo)
 			dataRout.POST("/transform", s.fileTransform)
