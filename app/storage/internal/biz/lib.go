@@ -13,6 +13,10 @@ func getAllFormFile(ctx *context.GContext, basePath string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	return formOption(formFiles, basePath)
+}
+
+func formOption(formFiles *multipart.Form, basePath string) ([]string, error) {
 	filePaths := []string{}
 	fileHandList := []*multipart.FileHeader{}
 	for _, fileHands := range formFiles.File {
