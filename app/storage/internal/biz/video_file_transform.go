@@ -2,6 +2,7 @@ package biz
 
 import (
 	"errors"
+	"log"
 	"mime/multipart"
 	"stb-library/lib/context"
 	"stb-library/lib/ffmpeg"
@@ -25,17 +26,23 @@ func NewTransformCase(defaultDir DefaultFileDir, s *SlogUseCase, h *ws.Hub) *Tra
 
 // Transform 视频文件类型转换 ftype 参数为完整的文件后缀 .mp4
 func (t *TransformUseCase) Transform(ctx *context.GContext) error {
+
+	log.Println("11111111111111111")
+
 	fileType := ctx.Request.FormValue("ftype")
 	if fileType == "" {
 		return errors.New("file type have nil")
 	}
+	log.Println("22222222222222222")
 
 	formFiles, err := ctx.MultipartForm()
 	if err != nil {
 		return err
 	}
+	log.Println("3333333333333")
 
 	go t.asncFormOption(ctx.Username, fileType, formFiles)
+	log.Println("444444444444")
 
 	return nil
 }
