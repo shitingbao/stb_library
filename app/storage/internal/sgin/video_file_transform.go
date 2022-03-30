@@ -1,6 +1,7 @@
 package sgin
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"path"
@@ -22,14 +23,22 @@ func (s *Sgin) fileTransform(ctx *gin.Context) {
 
 type fileModel struct {
 	FileName string `form:"file_name" json:"file_name"`
+	Token    string `form:"token" json:"token"`
 }
 
 //TODO Test资源文件下载
 func (s *Sgin) downloadFileService(ctx *gin.Context) {
 
 	arg := fileModel{}
-	ctx.Bind(&arg)
-
+	if err := ctx.Bind(&arg); err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+	resultUser, err := s.user.GetUserInfo(arg.Token)
+	if err != nil || resultUser == nil || resultUser.UserName == "" {
+		response.JsonErr(ctx, errors.New("资源请求拒绝"), nil)
+		return
+	}
 	ctx.Header("Content-Type", "application/octet-stream")
 	ctx.Header("Content-Disposition", "attachment; filename="+arg.FileName)
 	ctx.Header("Content-Transfer-Encoding", "binary")

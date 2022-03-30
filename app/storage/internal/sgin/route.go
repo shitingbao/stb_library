@@ -39,6 +39,8 @@ func (s *Sgin) setRoute() {
 		rg.POST("/login", s.login)
 		rg.GET("/logout", s.logout)
 		rg.POST("/register", s.register)
+
+		rg.GET("/downfile", s.downloadFileService)
 		dataRout := rg.Group("/").Use(s.verification)
 		{
 			dataRout.GET("/userinfo", s.getUserInfo)
@@ -48,7 +50,6 @@ func (s *Sgin) setRoute() {
 			dataRout.POST("/comparison", s.fileComparsion)
 			dataRout.POST("/imagezoom", s.imageZoom)
 
-			dataRout.GET("/downfile", s.downloadFileService)
 		}
 	}
 
