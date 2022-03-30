@@ -50,6 +50,8 @@ func (s *Sgin) setRoute() {
 			dataRout.POST("/comparison", s.fileComparsion)
 			dataRout.POST("/imagezoom", s.imageZoom)
 
+			dataRout.GET("/ghealth", s.health)
+			dataRout.POST("/phealth", s.health)
 		}
 	}
 
