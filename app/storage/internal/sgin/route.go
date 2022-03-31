@@ -43,7 +43,7 @@ func (s *Sgin) assetsRoute(ctx *gin.Context) {
 
 func (s *Sgin) setRoute() {
 	s.g.Use(cross)
-	s.g.GET("/_app.config.js", s.assetsRoute)
+
 	s.g.GET("/favicon.ico", s.assetsRoute)
 	rg := s.g.Group("/api")
 	{

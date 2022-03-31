@@ -34,6 +34,7 @@ func NewHTTPServer(c *conf.Server, g *gin.Engine, h *ws.Hub) *khttp.Server {
 
 	httpSrv.HandlePrefix("/assets", http.HandlerFunc(assetsRoute))
 	httpSrv.HandlePrefix("/resource", http.HandlerFunc(assetsRoute))
+	httpSrv.HandlePrefix("/_app.config.js", http.HandlerFunc(assetsRoute))
 
 	httpSrv.HandleFunc("/sockets/chat", func(w http.ResponseWriter, r *http.Request) {
 		ws.ServeWs(context.TODO(), h, w, r)
