@@ -1,7 +1,7 @@
 package sgin
 
 import (
-	"net/http"
+	"log"
 	"path/filepath"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
@@ -36,14 +36,15 @@ func (s *Sgin) verification(ctx *gin.Context) {
 
 // assets 静态资源反馈
 func (s *Sgin) assetsRoute(ctx *gin.Context) {
-	http.ServeFile(ctx.Writer, ctx.Request, filepath.Join("/opt/nginx/dist", ctx.Request.URL.String()))
-	// s.g.StaticFile("", filepath.Join("/opt/nginx/dist", ctx.Request.URL.String()))
+	// http.ServeFile(ctx.Writer, ctx.Request, filepath.Join("/opt/nginx/dist", ctx.Request.URL.String()))
+	log.Println(" ctx.Request.URL.String():", ctx.Request.URL.String())
+	s.g.StaticFile("/opt", filepath.Join("/nginx/dist", ctx.Request.URL.String()))
 	return
 }
 
 func (s *Sgin) setRoute() {
 	s.g.Use(cross)
-
+	s.g.GET("/_app.config.js", s.assetsRoute)
 	s.g.GET("/favicon.ico", s.assetsRoute)
 	rg := s.g.Group("/api")
 	{
