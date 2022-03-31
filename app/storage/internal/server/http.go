@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"log"
 	"mime"
 	"net/http"
 	"net/url"
@@ -30,10 +29,13 @@ func NewHTTPServer(c *conf.Server, g *gin.Engine, h *ws.Hub) *khttp.Server {
 		), khttp.Address(c.Http.Addr),
 	}
 	httpSrv := khttp.NewServer(opts...)
-
+	// 预先处理静态资源
 	httpSrv.HandleFunc("/", assetsIndex)
 	httpSrv.HandleFunc("/_app.config.js", assetsAppConfigFavicon)
 	httpSrv.HandleFunc("/favicon.ico", assetsAppConfigFavicon)
+
+	httpSrv.HandlePrefix("/assets", http.HandlerFunc(assetsRoute))
+	httpSrv.HandlePrefix("/resource", http.HandlerFunc(assetsRoute))
 
 	httpSrv.HandleFunc("/sockets/chat", func(w http.ResponseWriter, r *http.Request) {
 		ws.ServeWs(context.TODO(), h, w, r)
@@ -58,18 +60,8 @@ func assetsAppConfigFavicon(w http.ResponseWriter, r *http.Request) {
 
 // assets 静态资源反馈
 func assetsRoute(w http.ResponseWriter, r *http.Request) {
-	log.Println("URL=====:", r.URL.String())
-	paths, err := parsePaths(r.URL)
-	log.Println("parsePaths======:", paths, err)
-	//这里的path反馈工作元素内容待定
-	if err != nil {
-		return
-	}
-
-	if paths[0] == "assets" || paths[0] == "resource" {
-		http.ServeFile(w, r, filepath.Join("/opt/nginx/dist", r.URL.String()))
-		return
-	}
+	http.ServeFile(w, r, filepath.Join("/opt/nginx/dist", r.URL.String()))
+	return
 }
 
 //解析url
