@@ -45,7 +45,7 @@ func (s *Sgin) verification(ctx *gin.Context) {
 
 func (s *Sgin) setRoute() {
 	s.g.Use(cross)
-	s.g.Use(s.assets)
+	s.g.Group("/").Use(s.assets)
 	rg := s.g.Group("/api")
 	{
 		rg.POST("/login", s.login)
