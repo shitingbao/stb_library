@@ -1,6 +1,7 @@
 package sgin
 
 import (
+	"net/http"
 	"path/filepath"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
@@ -35,8 +36,8 @@ func (s *Sgin) verification(ctx *gin.Context) {
 
 // assets 静态资源反馈
 func (s *Sgin) assetsRoute(ctx *gin.Context) {
-	// http.ServeFile(w, r, filepath.Join("/opt/nginx/dist", r.URL.String()))
-	s.g.StaticFile("/opt", filepath.Join("/nginx/dist", ctx.Request.URL.String()))
+	http.ServeFile(ctx.Writer, ctx.Request, filepath.Join("/opt/nginx/dist", ctx.Request.URL.String()))
+	// s.g.StaticFile("", filepath.Join("/opt/nginx/dist", ctx.Request.URL.String()))
 	return
 }
 
