@@ -36,7 +36,7 @@ func (s *Sgin) verification(ctx *gin.Context) {
 // assets 静态资源反馈
 func (s *Sgin) assetsRoute(ctx *gin.Context) {
 	// http.ServeFile(w, r, filepath.Join("/opt/nginx/dist", r.URL.String()))
-	s.g.StaticFile("opt", filepath.Join("/nginx/dist", ctx.Request.URL.String()))
+	s.g.StaticFile("/opt", filepath.Join("/nginx/dist", ctx.Request.URL.String()))
 	return
 }
 
