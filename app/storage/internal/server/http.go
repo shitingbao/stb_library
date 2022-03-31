@@ -31,8 +31,8 @@ func NewHTTPServer(c *conf.Server, g *gin.Engine, h *ws.Hub) *khttp.Server {
 	httpSrv := khttp.NewServer(opts...)
 	// 预先处理静态资源
 	httpSrv.HandleFunc("/", assetsIndex)
-	httpSrv.HandleFunc("/_app.config.js", assetsAppConfigFavicon)
-	httpSrv.HandleFunc("/favicon.ico", assetsAppConfigFavicon)
+	httpSrv.HandleFunc("_app.config.js", assetsRoute)
+	httpSrv.HandleFunc("favicon.ico", assetsRoute)
 
 	httpSrv.HandlePrefix("/assets", http.HandlerFunc(assetsRoute))
 	httpSrv.HandlePrefix("/resource", http.HandlerFunc(assetsRoute))
@@ -50,11 +50,6 @@ func NewHTTPServer(c *conf.Server, g *gin.Engine, h *ws.Hub) *khttp.Server {
 // assets 静态资源反馈
 func assetsIndex(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join("/opt/nginx/dist", r.URL.String(), "index.html"))
-	return
-}
-
-func assetsAppConfigFavicon(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, filepath.Join("/opt/nginx/dist", r.URL.String()))
 	return
 }
 
