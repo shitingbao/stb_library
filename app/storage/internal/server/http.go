@@ -30,11 +30,13 @@ func NewHTTPServer(c *conf.Server, g *gin.Engine, h *ws.Hub) *khttp.Server {
 	}
 	httpSrv := khttp.NewServer(opts...)
 	// 预先处理静态资源
+
+	httpSrv.HandleFunc("/_app.config.js", assetsRoute)
+
 	httpSrv.HandleFunc("/", assetsIndex)
 
 	httpSrv.HandlePrefix("/assets", http.HandlerFunc(assetsRoute))
 	httpSrv.HandlePrefix("/resource", http.HandlerFunc(assetsRoute))
-	httpSrv.HandlePrefix("/_app.config.js", http.HandlerFunc(assetsRoute))
 
 	httpSrv.HandleFunc("/sockets/chat", func(w http.ResponseWriter, r *http.Request) {
 		ws.ServeWs(context.TODO(), h, w, r)
