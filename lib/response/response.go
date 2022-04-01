@@ -13,6 +13,13 @@ const (
 )
 
 func JsonOK(ctx *gin.Context, data ...interface{}) {
+
+	ctx.Header("Access-Control-Allow-Origin", "http://socket1.cn,http://socket1.cn:8000")
+	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
+	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+	ctx.Header("Access-Control-Allow-Credentials", "true")
+
 	var res interface{}
 	if len(data) > 0 {
 		res = data[0]
@@ -25,6 +32,13 @@ func JsonOK(ctx *gin.Context, data ...interface{}) {
 }
 
 func JsonErr(ctx *gin.Context, err error, data interface{}) {
+
+	ctx.Header("Access-Control-Allow-Origin", "http://socket1.cn,http://socket1.cn:8000")
+	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
+	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+	ctx.Header("Access-Control-Allow-Credentials", "true")
+
 	if err == nil {
 		err = errors.New("")
 	}
