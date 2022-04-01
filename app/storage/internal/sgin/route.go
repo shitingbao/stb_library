@@ -23,7 +23,7 @@ func (s *Sgin) setRoute() {
 	s.g.StaticFile("/_app.config.js", path.Join(vueAssetsRoutePath, "_app.config.js"))
 
 	s.g.StaticFS("/assets", http.Dir(path.Join(vueAssetsRoutePath, "assets")))     // 以 assets 为前缀的 url
-	s.g.StaticFS("/resource", http.Dir(path.Join(vueAssetsRoutePath, "resource"))) // 比如 127.0.0.1/resource/aa.js
+	s.g.StaticFS("/resource", http.Dir(path.Join(vueAssetsRoutePath, "resource"))) // 比如 127.0.0.1/resource
 
 	rg := s.g.Group("/api")
 	{
@@ -71,7 +71,7 @@ func (s *Sgin) health(ctx *gin.Context) {
 
 func cross(ctx *gin.Context) {
 	// ctx.Header("Access-Control-Allow-Origin", "*")
-	ctx.Header("Access-Control-Allow-Origin", "localhost,http://127.0.0.1,http://124.70.156.31,http://socket1.cn")
+	ctx.Header("Access-Control-Allow-Origin", "http://socket1.cn")
 	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
 	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
 	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
