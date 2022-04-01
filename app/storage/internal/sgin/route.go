@@ -1,8 +1,6 @@
 package sgin
 
 import (
-	"net/http"
-	"path"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
 
@@ -18,12 +16,12 @@ var (
 func (s *Sgin) setRoute() {
 	s.g.Use(cross)
 
-	s.g.StaticFile("/", path.Join(vueAssetsRoutePath, "index.html"))             // 指定资源文件 127.0.0.1/ 这种
-	s.g.StaticFile("/favicon.ico", path.Join(vueAssetsRoutePath, "favicon.ico")) // 127.0.0.1/favicon.ico
-	s.g.StaticFile("/_app.config.js", path.Join(vueAssetsRoutePath, "_app.config.js"))
+	// s.g.StaticFile("/", path.Join(vueAssetsRoutePath, "index.html"))             // 指定资源文件 127.0.0.1/ 这种
+	// s.g.StaticFile("/favicon.ico", path.Join(vueAssetsRoutePath, "favicon.ico")) // 127.0.0.1/favicon.ico
+	// s.g.StaticFile("/_app.config.js", path.Join(vueAssetsRoutePath, "_app.config.js"))
 
-	s.g.StaticFS("/assets", http.Dir(path.Join(vueAssetsRoutePath, "assets")))     // 以 assets 为前缀的 url
-	s.g.StaticFS("/resource", http.Dir(path.Join(vueAssetsRoutePath, "resource"))) // 比如 127.0.0.1/resource
+	// s.g.StaticFS("/assets", http.Dir(path.Join(vueAssetsRoutePath, "assets")))     // 以 assets 为前缀的 url
+	// s.g.StaticFS("/resource", http.Dir(path.Join(vueAssetsRoutePath, "resource"))) // 比如 127.0.0.1/resource
 
 	rg := s.g.Group("/api")
 	{
