@@ -32,7 +32,7 @@ func NewHTTPServer(c *conf.Server, g *gin.Engine, h *ws.Hub) *khttp.Server {
 	// 预先处理静态资源
 
 	httpSrv.HandleFunc("/", assetsIndex)
-	httpSrv.HandlePrefix("/_app.config.js/", http.HandlerFunc(assetsRoute))
+	httpSrv.HandleFunc("/_app.config.js?v=2.7.2-1648697086484", (assetsRoute))
 	httpSrv.HandleFunc("/favicon.ico", assetsIndex)
 
 	httpSrv.HandlePrefix("/assets", http.HandlerFunc(assetsRoute))
