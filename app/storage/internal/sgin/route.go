@@ -69,7 +69,7 @@ func (s *Sgin) health(ctx *gin.Context) {
 
 func cross(ctx *gin.Context) {
 	// ctx.Header("Access-Control-Allow-Origin", "*")
-	ctx.Header("Access-Control-Allow-Origin", "http://socket1.cn;http://socket1.cn:8000")
+	ctx.Header("Access-Control-Allow-Origin", "http://socket1.cn")
 	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
 	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
 	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
