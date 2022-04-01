@@ -2,6 +2,7 @@ package sgin
 
 import (
 	"net/http"
+	"path"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
 
@@ -10,38 +11,19 @@ import (
 
 var (
 	tokenKey = "Authorization"
+
+	vueAssetsRoutePath = "/opt/nginx/dist" // dist 所在路径
 )
-
-func cross(ctx *gin.Context) {
-	// ctx.Header("Access-Control-Allow-Origin", "*")
-	ctx.Header("Access-Control-Allow-Origin", "localhost,http://127.0.0.1,http://124.70.156.31,http://socket1.cn")
-	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
-	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
-	ctx.Header("Access-Control-Allow-Credentials", "true")
-	ctx.Next()
-}
-
-func (s *Sgin) verification(ctx *gin.Context) {
-	info, err := s.user.GetUserInfo(ctx.GetHeader(tokenKey))
-	if err != nil || info.UserName == "" {
-		ctx.Abort()
-		response.JsonErr(ctx, err, nil)
-	}
-	s.userInfo = info
-	ctx.Next()
-	return
-}
 
 func (s *Sgin) setRoute() {
 	s.g.Use(cross)
 
-	s.g.StaticFile("/", "/opt/nginx/dist/index.html")
-	s.g.StaticFile("/favicon.ico", "/opt/nginx/dist/favicon.ico")
-	s.g.StaticFile("/_app.config.js", "/opt/nginx/dist/_app.config.js")
+	s.g.StaticFile("/", path.Join(vueAssetsRoutePath, "index.html"))             // 指定资源文件 127.0.0.1/ 这种
+	s.g.StaticFile("/favicon.ico", path.Join(vueAssetsRoutePath, "favicon.ico")) // 127.0.0.1/favicon.ico
+	s.g.StaticFile("/_app.config.js", path.Join(vueAssetsRoutePath, "_app.config.js"))
 
-	s.g.StaticFS("/assets", http.Dir("/opt/nginx/dist/assets"))
-	s.g.StaticFS("/resource", http.Dir("/opt/nginx/dist/resource"))
+	s.g.StaticFS("/assets", http.Dir(path.Join(vueAssetsRoutePath, "assets")))     // 以 assets 为前缀的 url
+	s.g.StaticFS("/resource", http.Dir(path.Join(vueAssetsRoutePath, "resource"))) // 比如 127.0.0.1/resource/aa.js
 
 	rg := s.g.Group("/api")
 	{
@@ -85,4 +67,25 @@ func (s *Sgin) health(ctx *gin.Context) {
 		return
 	}
 	response.JsonOK(ctx, n)
+}
+
+func cross(ctx *gin.Context) {
+	// ctx.Header("Access-Control-Allow-Origin", "*")
+	ctx.Header("Access-Control-Allow-Origin", "localhost,http://127.0.0.1,http://124.70.156.31,http://socket1.cn")
+	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
+	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+	ctx.Header("Access-Control-Allow-Credentials", "true")
+	ctx.Next()
+}
+
+func (s *Sgin) verification(ctx *gin.Context) {
+	info, err := s.user.GetUserInfo(ctx.GetHeader(tokenKey))
+	if err != nil || info.UserName == "" {
+		ctx.Abort()
+		response.JsonErr(ctx, err, nil)
+	}
+	s.userInfo = info
+	ctx.Next()
+	return
 }
