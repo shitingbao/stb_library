@@ -2,6 +2,7 @@ package sgin
 
 import (
 	"mime"
+	"net/http"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
 
@@ -45,8 +46,9 @@ func (s *Sgin) setRoute() {
 	s.g.StaticFile("/", "/opt/nginx/dist/index.html")
 	s.g.StaticFile("/favicon.ico", "/opt/nginx/dist/favicon.ico")
 	s.g.StaticFile("/_app.config.js", "/opt/nginx/dist/_app.config.js")
-	s.g.StaticFile("/assets", "/opt/nginx/dist/assets")
-	s.g.StaticFile("/resource", "/opt/nginx/dist/resource")
+
+	s.g.StaticFS("/assets", http.Dir("/opt/nginx/dist/assets"))
+	s.g.StaticFS("/resource", http.Dir("/opt/nginx/dist/resource"))
 
 	rg := s.g.Group("/api")
 	{
