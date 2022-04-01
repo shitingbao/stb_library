@@ -1,7 +1,6 @@
 package sgin
 
 import (
-	"mime"
 	"net/http"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
@@ -12,12 +11,6 @@ import (
 var (
 	tokenKey = "Authorization"
 )
-
-// 自己解析静态资源
-func init() {
-	mime.AddExtensionType(".js", "text/javascript")
-	mime.AddExtensionType(".css", "text/css; charset=utf-8")
-}
 
 func cross(ctx *gin.Context) {
 	// ctx.Header("Access-Control-Allow-Origin", "*")
