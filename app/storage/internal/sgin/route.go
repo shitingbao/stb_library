@@ -1,6 +1,7 @@
 package sgin
 
 import (
+	"net/http"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
 
@@ -74,6 +75,11 @@ func cross(ctx *gin.Context) {
 	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
 	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
 	ctx.Header("Access-Control-Allow-Credentials", "true")
+	//允许类型校验
+	if ctx.Request.Method == "OPTIONS" {
+		ctx.JSON(http.StatusOK, "ok")
+		return
+	}
 	ctx.Next()
 }
 
