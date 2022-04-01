@@ -1,6 +1,7 @@
 package sgin
 
 import (
+	"mime"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
 
@@ -10,6 +11,12 @@ import (
 var (
 	tokenKey = "Authorization"
 )
+
+// 自己解析静态资源
+func init() {
+	mime.AddExtensionType(".js", "text/javascript")
+	mime.AddExtensionType(".css", "text/css; charset=utf-8")
+}
 
 func cross(ctx *gin.Context) {
 	// ctx.Header("Access-Control-Allow-Origin", "*")
@@ -34,6 +41,12 @@ func (s *Sgin) verification(ctx *gin.Context) {
 
 func (s *Sgin) setRoute() {
 	s.g.Use(cross)
+
+	s.g.StaticFile("/", "/opt/nginx/dist/index.html")
+	s.g.StaticFile("/favicon.ico", "/opt/nginx/dist/favicon.ico")
+	s.g.StaticFile("/_app.config.js", "/opt/nginx/dist/_app.config.js")
+	s.g.StaticFile("/assets", "/opt/nginx/dist/assets")
+	s.g.StaticFile("/resource", "/opt/nginx/dist/resource")
 
 	rg := s.g.Group("/api")
 	{
@@ -60,7 +73,7 @@ func (s *Sgin) setRoute() {
 	// s.g.StaticFile("assets", s.defaultFileDir.DefaultAssetsPath)
 
 	s.g.GET("/health", s.health)
-	s.g.Static("assets", s.defaultFileDir.DefaultAssetsPath)
+	// s.g.Static("assets", s.defaultFileDir.DefaultAssetsPath)
 }
 
 func (s *Sgin) health(ctx *gin.Context) {
