@@ -39,7 +39,7 @@ func (u *userRepo) GetUser(username string) (*biz.User, error) {
 //IsExistUser 判断用户是否存在，存在为true
 func (u *userRepo) IsExistUser(username string) (bool, error) {
 	var num int64
-	if err := u.data.db.Table("user").Where("user_name = ?", username).Count(&num).Error; err != nil {
+	if err := u.data.db.Table("user").Where("username = ?", username).Count(&num).Error; err != nil {
 		return false, err
 	}
 	return num > 0, nil
