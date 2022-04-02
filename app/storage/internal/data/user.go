@@ -27,7 +27,7 @@ func (u *userRepo) DelUser(ctx context.Context, token string) {
 //GetUser 获取一个user，不存在反馈 err
 func (u *userRepo) GetUser(username string) (*biz.User, error) {
 	ur := []*biz.User{}
-	if err := u.data.db.Table("user").Where("user_name = ?", username).Scan(&ur).Error; err != nil {
+	if err := u.data.db.Table("user").Where("username = ?", username).Scan(&ur).Error; err != nil {
 		return nil, err
 	}
 	if len(ur) == 0 {
