@@ -18,16 +18,16 @@ var UserVisitor = "visitor"
 
 type UserBase struct {
 	UserName string `form:"username" json:"username" gorm:"column:username"`
-	RealName string `form:"realName" json:"realName" gorm:"real_name"`
+	RealName string `form:"realName" json:"realName" gorm:"column:real_name"`
 	Avatar   string `form:"avatar" json:"avatar"`
 	Email    string `form:"email" json:"email"`
 	Phone    string `form:"phone" json:"phone"`
-	HomePath string `form:"homePath" json:"homePath" gorm:"home_path"`
+	HomePath string `form:"homePath" json:"homePath" gorm:"column:home_path"`
 }
 
 type Role struct {
-	RoleName string `json:"roleName"`
-	Value    string `json:"value"`
+	RoleName string `json:"roleName" gorm:"column:role_name"`
+	Value    string `json:"value" gorm:"column:value"`
 }
 
 //User 用户对象
