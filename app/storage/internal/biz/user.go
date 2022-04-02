@@ -17,12 +17,12 @@ import (
 var UserVisitor = "visitor"
 
 type UserBase struct {
-	UserName string `form:"username" json:"username" grom:"username"`
-	RealName string `form:"realName" json:"realName" grom:"real_name"`
+	UserName string `form:"username" json:"username" gorm:"column:username"`
+	RealName string `form:"realName" json:"realName" gorm:"real_name"`
 	Avatar   string `form:"avatar" json:"avatar"`
 	Email    string `form:"email" json:"email"`
 	Phone    string `form:"phone" json:"phone"`
-	HomePath string `form:"homePath" json:"homePath" grom:"home_path"`
+	HomePath string `form:"homePath" json:"homePath" gorm:"home_path"`
 }
 
 type Role struct {
@@ -32,7 +32,7 @@ type Role struct {
 
 //User 用户对象
 type User struct {
-	ID int `json:"userId" grom:"id"`
+	ID int `json:"userId" gorm:"id"`
 	UserBase
 	Password []byte //对应mysql的varbinary,末尾不会填充，不能使用binary，因为不足会使用ox0填充导致取出的时候多18位的0
 	Salt     string `form:"salt" json:"salt"`
