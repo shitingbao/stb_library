@@ -7,15 +7,15 @@ type GhealthRepo interface {
 }
 
 type GhealthUseCase struct {
-	slog *SlogUseCase
+	sLog *SlogUseCase
 	repo GhealthRepo
 }
 
 func NewGhealthUseCase(repo GhealthRepo, s *SlogUseCase) *GhealthUseCase {
-	return &GhealthUseCase{repo: repo, slog: s}
+	return &GhealthUseCase{repo: repo, sLog: s}
 }
 
 func (c *GhealthUseCase) SayHello(name string) (string, error) {
-	return "hello", c.slog.repo.SendOneLog("test", errors.New("test"))
+	return "hello", c.sLog.repo.SendOneLog("test", errors.New("test"))
 	// return c.repo.SayHello(name)
 }

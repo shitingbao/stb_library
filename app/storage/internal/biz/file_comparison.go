@@ -12,12 +12,12 @@ import (
 )
 
 type ComparisonUseCase struct {
-	slog           *SlogUseCase
+	sLog           *SlogUseCase
 	defaultFileDir DefaultFileDir
 }
 
 func NewFileComparisonCase(d DefaultFileDir, s *SlogUseCase) *ComparisonUseCase {
-	return &ComparisonUseCase{defaultFileDir: d, slog: s}
+	return &ComparisonUseCase{defaultFileDir: d, sLog: s}
 }
 
 //post中分api请求比对和表单比对

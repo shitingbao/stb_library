@@ -6,12 +6,12 @@ import (
 )
 
 type QrcodeUseCase struct {
-	slog           *SlogUseCase
+	sLog           *SlogUseCase
 	defaultFileDir DefaultFileDir
 }
 
 func NewQrcodeCase(defaultDir DefaultFileDir, s *SlogUseCase) *QrcodeUseCase {
-	return &QrcodeUseCase{defaultFileDir: defaultDir, slog: s}
+	return &QrcodeUseCase{defaultFileDir: defaultDir, sLog: s}
 }
 
 func (q *QrcodeUseCase) qrcodeEncoder(mes string) (string, error) {

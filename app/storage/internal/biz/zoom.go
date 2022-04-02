@@ -8,13 +8,13 @@ import (
 )
 
 type ImageZoomUseCase struct {
-	slog *SlogUseCase
+	sLog *SlogUseCase
 
 	defaultFileDir DefaultFileDir
 }
 
 func NewImageZoomCase(defaultDir DefaultFileDir, s *SlogUseCase) *ImageZoomUseCase {
-	return &ImageZoomUseCase{defaultFileDir: defaultDir, slog: s}
+	return &ImageZoomUseCase{defaultFileDir: defaultDir, sLog: s}
 }
 
 func getFormValue(ctx *context.GContext, content string) (int, error) {

@@ -35,6 +35,7 @@ type Sgin struct {
 	image            *biz.ImageWordUseCase
 	qrcode           *biz.QrcodeUseCase
 	user             *biz.UserUseCase
+	xiaoji           *biz.XiaojiUseCase
 	imgZoom          *biz.ImageZoomUseCase
 
 	g              *gin.Engine

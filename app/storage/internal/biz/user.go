@@ -85,13 +85,13 @@ type UserRepo interface {
 }
 
 type UserUseCase struct {
-	slog *SlogUseCase
+	sLog *SlogUseCase
 
 	repo UserRepo
 }
 
 func NewUserCase(repo UserRepo, s *SlogUseCase) *UserUseCase {
-	return &UserUseCase{repo: repo, slog: s}
+	return &UserUseCase{repo: repo, sLog: s}
 }
 
 func (u *UserUseCase) LoginOut(ctx context.Context, token string) error {

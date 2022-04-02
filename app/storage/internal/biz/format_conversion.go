@@ -14,12 +14,12 @@ import (
 )
 
 type FormatConversionUseCase struct {
-	slog           *SlogUseCase
+	sLog           *SlogUseCase
 	defaultFileDir DefaultFileDir
 }
 
 func NewExportCase(d DefaultFileDir, s *SlogUseCase) *FormatConversionUseCase {
-	return &FormatConversionUseCase{defaultFileDir: d, slog: s}
+	return &FormatConversionUseCase{defaultFileDir: d, sLog: s}
 }
 
 // FileChange file to csv or excel

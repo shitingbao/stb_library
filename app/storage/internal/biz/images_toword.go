@@ -12,7 +12,7 @@ import (
 
 //ImageWord 业务类
 type ImageWordUseCase struct {
-	slog            *SlogUseCase
+	sLog            *SlogUseCase
 	accessToken     string
 	accessTokenDate string
 	baidubceAddress string
@@ -21,7 +21,7 @@ type ImageWordUseCase struct {
 }
 
 func NewImageToWordCase(defaultDir DefaultFileDir, s *SlogUseCase) *ImageWordUseCase {
-	return &ImageWordUseCase{defaultFileDir: defaultDir, slog: s}
+	return &ImageWordUseCase{defaultFileDir: defaultDir, sLog: s}
 }
 
 //Post 图片转文字

@@ -10,7 +10,7 @@ import (
 )
 
 type TransformUseCase struct {
-	slog           *SlogUseCase
+	sLog           *SlogUseCase
 	hub            *ws.Hub
 	defaultFileDir DefaultFileDir
 }
@@ -18,7 +18,7 @@ type TransformUseCase struct {
 func NewTransformCase(defaultDir DefaultFileDir, s *SlogUseCase, h *ws.Hub) *TransformUseCase {
 	return &TransformUseCase{
 		defaultFileDir: defaultDir,
-		slog:           s,
+		sLog:           s,
 		hub:            h,
 	}
 }
