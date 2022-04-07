@@ -17,8 +17,8 @@ type MenuUser struct {
 }
 
 type MenuResult struct {
-	MenuList []Menu
-	Sort     string
+	MenuList []Menu `json:"menu_list"`
+	Sort     string `json:"sort"`
 }
 
 type ArgMenu struct {

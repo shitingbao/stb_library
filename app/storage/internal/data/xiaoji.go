@@ -143,7 +143,7 @@ func (x *xiaojiRepo) updateMenuSort(userId, menuId, parentId int, db *gorm.DB) e
 	}
 	if err := db.Table("menu_user").
 		Where("user_id = ? and parent_id = ?", userId, parentId).
-		Update("sort", sort).Error; err != nil {
+		Update("menu_sort", sort).Error; err != nil {
 		return err
 	}
 	return nil
