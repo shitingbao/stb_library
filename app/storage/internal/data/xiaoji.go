@@ -10,6 +10,10 @@ import (
 
 var _ biz.XiaojiRepo = (*xiaojiRepo)(nil)
 
+// comment：小记模块
+// 创建一级菜单和二级菜单共用一个接口，用是否有 父 id 区别
+// 创建一级节点时，同时创建自己的排序和一个空的二级排序（为了方便其他操作）
+
 type xiaojiRepo struct {
 	data *Data
 }

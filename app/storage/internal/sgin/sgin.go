@@ -67,7 +67,7 @@ func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
 func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine,
 	ex *biz.FormatConversionUseCase, cmp *biz.ComparisonUseCase, trans *biz.TransformUseCase,
 	img *biz.ImageWordUseCase, q *biz.QrcodeUseCase, u *biz.UserUseCase, c *biz.CentralUseCase,
-	imgzoom *biz.ImageZoomUseCase,
+	imgzoom *biz.ImageZoomUseCase, xiaoji *biz.XiaojiUseCase,
 ) *Sgin {
 	ginModel.MaxMultipartMemory = formFileSize << 20 // 为了 form 提交文件做前提
 
@@ -79,6 +79,7 @@ func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine,
 		image:            img,
 		qrcode:           q,
 		imgZoom:          imgzoom,
+		xiaoji:           xiaoji,
 		user:             u,
 		g:                ginModel,
 

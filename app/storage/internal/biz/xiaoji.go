@@ -20,8 +20,8 @@ type XiaojiRepo interface {
 	UpdateMenuName(userId, parentId int, name string) error
 }
 
-func NewXiaojiCase(defaultDir DefaultFileDir, s *SlogUseCase) *XiaojiUseCase {
-	return &XiaojiUseCase{defaultFileDir: defaultDir, sLog: s}
+func NewXiaojiCase(defaultDir DefaultFileDir, s *SlogUseCase, x XiaojiRepo) *XiaojiUseCase {
+	return &XiaojiUseCase{defaultFileDir: defaultDir, sLog: s, xiaoji: x}
 }
 
 func (x *XiaojiUseCase) GetMenuList(userId, parentId int) (model.MenuResult, error) {

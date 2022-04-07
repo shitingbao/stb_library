@@ -41,8 +41,11 @@ func (s *Sgin) setRoute() {
 			dataRout.POST("/imagezoom", s.imageZoom)
 
 			dataRout.GET("/menu_list", s.MenuList)
-			dataRout.GET("/create_menu", s.CreateMenu)
-			dataRout.GET("/delete_menu", s.DeleteMenu)
+			dataRout.POST("/create_menu", s.CreateMenu)
+			dataRout.POST("/delete_menu", s.DeleteMenu)
+			dataRout.POST("/update_menu_name", s.UpdateMenuName)
+			dataRout.POST("/update_menu_sort", s.UpdateMenuSort)
+			dataRout.POST("/update_ascription", s.UpdateAscription)
 
 			dataRout.GET("/ghealth", s.health)
 			dataRout.POST("/phealth", s.health)
