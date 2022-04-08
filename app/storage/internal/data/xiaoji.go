@@ -4,6 +4,7 @@ import (
 	"stb-library/app/storage/internal/biz"
 	"stb-library/app/storage/internal/model"
 	"strconv"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -47,7 +48,7 @@ func (x *xiaojiRepo) menuList(userId, parentId int) ([]model.Menu, error) {
 		Where("user_id = ? and parent_id = ?", userId, parentId).Scan(&list).Error; err != nil {
 		return nil, err
 	}
-	return []model.Menu{}, nil
+	return list, nil
 }
 
 // 反馈目录 id 顺序集合
@@ -102,7 +103,7 @@ func (x *xiaojiRepo) createMenu(userId, parentId int, name string, db *gorm.DB) 
 // 更新本级目录排序，并且生成下一级排序
 func (x *xiaojiRepo) createFirstMenuSort(userId, menuId, parentId int, db *gorm.DB) error {
 	var num int64 = 0
-	if err := db.Table("menu").
+	if err := db.Table("menu_user").
 		Where("user_id = ? and parent_id = ?", userId, parentId).
 		Count(&num).Error; err != nil {
 		return err
@@ -141,25 +142,22 @@ func (x *xiaojiRepo) updateMenuSort(userId, menuId, parentId int, db *gorm.DB) e
 	} else {
 		sort += "," + strconv.Itoa(menuId)
 	}
-	if err := db.Table("menu_user").
+
+	return db.Table("menu_user").
 		Where("user_id = ? and parent_id = ?", userId, parentId).
-		Update("menu_sort", sort).Error; err != nil {
-		return err
-	}
-	return nil
+		Update("menu_sort", sort).Error
 }
 
 // 删除直接传新生成的排序列表
-func (x *xiaojiRepo) DeleteMenu(userId, menuId, parentId int, newSort string) error {
+func (x *xiaojiRepo) DeleteMenu(menuId, userId, parentId int) error {
 	db := x.data.db.Begin()
 	defer db.Commit()
-	if err := db.Table("menu").Where("id = ?", menuId).
+	if err := db.Table("menu").Where("id = ? or parent_id = ?", menuId, menuId).
 		Delete(&model.Menu{}).Error; err != nil {
 		db.Rollback()
 		return err
 	}
-	if err := db.Table("menu_user").Where("user_id = ? and parent_id = ?", userId, parentId).
-		Update("sort", newSort).Error; err != nil {
+	if err := x.deleteSortMenuId(menuId, userId, parentId, db); err != nil {
 		db.Rollback()
 		return err
 	}
@@ -175,6 +173,30 @@ func (x *xiaojiRepo) DeleteMenu(userId, menuId, parentId int, newSort string) er
 	return nil
 }
 
+// 从目标排序列表中删除一个id
+func (x *xiaojiRepo) deleteSortMenuId(menuId, userId, parentId int, db *gorm.DB) error {
+	newSort := ""
+	if err := db.Table("menu_user").Select("menu_sort").Where("user_id = ? and parent_id = ?", userId, parentId).
+		Scan(&newSort).Error; err != nil {
+		return err
+	}
+	newSort = deleteSortString(strconv.Itoa(menuId), newSort)
+	return db.Table("menu_user").Where("user_id = ? and parent_id = ?", userId, parentId).
+		Update("menu_sort", newSort).Error
+}
+
+// deleteSortString 删除匹配的id
+func deleteSortString(menuId, newSort string) string {
+	str := strings.Split(newSort, ",")
+	flag := -1
+	for i, v := range str {
+		if v == menuId {
+			flag = i
+		}
+	}
+	return strings.Join(append(str[:flag], str[flag+1:]...), ",")
+}
+
 func (x *xiaojiRepo) UpdateMenuSort(userId, parentId int, newSort string) error {
 	if err := x.data.db.Table("menu_user").Where("user_id = ? and parent_id = ?", userId, parentId).
 		Update("menu_sort", newSort).Error; err != nil {
@@ -184,16 +206,18 @@ func (x *xiaojiRepo) UpdateMenuSort(userId, parentId int, newSort string) error 
 }
 
 // UpdateAscription 更新子目录归属
-func (x *xiaojiRepo) UpdateAscription(userId, menuId, parentId, flagParentId int, newSort string) error {
+func (x *xiaojiRepo) UpdateAscription(menuId, userId, parentId, flagParentId int) error {
 	db := x.data.db.Begin()
+	defer db.Commit()
 	// 更新父节点 id 所属关系
-	if err := db.Table("menu").Where("user_id = ? and parent_id = ?", userId, parentId).
+	if err := db.Table("menu").Where("id = ?", menuId).
 		Update("parent_id", flagParentId).Error; err != nil {
+		db.Rollback()
 		return err
 	}
 	// 更新本节点排序，去除移动的节点id
-	if err := db.Table("menu_user").Where("user_id = ? and parent_id = ?", userId, parentId).
-		Update("menu_sort", newSort).Error; err != nil {
+	if err := x.deleteSortMenuId(menuId, userId, parentId, db); err != nil {
+		db.Rollback()
 		return err
 	}
 
@@ -202,6 +226,7 @@ func (x *xiaojiRepo) UpdateAscription(userId, menuId, parentId, flagParentId int
 	if err := db.Table("menu_user").
 		Where("user_id = ? and parent_id = ?", userId, flagParentId).
 		Scan(&menu).Error; err != nil {
+		db.Rollback()
 		return err
 	}
 	if menu.MenuSort != "" {
@@ -210,13 +235,14 @@ func (x *xiaojiRepo) UpdateAscription(userId, menuId, parentId, flagParentId int
 	if err := db.Table("menu_user").
 		Where("user_id = ? and parent_id = ?", userId, flagParentId).
 		Update("menu_sort", menu.MenuSort+strconv.Itoa(menuId)).Error; err != nil {
+		db.Rollback()
 		return err
 	}
 	return nil
 }
 
-func (x *xiaojiRepo) UpdateMenuName(userId, parentId int, name string) error {
-	if err := x.data.db.Table("menu").Where("user_id = ? and parent_id = ?", userId, parentId).
+func (x *xiaojiRepo) UpdateMenuName(Id int, name string) error {
+	if err := x.data.db.Table("menu").Where("id = ?", Id).
 		Update("name", name).Error; err != nil {
 		return err
 	}

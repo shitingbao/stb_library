@@ -14,10 +14,10 @@ type XiaojiUseCase struct {
 type XiaojiRepo interface {
 	GetMenuList(userId, parentId int) (model.MenuResult, error)
 	CreateMenu(userId, parentId int, name string) error
-	DeleteMenu(userId, menuId, parentId int, NewSort string) error
+	DeleteMenu(menuId, userId, parentId int) error
 	UpdateMenuSort(userId, parentId int, newSort string) error
-	UpdateAscription(userId, menuId, parentId, flagParentId int, newSort string) error
-	UpdateMenuName(userId, parentId int, name string) error
+	UpdateAscription(menuId, userId, parentId, flagParentId int) error
+	UpdateMenuName(Id int, name string) error
 }
 
 func NewXiaojiCase(defaultDir DefaultFileDir, s *SlogUseCase, x XiaojiRepo) *XiaojiUseCase {
@@ -32,21 +32,21 @@ func (x *XiaojiUseCase) CreateMenu(userId, parentId int, name string) error {
 	return x.xiaoji.CreateMenu(userId, parentId, name)
 }
 
-func (x *XiaojiUseCase) DeleteMenu(userId, menuId, parentId int, NewSort string) error {
-	return x.xiaoji.DeleteMenu(userId, menuId, parentId, NewSort)
+func (x *XiaojiUseCase) DeleteMenu(menuId, userId, parentId int) error {
+	return x.xiaoji.DeleteMenu(menuId, userId, parentId)
 }
 
-func (x *XiaojiUseCase) UpdateMenuSort(userId int, parentId int, newSort string) error {
+func (x *XiaojiUseCase) UpdateMenuSort(userId, parentId int, newSort string) error {
 	return x.xiaoji.UpdateMenuSort(userId, parentId, newSort)
 }
 
-func (x *XiaojiUseCase) UpdateAscription(userId int, menuId int, parentId int, flagParentId int, newSort string) error {
+func (x *XiaojiUseCase) UpdateAscription(menuId int, userId int, parentId int, flagParentId int) error {
 	if parentId == 0 || flagParentId == 0 {
 		return errors.New("parentId or flagParentId can not nil")
 	}
-	return x.xiaoji.UpdateAscription(userId, menuId, parentId, flagParentId, newSort)
+	return x.xiaoji.UpdateAscription(menuId, userId, parentId, flagParentId)
 }
 
-func (x *XiaojiUseCase) UpdateMenuName(userId int, parentId int, name string) error {
-	return x.xiaoji.UpdateMenuName(userId, parentId, name)
+func (x *XiaojiUseCase) UpdateMenuName(Id int, name string) error {
+	return x.xiaoji.UpdateMenuName(Id, name)
 }

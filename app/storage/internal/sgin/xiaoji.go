@@ -43,7 +43,7 @@ func (s *Sgin) DeleteMenu(ctx *gin.Context) {
 		return
 	}
 
-	if err := s.xiaoji.DeleteMenu(menu.UserId, menu.Id, menu.ParentId, menu.NewSort); err != nil {
+	if err := s.xiaoji.DeleteMenu(menu.Id, menu.UserId, menu.ParentId); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
@@ -57,7 +57,7 @@ func (s *Sgin) UpdateMenuName(ctx *gin.Context) {
 		return
 	}
 
-	if err := s.xiaoji.UpdateMenuName(menu.UserId, menu.ParentId, menu.Name); err != nil {
+	if err := s.xiaoji.UpdateMenuName(menu.Id, menu.Name); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
@@ -85,7 +85,7 @@ func (s *Sgin) UpdateAscription(ctx *gin.Context) {
 		return
 	}
 
-	if err := s.xiaoji.UpdateAscription(menu.UserId, menu.Id, menu.ParentId, menu.FlagParentId, menu.NewSort); err != nil {
+	if err := s.xiaoji.UpdateAscription(menu.Id, menu.UserId, menu.ParentId, menu.FlagParentId); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
