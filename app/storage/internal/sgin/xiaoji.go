@@ -78,6 +78,7 @@ func (s *Sgin) UpdateMenuSort(ctx *gin.Context) {
 	response.JsonOK(ctx, nil)
 }
 
+// 更新基本信息
 func (s *Sgin) UpdateAscription(ctx *gin.Context) {
 	menu := &model.ArgMenu{}
 	if err := ctx.Bind(menu); err != nil {
