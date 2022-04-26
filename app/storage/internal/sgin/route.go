@@ -1,7 +1,6 @@
 package sgin
 
 import (
-	"net/http"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
 
@@ -15,7 +14,7 @@ var (
 )
 
 func (s *Sgin) setRoute() {
-	s.g.Use(cross)
+	// s.g.Use(cross)
 
 	// s.g.StaticFile("/", path.Join(vueAssetsRoutePath, "index.html"))             // 指定资源文件 127.0.0.1/ 这种
 	// s.g.StaticFile("/favicon.ico", path.Join(vueAssetsRoutePath, "favicon.ico")) // 127.0.0.1/favicon.ico
@@ -75,20 +74,20 @@ func (s *Sgin) health(ctx *gin.Context) {
 	response.JsonOK(ctx, n)
 }
 
-func cross(ctx *gin.Context) {
-	// ctx.Header("Access-Control-Allow-Origin", "*")
-	ctx.Header("Access-Control-Allow-Origin", "http://socket1.cn")
-	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
-	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
-	ctx.Header("Access-Control-Allow-Credentials", "true")
-	//允许类型校验
-	if ctx.Request.Method == "OPTIONS" {
-		ctx.JSON(http.StatusOK, "ok")
-		return
-	}
-	ctx.Next()
-}
+// func cross(ctx *gin.Context) {
+// 	// ctx.Header("Access-Control-Allow-Origin", "*")
+// 	ctx.Header("Access-Control-Allow-Origin", "http://socket1.cn")
+// 	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
+// 	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+// 	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+// 	ctx.Header("Access-Control-Allow-Credentials", "true")
+// 	//允许类型校验
+// 	if ctx.Request.Method == "OPTIONS" {
+// 		ctx.JSON(http.StatusOK, "ok")
+// 		return
+// 	}
+// 	ctx.Next()
+// }
 
 func (s *Sgin) verification(ctx *gin.Context) {
 	info, err := s.user.GetUserInfo(ctx.GetHeader(tokenKey))

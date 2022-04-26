@@ -40,6 +40,7 @@ require (
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/extrame/ole2 v0.0.0-20160812065207-d69429661ad7 // indirect
 	github.com/fatih/color v1.9.0 // indirect
+	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-kratos/aegis v0.1.1 // indirect
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20211124092129-2acede53f3e8 // indirect
@@ -55,6 +56,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/hashicorp/consul/api v1.11.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
