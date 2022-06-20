@@ -7,6 +7,7 @@ import (
 	"stb-library/app/storage/internal/biz"
 	"time"
 
+	"github.com/go-kratos/kratos/v2/middleware/circuitbreaker"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
@@ -41,6 +42,7 @@ func NewSlogServiceClient(r registry.Discovery, tp *tracesdk.TracerProvider) slo
 		grpc.WithMiddleware(
 			tracing.Client(tracing.WithTracerProvider(tp)),
 			recovery.Recovery(),
+			circuitbreaker.Client(), // 加入 sre 熔断机制
 		),
 	)
 	if err != nil {
