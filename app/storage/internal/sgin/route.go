@@ -74,6 +74,7 @@ func (s *Sgin) health(ctx *gin.Context) {
 	response.JsonOK(ctx, n)
 }
 
+// option 过滤
 // func cross(ctx *gin.Context) {
 // 	// ctx.Header("Access-Control-Allow-Origin", "*")
 // 	ctx.Header("Access-Control-Allow-Origin", "http://socket1.cn")
