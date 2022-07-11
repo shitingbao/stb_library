@@ -11,6 +11,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
+
+	"net/http"
+	_ "net/http/pprof"
 )
 
 const (
@@ -86,6 +89,9 @@ func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine,
 		defaultFileDir: dir,
 	}
 	s.setRoute()
+
+	go http.ListenAndServe("127.0.0.1:6060", nil) // 增加 pprof 检查入口
+
 	return s
 }
 
