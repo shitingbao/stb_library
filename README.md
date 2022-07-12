@@ -48,3 +48,19 @@
 
 kratos 中带的 logger ，只要实现了对应的 Log(level Level, keyvals ...interface{}) error 方法即可；  
 这里本项目中不使用本地收集的方法（因为官方例子中都有），我这里用了把日志发送到第三方服务的方式来收集；
+
+## 打包及体积压缩（）
+
+1. 构建使用 -ldflags 参数
+
+example
+```
+go build -ldflags "-w -s"
+```
+
+2. 使用 upx 将生成的执行文件压缩打包
+
+example
+```
+upx --brute test.exe
+```
