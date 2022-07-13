@@ -93,10 +93,9 @@ func (s *Sgin) health(ctx *gin.Context) {
 func (s *Sgin) verification(ctx *gin.Context) {
 	info, err := s.user.GetUserInfo(ctx.GetHeader(tokenKey))
 	if err != nil || info.UserName == "" {
-		ctx.Abort()
 		response.JsonErr(ctx, err, nil)
+		ctx.Abort()
 	}
 	s.userInfo = info
 	ctx.Next()
-	return
 }
