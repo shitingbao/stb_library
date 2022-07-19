@@ -80,3 +80,7 @@ upx --brute test.exe
 
 
 注意： 使用 go run main.go 运行的进程，也无法用 dlv attach ${pid} 调试，因为找不到代码的符号信息。
+
+## 注册成 windows 服务 
+
+// github.com/kardianos/service
