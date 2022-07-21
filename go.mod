@@ -82,6 +82,7 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.16.0 // indirect
+	github.com/panjf2000/ants/v2 v2.5.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/shirou/gopsutil/v3 v3.21.8 // indirect
