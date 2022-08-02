@@ -1,10 +1,19 @@
 package sgin
 
 import (
+	"mime"
+	"regexp"
 	"stb-library/app/storage/internal/biz"
 	"stb-library/lib/response"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tdewolff/minify"
+	"github.com/tdewolff/minify/css"
+	"github.com/tdewolff/minify/html"
+	"github.com/tdewolff/minify/js"
+	"github.com/tdewolff/minify/json"
+	"github.com/tdewolff/minify/svg"
+	"github.com/tdewolff/minify/xml"
 )
 
 var (
@@ -12,6 +21,21 @@ var (
 
 	vueAssetsRoutePath = "/opt/nginx/dist" // dist 所在路径
 )
+
+var (
+	m = minify.New() //资源缩小
+)
+
+func init() {
+	mime.AddExtensionType(".js", "text/javascript")
+	mime.AddExtensionType(".css", "text/css; charset=utf-8")
+	m.AddFunc(".js", js.Minify)
+	m.AddFunc(".css", css.Minify)
+	m.AddFunc("text/html", html.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("[/+]json$"), json.Minify)
+	m.AddFunc("image/svg+xml", svg.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("[/+]xml$"), xml.Minify)
+}
 
 func (s *Sgin) setRoute() {
 	// s.g.Use(cross)
