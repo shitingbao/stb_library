@@ -1,8 +1,9 @@
 package main
 
 import (
+	// "IotSocket/socketio"
 	"log"
-	"stb-library/lib/socketio"
+	"stb-library/lib/socketio/socketio"
 
 	"github.com/gin-gonic/gin"
 )

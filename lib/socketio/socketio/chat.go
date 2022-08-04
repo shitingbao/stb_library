@@ -26,24 +26,19 @@ func (s *SocketEvent) chatControl() {
 // 这里的 err 会直接断开连接,统一管理连接
 func (s *SocketEvent) chatConnectHandle(con socket.Conn) error {
 	log.Println("uid is connect start ======", con.Namespace(), con.Rooms())
-	uid, err := s.getUser(con)
-	if err != nil {
-		return err
-	}
-	s.loadCon(con, uid)
+
+	s.loadCon(con, s.getUser(con), s.getSn(con))
 	return nil
 }
 
-func (s *SocketEvent) eventChatHandle(con socket.Conn, uid string) {
+// 向 room 的 uid 发送一个 200 消息
+func (s *SocketEvent) eventChatHandle(con socket.Conn, uid, room string) {
 	// log.Println("con:", con.Namespace(), "--uid:", uid)
-	s.sendFlagMessage(con, chatflag, uid, "200")
+	// (con socket.Conn, event string, room string, uid string, val string)
+	s.sendFlagMessage(con, chatflag, room, uid, "200")
 }
 
 func (s *SocketEvent) disconnectChatHandle(con socket.Conn, reason string) {
 	log.Println("disconnectChatHandle closed", reason, "=--:", con.Namespace())
-	uid, err := s.getUser(con)
-	if err != nil {
-		return
-	}
-	s.delCon(uid)
+	s.delCon(con, s.getUser(con), s.getSn(con))
 }
