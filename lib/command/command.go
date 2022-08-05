@@ -5,7 +5,11 @@ import (
 	"os/exec"
 )
 
-func RunCommand(cmd exec.Cmd) (string, error) {
+func RunCommand(commands ...string) (string, error) {
+	if len(commands) < 1 {
+		return "", errors.New("commands is nil")
+	}
+	cmd := exec.Command(commands[0], commands[:1]...)
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
 	cmd.Start()
