@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-redis/redis"
 
-	"github.com/panjf2000/ants"
+	"github.com/panjf2000/ants/v2"
 	"github.com/sirupsen/logrus"
 
 	"github.com/pborman/uuid"
