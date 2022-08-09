@@ -1,7 +1,6 @@
 package socketio
 
 import (
-	// "IotSocket/rtc"
 	"log"
 	"net/url"
 	"stb-library/lib/socketio/rtc"
@@ -12,33 +11,31 @@ import (
 )
 
 var (
-	usrFlag = "uid" // 需要连接时带上身份标识
-	snFlag  = "sn"  // sn 代表加入拿个房间
-	noOwner = "noOwer"
+	snFlag      = "sn" // sn 代表加入拿个房间
+	machineFlag = "machine"
+	noOwner     = "noOwer"
 )
 
-// type machine struct {
-// 	remoteLock  *lock.Locker // remote 已连接锁定，获取该锁代表已经有远程连接，断开后释放
-// 	remoteOwner string       // 代表锁的所属用户
-// }
-
 type userCon struct {
-	con socket.Conn
-	uid string
+	con  socket.Conn
+	sn   string
+	room string
 }
 type SocketEvent struct {
-	Server    *socket.Server
-	roomUsers map[string][]userCon // 持久化用户，sn 为 key 的房间分类
-	lock      *sync.Mutex          // 控制连接锁，持久化用户连接时可能有 map 异步操作
-	machines  map[string]string    //sn 为 key 的所有机器,val string 写入控制者
+	Server        *socket.Server
+	roomUsers     map[string][]userCon   // 持久化用户，sn 为 key 的房间分类
+	lock          *sync.Mutex            // 控制连接锁，持久化用户连接时可能有 map 异步操作
+	machinesOwner map[string]string      // sn 为 key 的所有机器,val string 写入控制者
+	machinesCons  map[string]socket.Conn // 保持所有 sn 为 key 的机器连接
 }
 
 func New(opts *engineio.Options) *SocketEvent {
 	return &SocketEvent{
-		Server:    socket.NewServer(opts),
-		roomUsers: make(map[string][]userCon),
-		lock:      &sync.Mutex{},
-		machines:  make(map[string]string),
+		Server:        socket.NewServer(opts),
+		roomUsers:     make(map[string][]userCon),
+		lock:          &sync.Mutex{},
+		machinesOwner: make(map[string]string),
+		machinesCons:  make(map[string]socket.Conn),
 	}
 }
 
@@ -68,12 +65,20 @@ func (s *SocketEvent) Close() {
 	s.Server.Close()
 }
 
-func (s *SocketEvent) getUser(con socket.Conn) string {
-	return getQuery(usrFlag, con)
-}
-
 func (s *SocketEvent) getSn(con socket.Conn) string {
 	return getQuery(snFlag, con)
+}
+
+func (s *SocketEvent) getMachine(con socket.Conn) string {
+	return getQuery(machineFlag, con)
+}
+
+func (s *SocketEvent) getWidth(con socket.Conn) string {
+	return getQuery("width", con)
+}
+
+func (s *SocketEvent) getHeight(con socket.Conn) string {
+	return getQuery("height", con)
 }
 
 // getQuery 获取 query 参数中的 key 对应的值，默认只取第一位
@@ -90,68 +95,104 @@ func getQuery(key string, con socket.Conn) string {
 }
 
 // uid 为空的代表机器，否则就是用户连接
-func (s *SocketEvent) loadCon(con socket.Conn, uid, sn string) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-	if uid == "" {
-		s.machines[sn] = noOwner
-	} else {
-		s.roomUsers[sn] = append(s.roomUsers[sn], userCon{
-			con: con,
-			uid: uid,
-		})
+func (s *SocketEvent) loadCon(con socket.Conn, sn, msn string) {
+	if msn != "" {
+		s.lock.Lock()
+		defer s.lock.Unlock()
+		s.machinesOwner[sn] = noOwner
+		s.machinesCons[sn] = con
 	}
 }
 
+// 将连接加入房间，并获取控制房间的锁所属
+// uid 代表 连接者的 sn，第二个 sn代表被连接的机器
+// 被连接的 sn 机器就是 room key,加入房间,注意判断已经在房间的状态
 // 获取 sn 对应机器控制，反馈拥有者 和 标识 成功 true 失败 false
-func (s *SocketEvent) remoteMachines(uid, sn string) (string, bool) {
+func (s *SocketEvent) remoteMachines(con socket.Conn, uid, sn string) (string, bool) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	owner := s.machines[sn]
-	if owner != noOwner {
+	s.joinRoom(con, uid, sn)
+	owner, ok := s.machinesOwner[sn]
+	if !ok {
+		return "", false
+	}
+	log.Println(uid, ":--:", sn, "--owner:", owner)
+	if owner != noOwner { // 说明已经被获取控制权
 		return owner, false
 	}
-	s.machines[sn] = uid
-	log.Println("machines:", s.machines)
+	s.machinesOwner[sn] = uid
 	return uid, true
 }
 
-// 一个连接向另一个连接发送消息
-func (s *SocketEvent) sendFlagMessage(con socket.Conn, event, room, uid, val string) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-	cons := s.roomUsers[room]
-	for _, c := range cons {
-		if c.uid == uid {
-			c.con.Emit(event, val)
+func (s *SocketEvent) joinRoom(con socket.Conn, uid, room string) {
+	users := s.roomUsers[room]
+	for _, user := range users {
+		if user.sn == uid {
+			return
 		}
 	}
+	s.roomUsers[room] = append(s.roomUsers[room], userCon{
+		con:  con,
+		sn:   uid,
+		room: room,
+	})
+}
+
+// 一个连接向另一个连接发送消息
+func (s *SocketEvent) sendFlagMessage(event, sn string, val interface{}) {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+	c := s.machinesCons[sn]
+	c.Emit(event, val)
+
+	// cons, ok := s.roomUsers[sn]
+	// if !ok {
+	// 	return
+	// }
+	// log.Println("sendFlagMessage===:", event, sn, uid, val)
+	// for _, c := range cons {
+	// 	if c.sn == uid {
+	// 		c.con.Emit(event, val)
+	// 	}
+	// }
 }
 
 // 删除自己拥有的控制，去除房间内的连接保持
 // 房间内无连接，关闭rtc 连接
 // 注意 con close 是阻塞的
-func (s *SocketEvent) delCon(con socket.Conn, uid, sn string) {
-	log.Println("start delcon:", uid, sn)
+func (s *SocketEvent) delCon(con socket.Conn, sn string) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	if uid == "" {
-		return
-	}
-	owners := s.machines[sn]
-	if owners == uid {
-		s.machines[sn] = noOwner
-		log.Println("锁定释放：", sn)
-	}
-
-	for i, c := range s.roomUsers[sn] {
-		if c.con == con {
-			s.roomUsers[sn] = append(s.roomUsers[sn][:i], s.roomUsers[sn][i+1:]...)
-			log.Println("清除连接：", uid, "--sn:", sn)
-			continue
+	for ksn, owner := range s.machinesOwner {
+		if owner == sn {
+			s.machinesOwner[ksn] = noOwner
+			log.Println("锁定释放：", ksn)
+			return
 		}
 	}
-	if len(s.roomUsers[sn]) == 1 {
-		rtc.DeleteChannel(sn)
+	roomKey := ""
+	roomIdx := -1
+	flag := false
+	for _, users := range s.roomUsers {
+		if flag {
+			break
+		}
+		for i, c := range users {
+			if c.sn == sn {
+				roomKey = c.room
+				roomIdx = i
+				flag = true
+				break
+			}
+		}
+	}
+	if roomIdx >= 0 {
+		s.roomUsers[roomKey] = append(s.roomUsers[roomKey][:roomIdx], s.roomUsers[roomKey][roomIdx+1:]...)
+		log.Println("delete connect==!!!", roomKey, roomIdx)
+	}
+
+	if len(s.roomUsers[roomKey]) == 1 {
+		rtc.DeleteChannel(roomKey)
+		// log.Println("rtc.DeleteChannel(roomKey)==!!!")
 	}
 }
