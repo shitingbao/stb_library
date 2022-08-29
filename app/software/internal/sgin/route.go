@@ -50,6 +50,14 @@ func (s *Sgin) setRoute() {
 	// s.g.StaticFile("assets", s.defaultFileDir.DefaultAssetsPath)
 
 	s.g.GET("/health", s.health)
+
+	rg := s.g.Group("/api")
+	{
+		rg.POST("/login", s.login)
+		rg.GET("/logout", s.logout)
+		rg.POST("/register", s.register)
+	}
+
 	// s.g.Static("assets", s.defaultFileDir.DefaultAssetsPath)
 }
 

@@ -10,7 +10,7 @@ server:
 data:
   database:
     driver: mysql
-    source: root:12345678@tcp(124.70.156.31:3306)/stbweb
+    source: root:12345678@tcp(124.70.156.31:3306)/software
   redis:
     addr: 124.70.156.31:6379
     password:

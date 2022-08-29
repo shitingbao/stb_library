@@ -34,7 +34,7 @@ type Role struct {
 type User struct {
 	ID int `json:"userId" gorm:"id"`
 	UserBase
-	Password []byte //对应mysql的varbinary,末尾不会填充，不能使用binary，因为不足会使用ox0填充导致取出的时候多18位的0
+	Password []byte `form:"password" json:"password"` //对应mysql的varbinary,末尾不会填充，不能使用binary，因为不足会使用ox0填充导致取出的时候多18位的0
 	Salt     string `form:"salt" json:"salt"`
 	// CreateTime string `form:"create_time" json:"create_time"`
 }
