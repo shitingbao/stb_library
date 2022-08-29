@@ -25,6 +25,7 @@ app/storage/cmd/cmd
 app/storage/cmd/ffmpeg
 app/central/cmd/cmd
 app/base/cmd/cmd
+app/software/cmd/cmd
 
 
 .DS_store

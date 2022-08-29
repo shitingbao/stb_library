@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package api.software.v1;
+
+option go_package = "stb-library/api/software/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.software.v1";
+
+service Software {
+	rpc CreateSoftware (CreateSoftwareRequest) returns (CreateSoftwareReply);
+	rpc UpdateSoftware (UpdateSoftwareRequest) returns (UpdateSoftwareReply);
+	rpc DeleteSoftware (DeleteSoftwareRequest) returns (DeleteSoftwareReply);
+	rpc GetSoftware (GetSoftwareRequest) returns (GetSoftwareReply);
+	rpc ListSoftware (ListSoftwareRequest) returns (ListSoftwareReply);
+}
+
+message CreateSoftwareRequest {}
+message CreateSoftwareReply {}
+
+message UpdateSoftwareRequest {}
+message UpdateSoftwareReply {}
+
+message DeleteSoftwareRequest {}
+message DeleteSoftwareReply {}
+
+message GetSoftwareRequest {}
+message GetSoftwareReply {}
+
+message ListSoftwareRequest {}
+message ListSoftwareReply {}
