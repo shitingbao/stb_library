@@ -6,6 +6,7 @@ import "github.com/google/wire"
 var ProviderSet = wire.NewSet(
 	NewCentralUseCase,
 	NewSlogUseCase,
+	NewUserCase,
 )
 
 type DefaultFileDir struct {
