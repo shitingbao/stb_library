@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path"
-	v1 "stb-library/api/storage/v1"
+	v1 "stb-library/api/base/v1"
 	"stb-library/app/base/internal/biz"
 	"stb-library/lib/ws"
 
@@ -29,7 +29,7 @@ var ProviderSet = wire.NewSet(
 )
 
 type Sgin struct {
-	v1.UnimplementedStorageServer
+	v1.UnimplementedBaseServer
 	center *biz.CentralUseCase
 
 	g              *gin.Engine

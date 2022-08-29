@@ -1,7 +1,7 @@
 package server
 
 import (
-	v1 "stb-library/api/storage/v1"
+	v1 "stb-library/api/base/v1"
 	"stb-library/app/base/internal/conf"
 	"stb-library/app/base/internal/sgin"
 
@@ -30,6 +30,6 @@ func NewGRPCServer(c *conf.Server, tp *tracesdk.TracerProvider, g *sgin.Sgin) *g
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	v1.RegisterStorageServer(srv, g)
+	v1.RegisterBaseServer(srv, g)
 	return srv
 }

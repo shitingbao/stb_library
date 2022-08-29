@@ -10,11 +10,11 @@ import (
 	// "github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
-	"stb-library/app/storage/internal/biz"
-	"stb-library/app/storage/internal/conf"
-	"stb-library/app/storage/internal/data"
-	"stb-library/app/storage/internal/server"
-	"stb-library/app/storage/internal/sgin"
+	"stb-library/app/base/internal/biz"
+	"stb-library/app/base/internal/conf"
+	"stb-library/app/base/internal/data"
+	"stb-library/app/base/internal/server"
+	"stb-library/app/base/internal/sgin"
 )
 
 // initApp init kratos application.

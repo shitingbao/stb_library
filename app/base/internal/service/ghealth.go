@@ -1,14 +1,14 @@
 package service
 
 import (
-	"stb-library/app/storage/internal/biz"
+	"stb-library/app/base/internal/biz"
 
-	v1 "stb-library/api/storage/v1"
+	v1 "stb-library/api/base/v1"
 )
 
 type Ghealth struct {
 	// v1.UnimplementedGreeterServer
-	v1.UnimplementedStorageServer
+	v1.UnimplementedBaseServer
 
 	uc *biz.GhealthUseCase
 }

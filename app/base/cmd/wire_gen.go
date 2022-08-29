@@ -34,21 +34,11 @@ func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 	if err != nil {
 		return nil, nil, err
 	}
+	centralRepo := data.NewCentralRepo(dataData)
 	slogRepo := data.NewLogServerHandleRepo(dataData)
 	slogUseCase := biz.NewSlogUseCase(defaultFileDir, slogRepo)
-	formatConversionUseCase := biz.NewExportCase(defaultFileDir, slogUseCase)
-	comparisonUseCase := biz.NewFileComparisonCase(defaultFileDir, slogUseCase)
-	transformUseCase := biz.NewTransformCase(defaultFileDir, slogUseCase, hub)
-	imageWordUseCase := biz.NewImageToWordCase(defaultFileDir, slogUseCase)
-	qrcodeUseCase := biz.NewQrcodeCase(defaultFileDir, slogUseCase)
-	userRepo := data.NewUserRepo(dataData)
-	userUseCase := biz.NewUserCase(userRepo, slogUseCase)
-	centralRepo := data.NewCentralRepo(dataData)
 	centralUseCase := biz.NewCentralUseCase(centralRepo, slogUseCase)
-	imageZoomUseCase := biz.NewImageZoomCase(defaultFileDir, slogUseCase)
-	xiaojiRepo := data.NewXiaojiRepo(dataData)
-	xiaojiUseCase := biz.NewXiaojiCase(defaultFileDir, slogUseCase, xiaojiRepo)
-	sginSgin := sgin.NewSgin(defaultFileDir, engine, formatConversionUseCase, comparisonUseCase, transformUseCase, imageWordUseCase, qrcodeUseCase, userUseCase, centralUseCase, imageZoomUseCase, xiaojiUseCase)
+	sginSgin := sgin.NewSgin(defaultFileDir, engine, centralUseCase)
 	grpcServer := server.NewGRPCServer(confServer, tracerProvider, sginSgin)
 	registrar := data.NewRegistrar(registry)
 	app := newApp(httpServer, grpcServer, registrar)
