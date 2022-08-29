@@ -5,6 +5,7 @@ import (
 	"os"
 	"stb-library/app/base/internal/conf"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -77,7 +78,7 @@ func main() {
 			semconv.ServiceNameKey.String(Name),
 		)),
 	)
-
+	gin.SetMode(gin.ReleaseMode)
 	app, cleanup, err := initApp(bc.Server, &rc, bc.Data, tp)
 	if err != nil {
 		panic(err)
