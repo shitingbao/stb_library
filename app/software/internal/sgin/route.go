@@ -57,7 +57,10 @@ func (s *Sgin) setRoute() {
 		rg.GET("/logout", s.logout)
 		rg.POST("/register", s.register)
 	}
-
+	dataRout := rg.Group("/app").Use(s.verification)
+	{
+		dataRout.GET("/ping", s.getUserInfo)
+	}
 	// s.g.Static("assets", s.defaultFileDir.DefaultAssetsPath)
 }
 
@@ -94,11 +97,11 @@ func (s *Sgin) health(ctx *gin.Context) {
 // }
 
 func (s *Sgin) verification(ctx *gin.Context) {
-	// info, err := s.user.GetUserInfo(ctx.GetHeader(tokenKey))
-	// if err != nil || info.UserName == "" {
-	// 	response.JsonErr(ctx, err, nil)
-	// 	ctx.Abort()
-	// }
-	// s.userInfo = info
-	// ctx.Next()
+	info, err := s.user.GetUserInfo(ctx.GetHeader(tokenKey))
+	if err != nil || info.UserName == "" {
+		response.JsonErr(ctx, err, nil)
+		ctx.Abort()
+	}
+	s.userInfo = info
+	ctx.Next()
 }
