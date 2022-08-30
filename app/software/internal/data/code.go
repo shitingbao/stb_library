@@ -22,12 +22,22 @@ func (u *codeRepo) Delete(ctx context.Context, token string) error {
 	return nil
 }
 
-// GetUser 获取一个user，不存在反馈 err
-func (u *codeRepo) GetCodes(key, codeType string) (*biz.Code, error) {
-	ur := []*biz.Code{}
-	return ur[0], nil
+func (u *codeRepo) GetCodes(codeType int, key []string, values []int) ([]biz.Code, error) {
+	codes := []biz.Code{}
+	if err := u.data.db.Table("code").Where("key in (?) and code_type = ? and id in (values)", key, codeType).Scan(&codes).Error; err != nil {
+		return nil, err
+	}
+	return codes, nil
 }
 
-func (u *codeRepo) Create(codes []*biz.Code) error {
-	return u.data.db.Create(codes).Error
+func (u *codeRepo) GetCodesMAx() (int64, error) {
+	var num int64
+	if err := u.data.db.Table("code").Count(&num).Error; err != nil {
+		return 0, err
+	}
+	return num, nil
+}
+
+func (u *codeRepo) Create(codes []biz.Code) error {
+	return u.data.db.Create(&codes).Error
 }
