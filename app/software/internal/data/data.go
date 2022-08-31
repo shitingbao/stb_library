@@ -5,6 +5,7 @@ import (
 	centralV1 "stb-library/api/central/v1"
 	"stb-library/app/software/internal/conf"
 	"stb-library/lib/ddb"
+	"stb-library/lib/mongodb"
 	"stb-library/lib/rediser"
 
 	slog "stb-library/api/slog/v1"
@@ -38,10 +39,11 @@ var ProviderSet = wire.NewSet(
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	db   *gorm.DB
-	rds  *redis.Client
-	ce   centralV1.CentralClient
-	slog slog.LogServerClient
+	db          *gorm.DB
+	rds         *redis.Client
+	ce          centralV1.CentralClient
+	slog        slog.LogServerClient
+	mongoClient *mongodb.Mongodb
 }
 
 // NewData .
@@ -54,11 +56,17 @@ func NewData(c *conf.Data, l slog.LogServerClient, central centralV1.CentralClie
 	if err != nil {
 		return nil, nil, err
 	}
+
+	m, err := mongodb.OpenMongoDb(c.Mongo.Driver, "software")
+	if err != nil {
+		return nil, nil, err
+	}
 	da := &Data{
-		db:   d,
-		rds:  r,
-		ce:   central,
-		slog: l,
+		db:          d,
+		rds:         r,
+		ce:          central,
+		slog:        l,
+		mongoClient: m,
 	}
 
 	return da, da.cleanup, nil
@@ -109,4 +117,8 @@ func NewCentralGrpcClient(r registry.Discovery, tp *tracesdk.TracerProvider) cen
 		panic(err)
 	}
 	return centralV1.NewCentralClient(conn)
+}
+
+func NewMongoClient(conf *conf.Mongo) (*mongodb.Mongodb, error) {
+	return mongodb.OpenMongoDb(conf.Driver, "software")
 }

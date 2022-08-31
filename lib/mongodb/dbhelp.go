@@ -20,8 +20,8 @@ import (
 
 var defaultTimeout = 10 * time.Second
 
-//Mongodb 一个mongo连接对象
-//保存数据库名称（Database），集合对象（CollectionDB用于操作），Client基本连接
+// Mongodb 一个mongo连接对象
+// 保存数据库名称（Database），集合对象（CollectionDB用于操作），Client基本连接
 type Mongodb struct {
 	Database     string
 	Client       *mongo.Client
@@ -29,8 +29,8 @@ type Mongodb struct {
 	Ctx          context.Context
 }
 
-//OpenMongoDb 连接一个mongodb
-//输入连接字符串，待连接数据库，集合名称，反馈该集合对象和error
+// OpenMongoDb 连接一个mongodb
+// 输入连接字符串，待连接数据库，集合名称，反馈该集合对象和error
 func OpenMongoDb(driver, database string) (*Mongodb, error) {
 	ctx := context.TODO()
 	// defer canf()
@@ -50,7 +50,7 @@ func OpenMongoDb(driver, database string) (*Mongodb, error) {
 	}, nil
 }
 
-//InsertOne 插入一条文档，传入一个content,一个集合对象，和待插入的bson的对象数据，反馈该数据的id和error
+// InsertOne 插入一条文档，传入一个content,一个集合对象，和待插入的bson的对象数据，反馈该数据的id和error
 func (m *Mongodb) InsertOne(collect string, data bson.M) (interface{}, error) {
 	res, err := m.CollectionDB.Collection(collect).InsertOne(m.Ctx, data)
 	if err != nil {
@@ -60,7 +60,7 @@ func (m *Mongodb) InsertOne(collect string, data bson.M) (interface{}, error) {
 	return id, nil
 }
 
-//InsertMany 插入多条数据
+// InsertMany 插入多条数据
 func (m *Mongodb) InsertMany(collect string, data bson.M) (interface{}, error) {
 	res, err := m.CollectionDB.Collection(collect).InsertOne(m.Ctx, data)
 	if err != nil {
@@ -70,8 +70,8 @@ func (m *Mongodb) InsertMany(collect string, data bson.M) (interface{}, error) {
 	return id, nil
 }
 
-//Selectone 查询一条语句，输入集合，条件（bson.D中包含条件数组）,以及接受的结构所以result得是一个struct的指针，反馈查询出来数据
-//opt是限制函数
+// Selectone 查询一条语句，输入集合，条件（bson.D中包含条件数组）,以及接受的结构所以result得是一个struct的指针，反馈查询出来数据
+// opt是限制函数
 func (m *Mongodb) Selectone(collect string, where bson.M, opts ...*options.FindOneOptions) (bson.M, error) {
 	var result bson.M
 	if err := m.CollectionDB.Collection(collect).FindOne(m.Ctx, where, opts...).Decode(&result); err != nil {
@@ -80,8 +80,8 @@ func (m *Mongodb) Selectone(collect string, where bson.M, opts ...*options.FindO
 	return result, nil
 }
 
-//SelectMany 查询所有，输入集合和条件（bson.M中包含条件数组），反馈所有数据和error
-//opt是限制函数
+// SelectMany 查询所有，输入集合和条件（bson.M中包含条件数组），反馈所有数据和error
+// opt是限制函数
 func (m *Mongodb) SelectMany(collect string, where bson.M, opts ...*options.FindOptions) ([]bson.M, error) {
 	var result []bson.M
 	cur, err := m.CollectionDB.Collection(collect).Find(m.Ctx, where, opts...)
@@ -103,7 +103,7 @@ func (m *Mongodb) SelectMany(collect string, where bson.M, opts ...*options.Find
 	return result, nil
 }
 
-//UpdateOne 更新一条数据
+// UpdateOne 更新一条数据
 func (m *Mongodb) UpdateOne(collect string, where, update bson.M, opts ...*options.UpdateOptions) (interface{}, error) {
 	res, err := m.CollectionDB.Collection(collect).UpdateOne(m.Ctx, where, update, opts...)
 	if err != nil {
@@ -112,7 +112,7 @@ func (m *Mongodb) UpdateOne(collect string, where, update bson.M, opts ...*optio
 	return res.UpsertedID, nil
 }
 
-//UpdateMany 更新一条数据
+// UpdateMany 更新一条数据
 func (m *Mongodb) UpdateMany(collect string, update interface{}, where bson.M, opts ...*options.UpdateOptions) (interface{}, error) {
 	res, err := m.CollectionDB.Collection(collect).UpdateMany(m.Ctx, where, update, opts...)
 	if err != nil {
@@ -121,7 +121,7 @@ func (m *Mongodb) UpdateMany(collect string, update interface{}, where bson.M, o
 	return res.UpsertedID, nil
 }
 
-//DeleteCollecting 删除集合
+// DeleteCollecting 删除集合
 func (m *Mongodb) DeleteCollecting() error {
 	if err := m.CollectionDB.Drop(m.Ctx); err != nil {
 		return err
@@ -129,7 +129,7 @@ func (m *Mongodb) DeleteCollecting() error {
 	return nil
 }
 
-//DeleteDocument 删除文档
+// DeleteDocument 删除文档
 func (m *Mongodb) DeleteDocument(collect string, where bson.M, opts ...*options.FindOneAndDeleteOptions) error {
 	if res := m.CollectionDB.Collection(collect).FindOneAndDelete(m.Ctx, where, opts...); res.Err() != nil {
 		return res.Err()
@@ -137,7 +137,7 @@ func (m *Mongodb) DeleteDocument(collect string, where bson.M, opts ...*options.
 	return nil
 }
 
-//CloseCtx monggodb释放ctx资源
+// CloseCtx monggodb释放ctx资源
 func (m *Mongodb) CloseCtx() {
 	m.Client.Disconnect(m.Ctx)
 }

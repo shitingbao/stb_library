@@ -45,6 +45,7 @@ message Data {
   }
   Database database = 1;
   Redis redis = 2;
+  Mongo mongo =3;
 }
 
 
@@ -54,4 +55,8 @@ message Registry {
     string scheme = 2;
   }
   Consul consul = 1;
+}
+
+message Mongo {
+  string driver = 1;
 }
