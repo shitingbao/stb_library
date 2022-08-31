@@ -22,9 +22,9 @@ func (u *codeRepo) Delete(ctx context.Context, token string) error {
 	return nil
 }
 
-func (u *codeRepo) GetCodes(codeType int, key []string, values []int) ([]biz.Code, error) {
+func (u *codeRepo) GetCodes(values []int) ([]biz.Code, error) {
 	codes := []biz.Code{}
-	if err := u.data.db.Table("code").Where("key in (?) and code_type = ? and id in (values)", key, codeType).Scan(&codes).Error; err != nil {
+	if err := u.data.db.Table("code").Where("id in (values)", values).Scan(&codes).Error; err != nil {
 		return nil, err
 	}
 	return codes, nil

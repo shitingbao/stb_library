@@ -21,7 +21,7 @@ type ArgCode struct {
 
 type CodeRepo interface {
 	Delete(context.Context, string) error
-	GetCodes(int, []string, []int) ([]Code, error)
+	GetCodes([]int) ([]Code, error)
 	Create([]Code) error
 	GetCodesMAx() (int64, error)
 }
