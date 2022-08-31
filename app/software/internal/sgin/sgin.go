@@ -36,6 +36,8 @@ type Sgin struct {
 	defaultFileDir biz.DefaultFileDir
 	user           *biz.UserUseCase
 	userInfo       *biz.UserResult
+	code           *biz.CodeUseCase
+	codeHeader     *biz.CodeHeaderUseCase
 }
 
 func NewGinEngine() *gin.Engine {
@@ -60,13 +62,16 @@ func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
 }
 
 // sgin 只作路由对应
-func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine, c *biz.CentralUseCase, u *biz.UserUseCase) *Sgin {
+func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine, c *biz.CentralUseCase, u *biz.UserUseCase,
+	codeCase *biz.CodeUseCase, ch *biz.CodeHeaderUseCase) *Sgin {
 	ginModel.MaxMultipartMemory = formFileSize << 20 // 为了 form 提交文件做前提
 	s := &Sgin{
 		center:         c,
 		g:              ginModel,
 		defaultFileDir: dir,
 		user:           u,
+		code:           codeCase,
+		codeHeader:     ch,
 	}
 	s.setRoute()
 

@@ -34,6 +34,8 @@ var ProviderSet = wire.NewSet(
 	NewLogServerHandleRepo,
 	NewHealthRepo,
 	NewUserRepo,
+	NewCodeRepo,
+	NewCodeHeaderRepo,
 )
 
 // Data .

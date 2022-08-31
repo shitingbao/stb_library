@@ -57,10 +57,27 @@ func (s *Sgin) setRoute() {
 		rg.GET("/logout", s.logout)
 		rg.POST("/register", s.register)
 	}
-	dataRout := rg.Group("/app").Use(s.verification)
+
+	dataRout := s.g.Group("/app").Use(s.verification)
 	{
 		dataRout.GET("/ping", s.getUserInfo)
+
 	}
+
+	codeRoute := s.g.Group("/code")
+	{
+		codeRoute.POST("/create", s.codeCreate)
+		codeRoute.POST("/list", s.codeGetCodes)
+
+	}
+
+	codeHeaderRoute := s.g.Group("/code_header")
+	{
+		codeHeaderRoute.POST("/create", s.codeHeaderCreate)
+		codeHeaderRoute.POST("/list", s.codeHeaderGetCodes)
+
+	}
+
 	// s.g.Static("assets", s.defaultFileDir.DefaultAssetsPath)
 }
 

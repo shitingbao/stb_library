@@ -61,12 +61,12 @@ func (m *Mongodb) InsertOne(collect string, data bson.M) (interface{}, error) {
 }
 
 // InsertMany 插入多条数据
-func (m *Mongodb) InsertMany(collect string, data bson.M) (interface{}, error) {
-	res, err := m.CollectionDB.Collection(collect).InsertOne(m.Ctx, data)
+func (m *Mongodb) InsertMany(collect string, data []interface{}) ([]interface{}, error) {
+	res, err := m.CollectionDB.Collection(collect).InsertMany(m.Ctx, data)
 	if err != nil {
 		return nil, err
 	}
-	id := res.InsertedID
+	id := res.InsertedIDs
 	return id, nil
 }
 

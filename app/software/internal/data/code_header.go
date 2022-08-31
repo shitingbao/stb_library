@@ -7,32 +7,32 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-var _ biz.CodeRepo = (*codeRepo)(nil)
+var _ biz.CodeHeaderRepo = (*codeHeaderRepo)(nil)
 
-type codeRepo struct {
+type codeHeaderRepo struct {
 	data *Data
 }
 
-func NewCodeRepo(d *Data) biz.CodeRepo {
-	return &codeRepo{
+func NewCodeHeaderRepo(d *Data) biz.CodeHeaderRepo {
+	return &codeHeaderRepo{
 		data: d,
 	}
 }
 
-func (u *codeRepo) Delete(ctx context.Context, token string) error {
+func (u *codeHeaderRepo) Delete(ctx context.Context, token string) error {
 	// rediser.DelCode(u.data.rds, token)
 	return nil
 }
 
 // db.code.aggregate( [
 //
-//	{ $match : { key : "bbb" ,"_id":{$nin:[ObjectId("630f6a86c466a68e1a651315")]}}
+//	{ $match : { key : "aaa" ,content:{$nin:["a","c","e","b"]}}
 //	},
 //	{ $sample :{ size : 3 }
 //	}
 //
 // ] );
-func (u *codeRepo) GetCodes(num int, key string, filters []string) ([]bson.M, error) {
+func (u *codeHeaderRepo) GetCodes(num int, key string, filters []string) ([]bson.M, error) {
 	ids := []bson.ObjectId{}
 	for _, v := range filters {
 		if v == "" {
@@ -55,13 +55,14 @@ func (u *codeRepo) GetCodes(num int, key string, filters []string) ([]bson.M, er
 			},
 		},
 	}
-	cur, err := u.data.mongoClient.CollectionDB.Collection("code").Aggregate(u.data.mongoClient.Ctx, where)
+	ctx := context.Background()
+	cur, err := u.data.mongoClient.CollectionDB.Collection("code_header").Aggregate(ctx, where)
 	if err != nil {
 		return nil, err
 	}
 	var result []bson.M
-	defer cur.Close(u.data.mongoClient.Ctx)
-	for cur.Next(u.data.mongoClient.Ctx) {
+	defer cur.Close(ctx)
+	for cur.Next(ctx) {
 		var res bson.M
 		if err := cur.Decode(&res); err != nil {
 			return nil, err
@@ -74,7 +75,7 @@ func (u *codeRepo) GetCodes(num int, key string, filters []string) ([]bson.M, er
 	return result, nil
 }
 
-func (u *codeRepo) Create(codes []biz.Code) error {
+func (u *codeHeaderRepo) Create(codes []biz.CodeHeader) error {
 	list := []interface{}{}
 	for _, cod := range codes {
 		m := bson.M{
@@ -85,7 +86,7 @@ func (u *codeRepo) Create(codes []biz.Code) error {
 		list = append(list, m)
 	}
 
-	if _, err := u.data.mongoClient.InsertMany("code", list); err != nil {
+	if _, err := u.data.mongoClient.InsertMany("code_header", list); err != nil {
 		return err
 	}
 	return nil
