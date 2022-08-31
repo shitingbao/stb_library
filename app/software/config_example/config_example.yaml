@@ -17,6 +17,8 @@ data:
     level: 0
     read_timeout: 0.2s
     write_timeout: 0.2s
+  mongo:
+    driver: mongodb://root:ihavetolove4116#@124.70.156.31:27017
 
 consul:
   address: 124.70.156.31:8500
