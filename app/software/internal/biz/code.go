@@ -79,6 +79,7 @@ func (c *CodeUseCase) CreateDocx(arg model.ArgDocx) ([]bson.M, error) {
 		if !ok {
 			return nil, errors.New("codes error")
 		}
+		contentList = append(contentList, arg.ContentTitle)
 		contentList = append(contentList, con)
 	}
 	office.CreateDocx("./test.docx", titilecon, contentList)
