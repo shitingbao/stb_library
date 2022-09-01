@@ -8,7 +8,6 @@ var ProviderSet = wire.NewSet(
 	NewSlogUseCase,
 	NewUserCase,
 	NewCodeCase,
-	NewCodeHeaderCase,
 )
 
 type DefaultFileDir struct {

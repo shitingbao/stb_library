@@ -73,8 +73,8 @@ func (s *Sgin) setRoute() {
 
 	codeHeaderRoute := s.g.Group("/code_header")
 	{
-		codeHeaderRoute.POST("/create", s.codeHeaderCreate)
-		codeHeaderRoute.POST("/list", s.codeHeaderGetCodes)
+		codeHeaderRoute.POST("/create", s.createHeaders)
+		codeHeaderRoute.POST("/list", s.getHeaderCode)
 
 	}
 
