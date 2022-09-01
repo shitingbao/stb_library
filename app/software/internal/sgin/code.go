@@ -63,3 +63,17 @@ func (s *Sgin) getHeaderCode(ctx *gin.Context) {
 	}
 	response.JsonOK(ctx, res)
 }
+
+func (s *Sgin) getDocx(ctx *gin.Context) {
+	arg := model.ArgDocx{}
+	if err := ctx.Bind(&arg); err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+	res, err := s.code.CreateDocx(arg)
+	if err != nil {
+		response.JsonErr(ctx, err, nil)
+		return
+	}
+	response.JsonOK(ctx, res)
+}

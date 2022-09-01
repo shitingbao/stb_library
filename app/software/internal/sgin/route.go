@@ -68,6 +68,7 @@ func (s *Sgin) setRoute() {
 	{
 		codeRoute.POST("/create", s.codeCreate)
 		codeRoute.POST("/list", s.codeGetCodes)
+		codeRoute.POST("/docx", s.getDocx)
 
 	}
 
