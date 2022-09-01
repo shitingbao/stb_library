@@ -2,6 +2,7 @@ package sgin
 
 import (
 	"stb-library/app/software/internal/biz"
+	"stb-library/app/software/internal/model"
 	"stb-library/lib/response"
 
 	"github.com/gin-gonic/gin"
@@ -22,12 +23,12 @@ func (s *Sgin) codeCreate(ctx *gin.Context) {
 }
 
 func (s *Sgin) codeGetCodes(ctx *gin.Context) {
-	arg := biz.ArgCode{}
+	arg := model.ArgDocx{}
 	if err := ctx.Bind(&arg); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	res, err := s.code.GetCodes(arg.Num, arg.Key, arg.Filters)
+	res, err := s.code.GetCodes(arg.ContentsNum, arg.ContentsKey, arg.ContentFilters)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return

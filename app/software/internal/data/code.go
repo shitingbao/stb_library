@@ -32,7 +32,7 @@ func (u *codeRepo) Delete(ctx context.Context, token string) error {
 //	}
 //
 // ] );
-func (u *codeRepo) GetCodes(num int, key string, filters []string) ([]bson.M, error) {
+func (u *codeRepo) GetCodes(num int, keys []string, filters []string) ([]bson.M, error) {
 	ids := []bson.ObjectId{}
 	for _, v := range filters {
 		if v == "" {
@@ -43,7 +43,9 @@ func (u *codeRepo) GetCodes(num int, key string, filters []string) ([]bson.M, er
 	where := []bson.M{
 		{
 			"$match": bson.M{
-				"key": key,
+				"key": bson.M{
+					"$in": keys,
+				},
 				"_id": bson.M{
 					"$nin": ids,
 				},
