@@ -3,7 +3,6 @@ package biz
 import (
 	"context"
 	"errors"
-	"log"
 	"stb-library/app/software/internal/model"
 	"stb-library/lib/office"
 
@@ -64,16 +63,18 @@ func (c *CodeUseCase) CreateDocx(arg model.ArgDocx) ([]bson.M, error) {
 	if err != nil || len(head) < 1 {
 		return nil, err
 	}
-	codes, err := c.repo.GetCodes(arg.ContentsNum, arg.ContentsKey, arg.ContentFilters)
-	if err != nil {
-		return nil, err
-	}
-	log.Println(head, codes[0][""])
-	titilecon, ok := codes[0]["content"].(string)
+	hd, ok := head[0]["content"].(string)
 	if !ok {
 		return nil, errors.New("codes error")
 	}
+	codes, err := c.repo.GetCodes(arg.ContentsNum, arg.ContentsKey, arg.ContentFilters)
+	if err != nil || len(codes) < 1 {
+
+		return nil, errors.New("codes error")
+	}
+
 	contentList := []string{}
+	contentList = append(contentList, hd) // 语言类型
 	for _, c := range codes {
 		con, ok := c["content"].(string)
 		if !ok {
@@ -82,6 +83,7 @@ func (c *CodeUseCase) CreateDocx(arg model.ArgDocx) ([]bson.M, error) {
 		contentList = append(contentList, arg.ContentTitle)
 		contentList = append(contentList, con)
 	}
-	office.CreateDocx("./test.docx", titilecon, contentList)
+	// log.Println(hd, contentList)
+	office.CreateDocx("./test.docx", arg.HeaderContent, contentList)
 	return nil, nil
 }
