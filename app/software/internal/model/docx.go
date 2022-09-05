@@ -9,3 +9,23 @@ type ArgDocx struct {
 	ContentsNum    int      `json:"contents_num"`    // 取多少条内容段
 	ContentTitle   string   `json:"content_title"`   // 每个段落前的注释
 }
+
+type Code struct {
+	Key        string `form:"key" json:"key" gorm:"column:key"`
+	Content    string `form:"content" json:"content" gorm:"column:content"`
+	CodeLength int    `form:"code_length" json:"code_length" gorm:"column:code_length"`
+}
+
+func (Code) TableName() string {
+	return "code"
+}
+
+type ArgCode struct {
+	Codes []Code `form:"codes" json:"codes"`
+}
+
+type CodeInfo struct {
+	Key     string   `form:"key" json:"key" gorm:"column:key"`
+	Filters []string `form:"filters" json:"filters"`
+	Num     int      `form:"num" json:"num"`
+}

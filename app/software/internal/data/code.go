@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"stb-library/app/software/internal/biz"
+	"stb-library/app/software/internal/model"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -76,9 +77,9 @@ func (u *codeRepo) GetCodes(num int, keys []string, filters []string) ([]bson.M,
 	return result, nil
 }
 
-func (u *codeRepo) Create(codes []biz.Code) error {
+func (u *codeRepo) Create(arg model.ArgCode) error {
 	list := []interface{}{}
-	for _, cod := range codes {
+	for _, cod := range arg.Codes {
 		m := bson.M{
 			"key":         cod.Key,
 			"content":     cod.Content,
@@ -136,9 +137,9 @@ func (u *codeRepo) GetHeaderCode(num int, key string, filters []string) ([]bson.
 	return result, nil
 }
 
-func (u *codeRepo) CreateHeaders(codes []biz.Code) error {
+func (u *codeRepo) CreateHeaders(arg model.ArgCode) error {
 	list := []interface{}{}
-	for _, cod := range codes {
+	for _, cod := range arg.Codes {
 		m := bson.M{
 			"key":         cod.Key,
 			"content":     cod.Content,

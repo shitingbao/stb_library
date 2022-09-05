@@ -1,7 +1,6 @@
 package sgin
 
 import (
-	"stb-library/app/software/internal/biz"
 	"stb-library/app/software/internal/model"
 	"stb-library/lib/response"
 
@@ -9,13 +8,13 @@ import (
 )
 
 func (s *Sgin) codeCreate(ctx *gin.Context) {
-	codes := []biz.Code{}
-	if err := ctx.Bind(&codes); err != nil {
+	arg := model.ArgCode{}
+	if err := ctx.Bind(&arg); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
 
-	if err := s.code.Create(codes); err != nil {
+	if err := s.code.Create(arg); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
@@ -37,7 +36,7 @@ func (s *Sgin) codeGetCodes(ctx *gin.Context) {
 }
 
 func (s *Sgin) createHeaders(ctx *gin.Context) {
-	codes := []biz.Code{}
+	codes := model.ArgCode{}
 	if err := ctx.Bind(&codes); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
@@ -51,7 +50,7 @@ func (s *Sgin) createHeaders(ctx *gin.Context) {
 }
 
 func (s *Sgin) getHeaderCode(ctx *gin.Context) {
-	arg := biz.ArgCode{}
+	arg := model.CodeInfo{}
 	if err := ctx.Bind(&arg); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
