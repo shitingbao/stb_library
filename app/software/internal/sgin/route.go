@@ -68,7 +68,7 @@ func (s *Sgin) setRoute() {
 	codeRoute := s.g.Group("/code")
 	{
 		codeRoute.POST("/create", s.codeCreate)
-		codeRoute.POST("/list", s.codeGetCodes)
+		codeRoute.POST("/list", s.codeList)
 		codeRoute.POST("/docx", s.getDocx)
 
 	}
@@ -76,7 +76,7 @@ func (s *Sgin) setRoute() {
 	codeHeaderRoute := s.g.Group("/code_header")
 	{
 		codeHeaderRoute.POST("/create", s.createHeaders)
-		codeHeaderRoute.POST("/list", s.getHeaderCode)
+		codeHeaderRoute.POST("/list", s.codeHeaderList)
 
 	}
 

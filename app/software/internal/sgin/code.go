@@ -21,13 +21,13 @@ func (s *Sgin) codeCreate(ctx *gin.Context) {
 	response.JsonOK(ctx, nil)
 }
 
-func (s *Sgin) codeGetCodes(ctx *gin.Context) {
+func (s *Sgin) codeList(ctx *gin.Context) {
 	arg := model.ArgDocx{}
 	if err := ctx.Bind(&arg); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	res, err := s.code.GetCodes(arg.ContentsNum, arg.ContentsKey, arg.ContentFilters)
+	res, err := s.code.GetCodes(arg.ContentsNum, arg.Language, arg.ContentsKey, arg.ContentFilters)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
@@ -49,13 +49,13 @@ func (s *Sgin) createHeaders(ctx *gin.Context) {
 	response.JsonOK(ctx, nil)
 }
 
-func (s *Sgin) getHeaderCode(ctx *gin.Context) {
-	arg := model.CodeInfo{}
+func (s *Sgin) codeHeaderList(ctx *gin.Context) {
+	arg := model.ArgDocx{}
 	if err := ctx.Bind(&arg); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	res, err := s.code.GetHeaderCode(arg.Num, arg.Key, arg.Filters)
+	res, err := s.code.GetHeaderCode(arg.ContentsNum, arg.Language, arg.HeaderFilters)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return

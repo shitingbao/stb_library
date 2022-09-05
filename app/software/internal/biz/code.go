@@ -11,7 +11,7 @@ import (
 
 type CodeRepo interface {
 	Delete(context.Context, string) error
-	GetCodes(int, []string, []string) ([]bson.M, error)
+	GetCodes(int, string, []string, []string) ([]bson.M, error)
 	Create(model.ArgCode) error
 	GetHeaderCode(int, string, []string) ([]bson.M, error)
 	CreateHeaders(model.ArgCode) error
@@ -30,8 +30,8 @@ func (c *CodeUseCase) Create(arg model.ArgCode) error {
 	return c.repo.Create(arg)
 }
 
-func (c *CodeUseCase) GetCodes(num int, key []string, filters []string) ([]bson.M, error) {
-	return c.repo.GetCodes(num, key, filters)
+func (c *CodeUseCase) GetCodes(num int, lan string, key []string, filters []string) ([]bson.M, error) {
+	return c.repo.GetCodes(num, lan, key, filters)
 }
 
 func (c *CodeUseCase) CreateHeaders(arg model.ArgCode) error {
@@ -43,7 +43,7 @@ func (c *CodeUseCase) GetHeaderCode(num int, key string, filters []string) ([]bs
 }
 
 func (c *CodeUseCase) CreateDocx(arg model.ArgDocx) ([]bson.M, error) {
-	head, err := c.repo.GetHeaderCode(1, arg.TitleKey, arg.TitleFilters)
+	head, err := c.repo.GetHeaderCode(1, arg.Language, arg.HeaderFilters)
 	if err != nil || len(head) < 1 {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *CodeUseCase) CreateDocx(arg model.ArgDocx) ([]bson.M, error) {
 	if !ok {
 		return nil, errors.New("codes error")
 	}
-	codes, err := c.repo.GetCodes(arg.ContentsNum, arg.ContentsKey, arg.ContentFilters)
+	codes, err := c.repo.GetCodes(arg.ContentsNum, arg.Language, arg.ContentsKey, arg.ContentFilters)
 	if err != nil || len(codes) < 1 {
 
 		return nil, errors.New("codes error")

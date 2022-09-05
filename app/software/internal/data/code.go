@@ -33,7 +33,7 @@ func (u *codeRepo) Delete(ctx context.Context, token string) error {
 //	}
 //
 // ] );
-func (u *codeRepo) GetCodes(num int, keys []string, filters []string) ([]bson.M, error) {
+func (u *codeRepo) GetCodes(num int, lan string, keys []string, filters []string) ([]bson.M, error) {
 	ids := []bson.ObjectId{}
 	for _, v := range filters {
 		if v == "" {
@@ -44,6 +44,7 @@ func (u *codeRepo) GetCodes(num int, keys []string, filters []string) ([]bson.M,
 	where := []bson.M{
 		{
 			"$match": bson.M{
+				"language": lan,
 				"key": bson.M{
 					"$in": keys,
 				},
@@ -81,6 +82,7 @@ func (u *codeRepo) Create(arg model.ArgCode) error {
 	list := []interface{}{}
 	for _, cod := range arg.Codes {
 		m := bson.M{
+			"language":    cod.Language,
 			"key":         cod.Key,
 			"content":     cod.Content,
 			"code_length": len(cod.Content),
@@ -94,7 +96,7 @@ func (u *codeRepo) Create(arg model.ArgCode) error {
 	return nil
 }
 
-func (u *codeRepo) GetHeaderCode(num int, key string, filters []string) ([]bson.M, error) {
+func (u *codeRepo) GetHeaderCode(num int, lan string, filters []string) ([]bson.M, error) {
 	ids := []bson.ObjectId{}
 	for _, v := range filters {
 		if v == "" {
@@ -105,7 +107,7 @@ func (u *codeRepo) GetHeaderCode(num int, key string, filters []string) ([]bson.
 	where := []bson.M{
 		{
 			"$match": bson.M{
-				"key": key,
+				"language": lan,
 				"_id": bson.M{
 					"$nin": ids,
 				},
@@ -141,7 +143,7 @@ func (u *codeRepo) CreateHeaders(arg model.ArgCode) error {
 	list := []interface{}{}
 	for _, cod := range arg.Codes {
 		m := bson.M{
-			"key":         cod.Key,
+			"language":    cod.Language,
 			"content":     cod.Content,
 			"code_length": len(cod.Content),
 		}
