@@ -11,9 +11,8 @@ type ArgDocx struct {
 }
 
 type Code struct {
-	Key        string `form:"key" json:"key" gorm:"column:key"`
-	Content    string `form:"content" json:"content" gorm:"column:content"`
-	CodeLength int    `form:"code_length" json:"code_length" gorm:"column:code_length"`
+	Key     string `form:"key" json:"key" gorm:"column:key"`
+	Content string `form:"content" json:"content" gorm:"column:content"`
 }
 
 func (Code) TableName() string {

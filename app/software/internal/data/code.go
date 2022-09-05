@@ -83,7 +83,7 @@ func (u *codeRepo) Create(arg model.ArgCode) error {
 		m := bson.M{
 			"key":         cod.Key,
 			"content":     cod.Content,
-			"code_length": cod.CodeLength,
+			"code_length": len(cod.Content),
 		}
 		list = append(list, m)
 	}
@@ -143,7 +143,7 @@ func (u *codeRepo) CreateHeaders(arg model.ArgCode) error {
 		m := bson.M{
 			"key":         cod.Key,
 			"content":     cod.Content,
-			"code_length": cod.CodeLength,
+			"code_length": len(cod.Content),
 		}
 		list = append(list, m)
 	}
