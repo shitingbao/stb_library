@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"stb-library/app/software/internal/model"
 	"stb-library/lib/office"
@@ -12,9 +13,9 @@ import (
 type CodeRepo interface {
 	Delete(context.Context, string) error
 	GetCodes(int, string, []string, []string) ([]bson.M, error)
-	Create(model.ArgCode) error
+	Create([]model.Code) error
 	GetHeaderCode(int, string, []string) ([]bson.M, error)
-	CreateHeaders(model.ArgCode) error
+	CreateHeaders([]model.Code) error
 }
 
 type CodeUseCase struct {
@@ -26,16 +27,24 @@ func NewCodeCase(repo CodeRepo, s *SlogUseCase) *CodeUseCase {
 	return &CodeUseCase{repo: repo, sLog: s}
 }
 
-func (c *CodeUseCase) Create(arg model.ArgCode) error {
-	return c.repo.Create(arg)
+func (c *CodeUseCase) Create(arg string) error {
+	codes := []model.Code{}
+	if err := json.Unmarshal([]byte(arg), &codes); err != nil {
+		return err
+	}
+	return c.repo.Create(codes)
 }
 
 func (c *CodeUseCase) GetCodes(num int, lan string, key []string, filters []string) ([]bson.M, error) {
 	return c.repo.GetCodes(num, lan, key, filters)
 }
 
-func (c *CodeUseCase) CreateHeaders(arg model.ArgCode) error {
-	return c.repo.CreateHeaders(arg)
+func (c *CodeUseCase) CreateHeaders(arg string) error {
+	codes := []model.Code{}
+	if err := json.Unmarshal([]byte(arg), &codes); err != nil {
+		return err
+	}
+	return c.repo.CreateHeaders(codes)
 }
 
 func (c *CodeUseCase) GetHeaderCode(num int, key string, filters []string) ([]bson.M, error) {

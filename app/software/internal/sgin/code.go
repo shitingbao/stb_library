@@ -8,13 +8,13 @@ import (
 )
 
 func (s *Sgin) codeCreate(ctx *gin.Context) {
-	arg := model.ArgCode{}
+	arg := model.ArgCodeModel{}
 	if err := ctx.Bind(&arg); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
 
-	if err := s.code.Create(arg); err != nil {
+	if err := s.code.Create(arg.Codes); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
@@ -36,13 +36,13 @@ func (s *Sgin) codeList(ctx *gin.Context) {
 }
 
 func (s *Sgin) createHeaders(ctx *gin.Context) {
-	codes := model.ArgCode{}
+	codes := model.ArgCodeModel{}
 	if err := ctx.Bind(&codes); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
 
-	if err := s.code.CreateHeaders(codes); err != nil {
+	if err := s.code.CreateHeaders(codes.Codes); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}

@@ -19,3 +19,7 @@ type Code struct {
 type ArgCode struct {
 	Codes []Code `form:"codes" json:"codes"`
 }
+
+type ArgCodeModel struct {
+	Codes string `form:"codes" json:"codes"`
+}

@@ -78,9 +78,9 @@ func (u *codeRepo) GetCodes(num int, lan string, keys []string, filters []string
 	return result, nil
 }
 
-func (u *codeRepo) Create(arg model.ArgCode) error {
+func (u *codeRepo) Create(arg []model.Code) error {
 	list := []interface{}{}
-	for _, cod := range arg.Codes {
+	for _, cod := range arg {
 		m := bson.M{
 			"language":    cod.Language,
 			"key":         cod.Key,
@@ -139,9 +139,9 @@ func (u *codeRepo) GetHeaderCode(num int, lan string, filters []string) ([]bson.
 	return result, nil
 }
 
-func (u *codeRepo) CreateHeaders(arg model.ArgCode) error {
+func (u *codeRepo) CreateHeaders(arg []model.Code) error {
 	list := []interface{}{}
-	for _, cod := range arg.Codes {
+	for _, cod := range arg {
 		m := bson.M{
 			"language":    cod.Language,
 			"content":     cod.Content,
