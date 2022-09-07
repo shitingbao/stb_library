@@ -60,7 +60,7 @@ func (c *CodeUseCase) CreateDocx(arg model.ArgDocx) ([]bson.M, error) {
 	if !ok {
 		return nil, errors.New("codes error")
 	}
-	codes, err := c.repo.GetCodes(arg.ContentsNum, arg.Language, arg.ContentsKey, arg.ContentFilters)
+	codes, err := c.repo.GetCodes(arg.ContentsNum, arg.Language, arg.ContentsKeys, arg.ContentFilters)
 	if err != nil || len(codes) < 1 {
 
 		return nil, errors.New("codes error")

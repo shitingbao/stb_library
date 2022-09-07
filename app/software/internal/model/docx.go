@@ -5,7 +5,7 @@ type ArgDocx struct {
 	Language       string   `form:"language" json:"language"` // c，c#，java
 	HeaderFilters  []string `json:"header_filters"`           //
 	ContentFilters []string `json:"content_filters"`          //
-	ContentsKey    []string `json:"content_key"`              // 内容关键字集合
+	ContentsKeys   []string `json:"content_keys"`             // 内容关键字集合
 	ContentsNum    int      `json:"contents_num"`             // 取多少条内容段
 	ContentTitle   string   `json:"content_title"`            // 每个段落前的注释
 }

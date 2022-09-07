@@ -27,7 +27,7 @@ func (s *Sgin) codeList(ctx *gin.Context) {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	res, err := s.code.GetCodes(arg.ContentsNum, arg.Language, arg.ContentsKey, arg.ContentFilters)
+	res, err := s.code.GetCodes(arg.ContentsNum, arg.Language, arg.ContentsKeys, arg.ContentFilters)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
