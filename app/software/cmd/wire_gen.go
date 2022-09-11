@@ -19,7 +19,7 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Data, tracerProvider *trace.TracerProvider) (*kratos.App, func(), error) {
+func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Data, office *conf.Office, tracerProvider *trace.TracerProvider) (*kratos.App, func(), error) {
 	engine := sgin.NewGinEngine()
 	hub := sgin.NewChatSocketfunc()
 	httpServer := server.NewHTTPServer(confServer, engine, hub)
@@ -41,7 +41,7 @@ func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 	userRepo := data.NewUserRepo(dataData)
 	userUseCase := biz.NewUserCase(userRepo, slogUseCase)
 	codeRepo := data.NewCodeRepo(dataData)
-	codeUseCase := biz.NewCodeCase(codeRepo, slogUseCase)
+	codeUseCase := biz.NewCodeCase(codeRepo, slogUseCase, office)
 	sginSgin := sgin.NewSgin(defaultFileDir, engine, centralUseCase, userUseCase, codeUseCase)
 	grpcServer := server.NewGRPCServer(confServer, tracerProvider, sginSgin)
 	registrar := data.NewRegistrar(registry)

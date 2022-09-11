@@ -9,6 +9,7 @@ message Bootstrap {
   Trace trace = 1;
   Server server = 2;
   Data data = 3;
+  Office office = 4;
 }
 
 message Trace {
@@ -59,4 +60,16 @@ message Registry {
 
 message Mongo {
   string driver = 1;
+}
+
+
+message Office {
+  message DocxWord {
+    string secret = 1;
+  }
+  DocxWord docx = 1;
+}
+
+message Extra {
+  Office office = 1;
 }

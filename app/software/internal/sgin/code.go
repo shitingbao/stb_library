@@ -64,12 +64,18 @@ func (s *Sgin) codeHeaderList(ctx *gin.Context) {
 }
 
 func (s *Sgin) getDocx(ctx *gin.Context) {
-	arg := model.ArgDocx{}
+	arg := model.ArgCodeModel{}
 	if err := ctx.Bind(&arg); err != nil {
 		response.JsonErr(ctx, err, nil)
 		return
 	}
-	res, err := s.code.CreateDocx(arg)
+
+	// arg := model.ArgDocx{}
+	// if err := ctx.Bind(&arg); err != nil {
+	// 	response.JsonErr(ctx, err, nil)
+	// 	return
+	// }
+	res, err := s.code.CreateDocx(arg.Codes)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return

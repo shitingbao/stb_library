@@ -67,6 +67,11 @@ func main() {
 	if err := c.Scan(&rc); err != nil {
 		panic(err)
 	}
+
+	var oc conf.Extra
+	if err := c.Scan(&oc); err != nil {
+		panic(err)
+	}
 	// exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(bc.Trace.Endpoint)))
 	// if err != nil {
 	// 	panic(err)
@@ -78,7 +83,7 @@ func main() {
 		)),
 	)
 	// gin.SetMode(gin.ReleaseMode)
-	app, cleanup, err := initApp(bc.Server, &rc, bc.Data, tp)
+	app, cleanup, err := initApp(bc.Server, &rc, bc.Data, oc.Office, tp)
 	if err != nil {
 		panic(err)
 	}

@@ -7,19 +7,22 @@ import (
 	"github.com/unidoc/unioffice/schema/soo/wml"
 )
 
-func init() {
+type OfficeDocx struct{}
+
+func NewOfficeDocx(officeDocxCode string) (*OfficeDocx, error) {
 	// Make sure to load your metered License API key prior to using the library.
 	// If you need a key, you can sign up and create a free one at https://cloud.unidoc.io
-	err := license.SetMeteredKey("9be68b870d264caf7842deb88abbe70719fb27dcdc389ba826909ac696c44981")
+	err := license.SetMeteredKey(officeDocxCode)
 	if err != nil {
 		panic(err)
 	}
+	return &OfficeDocx{}, nil
 }
 
 // CreateDocx
 // 写入文件名，页眉，内容段落，生成一个 docx 文档
 // filename 为完整的路径文件名称，eg ： D://test/fl/aa.docx
-func CreateDocx(filename, title string, contents []string) {
+func (o *OfficeDocx) CreateDocx(filename, title string, contents []string) {
 	doc := document.New()
 	defer doc.Close()
 

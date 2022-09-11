@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"stb-library/app/software/internal/conf"
 	"stb-library/app/software/internal/model"
 	"stb-library/lib/office"
 
@@ -19,12 +20,13 @@ type CodeRepo interface {
 }
 
 type CodeUseCase struct {
-	sLog *SlogUseCase
-	repo CodeRepo
+	office *conf.Office
+	sLog   *SlogUseCase
+	repo   CodeRepo
 }
 
-func NewCodeCase(repo CodeRepo, s *SlogUseCase) *CodeUseCase {
-	return &CodeUseCase{repo: repo, sLog: s}
+func NewCodeCase(repo CodeRepo, s *SlogUseCase, o *conf.Office) *CodeUseCase {
+	return &CodeUseCase{repo: repo, sLog: s, office: o}
 }
 
 func (c *CodeUseCase) Create(arg string) error {
@@ -51,7 +53,12 @@ func (c *CodeUseCase) GetHeaderCode(num int, key string, filters []string) ([]bs
 	return c.repo.GetHeaderCode(num, key, filters)
 }
 
-func (c *CodeUseCase) CreateDocx(arg model.ArgDocx) ([]bson.M, error) {
+func (c *CodeUseCase) CreateDocx(param string) ([]bson.M, error) {
+	arg := model.ArgDocx{}
+	if err := json.Unmarshal([]byte(param), &arg); err != nil {
+		return nil, err
+	}
+
 	head, err := c.repo.GetHeaderCode(1, arg.Language, arg.HeaderFilters)
 	if err != nil || len(head) < 1 {
 		return nil, err
@@ -77,6 +84,10 @@ func (c *CodeUseCase) CreateDocx(arg model.ArgDocx) ([]bson.M, error) {
 		contentList = append(contentList, con)
 	}
 	// log.Println(hd, contentList)
-	office.CreateDocx("./test.docx", arg.HeaderContent, contentList)
+	doc, err := office.NewOfficeDocx(c.office.Docx.Secret)
+	if err != nil {
+		return nil, err
+	}
+	doc.CreateDocx("./test.docx", arg.HeaderContent, contentList)
 	return nil, nil
 }

@@ -18,6 +18,6 @@ import (
 )
 
 // initApp init kratos application.
-func initApp(*conf.Server, *conf.Registry, *conf.Data, *tracesdk.TracerProvider) (*kratos.App, func(), error) {
+func initApp(*conf.Server, *conf.Registry, *conf.Data, *conf.Office, *tracesdk.TracerProvider) (*kratos.App, func(), error) {
 	panic(wire.Build(data.ProviderSet, biz.ProviderSet, server.ProviderSet, sgin.ProviderSet, newApp))
 }
