@@ -75,7 +75,7 @@ func (s *Sgin) getDocx(ctx *gin.Context) {
 	// 	response.JsonErr(ctx, err, nil)
 	// 	return
 	// }
-	res, err := s.code.CreateDocx(arg.Codes)
+	res, err := s.code.CreateDocx(arg.Codes, s.defaultFileDir.DefaultAssetsPath)
 	if err != nil {
 		response.JsonErr(ctx, err, nil)
 		return

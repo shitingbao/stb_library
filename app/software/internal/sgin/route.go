@@ -3,6 +3,7 @@ package sgin
 import (
 	"mime"
 	"net/http"
+	"path"
 	"regexp"
 	"stb-library/lib/response"
 
@@ -18,8 +19,6 @@ import (
 
 var (
 	tokenKey = "Authorization"
-
-	vueAssetsRoutePath = "/opt/nginx/dist" // dist 所在路径
 )
 
 var (
@@ -40,15 +39,15 @@ func init() {
 func (s *Sgin) setRoute() {
 	s.g.Use(cross)
 
-	// s.g.StaticFile("/", path.Join(vueAssetsRoutePath, "index.html"))             // 指定资源文件 127.0.0.1/ 这种
-	// s.g.StaticFile("/favicon.ico", path.Join(vueAssetsRoutePath, "favicon.ico")) // 127.0.0.1/favicon.ico
-	// s.g.StaticFile("/_app.config.js", path.Join(vueAssetsRoutePath, "_app.config.js"))
+	s.g.StaticFile("/", path.Join(s.defaultFileDir.DefaultDirPath, "index.html"))             // 指定资源文件 127.0.0.1/ 这种
+	s.g.StaticFile("/favicon.ico", path.Join(s.defaultFileDir.DefaultDirPath, "favicon.ico")) // 127.0.0.1/favicon.ico
+	s.g.StaticFile("/_app.config.js", path.Join(s.defaultFileDir.DefaultDirPath, "_app.config.js"))
 
-	// s.g.StaticFS("/assets", http.Dir(path.Join(vueAssetsRoutePath, "assets")))     // 以 assets 为前缀的 url
-	// s.g.StaticFS("/resource", http.Dir(path.Join(vueAssetsRoutePath, "resource"))) // 比如 127.0.0.1/resource
+	s.g.StaticFS("/assets", http.Dir(path.Join(s.defaultFileDir.DefaultDirPath, "assets")))     // 以 assets 为前缀的 url
+	s.g.StaticFS("/resource", http.Dir(path.Join(s.defaultFileDir.DefaultDirPath, "resource"))) // 比如 127.0.0.1/resource
 
-	// s.g.StaticFS("assets", http.Dir(s.defaultFileDir.DefaultAssetsPath))// 直接播放视频
-	// s.g.StaticFile("assets", s.defaultFileDir.DefaultAssetsPath)
+	// s.g.StaticFS("assets", http.Dir(s.defaultFileDir.DefaultDirPath))// 直接播放视频
+	// s.g.StaticFile("assets", s.defaultFileDir.DefaultDirPath)
 
 	s.g.GET("/health", s.health)
 

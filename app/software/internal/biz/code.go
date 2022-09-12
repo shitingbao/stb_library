@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"path"
 	"stb-library/app/software/internal/conf"
 	"stb-library/app/software/internal/model"
 	"stb-library/lib/office"
@@ -53,7 +54,7 @@ func (c *CodeUseCase) GetHeaderCode(num int, key string, filters []string) ([]bs
 	return c.repo.GetHeaderCode(num, key, filters)
 }
 
-func (c *CodeUseCase) CreateDocx(param string) ([]bson.M, error) {
+func (c *CodeUseCase) CreateDocx(param, assetsPath string) ([]bson.M, error) {
 	arg := model.ArgDocx{}
 	if err := json.Unmarshal([]byte(param), &arg); err != nil {
 		return nil, err
@@ -88,6 +89,6 @@ func (c *CodeUseCase) CreateDocx(param string) ([]bson.M, error) {
 	if err != nil {
 		return nil, err
 	}
-	doc.CreateDocx("./test.docx", arg.HeaderContent, contentList)
+	doc.CreateDocx(path.Join(assetsPath, "software.docx"), arg.HeaderContent, contentList)
 	return nil, nil
 }
