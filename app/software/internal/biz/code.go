@@ -22,12 +22,11 @@ type CodeRepo interface {
 
 type CodeUseCase struct {
 	office *conf.Office
-	sLog   *SlogUseCase
 	repo   CodeRepo
 }
 
-func NewCodeCase(repo CodeRepo, s *SlogUseCase, o *conf.Office) *CodeUseCase {
-	return &CodeUseCase{repo: repo, sLog: s, office: o}
+func NewCodeCase(repo CodeRepo, o *conf.Office) *CodeUseCase {
+	return &CodeUseCase{repo: repo, office: o}
 }
 
 func (c *CodeUseCase) Create(arg string) error {

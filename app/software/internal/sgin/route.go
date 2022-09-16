@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"path"
 	"regexp"
-	"stb-library/lib/response"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tdewolff/minify"
@@ -49,21 +48,6 @@ func (s *Sgin) setRoute() {
 	// s.g.StaticFS("assets", http.Dir(s.defaultFileDir.DefaultDirPath))// 直接播放视频
 	// s.g.StaticFile("assets", s.defaultFileDir.DefaultDirPath)
 
-	s.g.GET("/health", s.health)
-
-	rg := s.g.Group("/api")
-	{
-		rg.POST("/login", s.login)
-		rg.GET("/logout", s.logout)
-		rg.POST("/register", s.register)
-	}
-
-	dataRout := s.g.Group("/app").Use(s.verification)
-	{
-		dataRout.GET("/ping", s.getUserInfo)
-
-	}
-
 	codeRoute := s.g.Group("/code")
 	{
 		codeRoute.POST("/create", s.codeCreate)
@@ -82,22 +66,6 @@ func (s *Sgin) setRoute() {
 	// s.g.Static("assets", s.defaultFileDir.DefaultAssetsPath)
 }
 
-func (s *Sgin) health(ctx *gin.Context) {
-	name := ""
-	if err := ctx.Bind(name); err != nil {
-		response.JsonErr(ctx, err, nil)
-		return
-	}
-
-	n, err := s.center.SayHello(name)
-
-	if err != nil {
-		response.JsonErr(ctx, err, nil)
-		return
-	}
-	response.JsonOK(ctx, n)
-}
-
 // option 过滤
 func cross(ctx *gin.Context) {
 	ctx.Header("Access-Control-Allow-Origin", "*")
@@ -111,15 +79,5 @@ func cross(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, "ok")
 		return
 	}
-	ctx.Next()
-}
-
-func (s *Sgin) verification(ctx *gin.Context) {
-	info, err := s.user.GetUserInfo(ctx.GetHeader(tokenKey))
-	if err != nil || info.UserName == "" {
-		response.JsonErr(ctx, err, nil)
-		ctx.Abort()
-	}
-	s.userInfo = info
 	ctx.Next()
 }

@@ -27,25 +27,15 @@ func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 	if err != nil {
 		return nil, nil, err
 	}
-	discovery := data.NewDiscovery(registry)
-	logServerClient := data.NewSlogServiceClient(discovery, tracerProvider)
-	centralClient := data.NewCentralGrpcClient(discovery, tracerProvider)
-	dataData, cleanup, err := data.NewData(confData, logServerClient, centralClient)
+	dataData, cleanup, err := data.NewData(confData)
 	if err != nil {
 		return nil, nil, err
 	}
-	centralRepo := data.NewCentralRepo(dataData)
-	slogRepo := data.NewLogServerHandleRepo(dataData)
-	slogUseCase := biz.NewSlogUseCase(defaultFileDir, slogRepo)
-	centralUseCase := biz.NewCentralUseCase(centralRepo, slogUseCase)
-	userRepo := data.NewUserRepo(dataData)
-	userUseCase := biz.NewUserCase(userRepo, slogUseCase)
 	codeRepo := data.NewCodeRepo(dataData)
-	codeUseCase := biz.NewCodeCase(codeRepo, slogUseCase, office)
-	sginSgin := sgin.NewSgin(defaultFileDir, engine, centralUseCase, userUseCase, codeUseCase)
+	codeUseCase := biz.NewCodeCase(codeRepo, office)
+	sginSgin := sgin.NewSgin(defaultFileDir, engine, codeUseCase)
 	grpcServer := server.NewGRPCServer(confServer, tracerProvider, sginSgin)
-	registrar := data.NewRegistrar(registry)
-	app := newApp(httpServer, grpcServer, registrar)
+	app := newApp(httpServer, grpcServer)
 	return app, func() {
 		cleanup()
 	}, nil

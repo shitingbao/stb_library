@@ -30,12 +30,9 @@ var ProviderSet = wire.NewSet(
 
 type Sgin struct {
 	v1.UnimplementedSoftwareServer
-	center *biz.CentralUseCase
 
 	g              *gin.Engine
 	defaultFileDir biz.DefaultFileDir
-	user           *biz.UserUseCase
-	userInfo       *biz.UserResult
 	code           *biz.CodeUseCase
 }
 
@@ -61,14 +58,11 @@ func ConstructorDefaultDir() (biz.DefaultFileDir, error) {
 }
 
 // sgin 只作路由对应
-func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine, c *biz.CentralUseCase, u *biz.UserUseCase,
-	codeCase *biz.CodeUseCase) *Sgin {
+func NewSgin(dir biz.DefaultFileDir, ginModel *gin.Engine, codeCase *biz.CodeUseCase) *Sgin {
 	ginModel.MaxMultipartMemory = formFileSize << 20 // 为了 form 提交文件做前提
 	s := &Sgin{
-		center:         c,
 		g:              ginModel,
 		defaultFileDir: dir,
-		user:           u,
 		code:           codeCase,
 	}
 	s.setRoute()

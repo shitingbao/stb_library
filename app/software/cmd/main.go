@@ -8,7 +8,6 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
-	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -32,7 +31,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(hs *http.Server, gs *grpc.Server, r registry.Registrar) *kratos.App {
+func newApp(hs *http.Server, gs *grpc.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -42,7 +41,6 @@ func newApp(hs *http.Server, gs *grpc.Server, r registry.Registrar) *kratos.App 
 			hs,
 			gs,
 		),
-		kratos.Registrar(r),
 	)
 }
 
