@@ -10,7 +10,7 @@ import (
 	"golang.org/x/text/transform"
 )
 
-func RunCommand(commands ...string) (string, error) {
+func RunCommand(cmd exec.Cmd) (string, error) {
 	if len(commands) < 1 {
 		return "", errors.New("commands is nil")
 	}
