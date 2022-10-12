@@ -23,6 +23,7 @@ require (
 	github.com/nsqio/go-nsq v1.1.0
 	github.com/panjf2000/ants/v2 v2.5.0
 	github.com/pborman/uuid v1.2.1
+	github.com/rabbitmq/amqp091-go v1.5.0
 	github.com/robfig/cron v1.2.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/shirou/gopsutil/v3 v3.21.8
@@ -31,6 +32,7 @@ require (
 	github.com/tdewolff/minify v2.3.6+incompatible
 	github.com/tealeg/xlsx v1.0.5
 	github.com/tuotoo/qrcode v0.0.0-20220425170535-52ccc2bebf5d
+	github.com/unidoc/unioffice v1.20.0
 	github.com/xuri/excelize/v2 v2.6.1
 	go.mongodb.org/mongo-driver v1.7.3
 	go.opentelemetry.io/otel v1.4.1
@@ -106,7 +108,6 @@ require (
 	github.com/tklauser/go-sysconf v0.3.9 // indirect
 	github.com/tklauser/numcpus v0.3.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
-	github.com/unidoc/unioffice v1.20.0 // indirect
 	github.com/vcaesar/gops v0.21.3 // indirect
 	github.com/vcaesar/imgo v0.30.0 // indirect
 	github.com/vcaesar/keycode v0.10.0 // indirect
