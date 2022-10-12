@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os/exec"
 	"path"
+	"regexp"
+	"stb-library/lib/command"
+	"strconv"
 	"strings"
 )
 
-//GetAllDirFile 便利所有文件内文件，反馈所有文件路径,isAbsolute代表是否反馈完整路径，或者只反馈文件名称
-//isAbsolute为true反馈当前开始的完整路径，[file/aa/aa.txt file/aa/bb/bb.txt]，为false只反馈文件名，[aa.txt bb.txt]
+// GetAllDirFile 便利所有文件内文件，反馈所有文件路径,isAbsolute代表是否反馈完整路径，或者只反馈文件名称
+// isAbsolute为true反馈当前开始的完整路径，[file/aa/aa.txt file/aa/bb/bb.txt]，为false只反馈文件名，[aa.txt bb.txt]
 func GetAllDirFile(url string, isAbsolute bool) ([]string, error) {
 	fList := []string{}
 	ft, err := ioutil.ReadDir(url)
@@ -34,7 +38,7 @@ func GetAllDirFile(url string, isAbsolute bool) ([]string, error) {
 	return fList, nil
 }
 
-//文件后缀操作
+// 文件后缀操作
 func fileNameOpera() {
 	fullFilename := "/Users/itfanr/Documents/test.txt"
 	log.Println(path.Dir(fullFilename)) //获取当前目录，"/Users/itfanr/Documents"
@@ -49,4 +53,19 @@ func fileNameOpera() {
 	var filenameOnly string
 	filenameOnly = strings.TrimSuffix(filenameWithSuffix, fileSuffix) //获取文件名(test)
 	fmt.Println("filenameOnly =", filenameOnly)
+}
+
+// GetFileDiskSize 获取实际文件磁盘占用
+func GetFileDiskSize(url string) int64 {
+	cmd := exec.Command("du", "-Lb", url)
+	out, err := command.RunCommand(*cmd)
+	if err != nil {
+		return 0
+	}
+	log.Println("out:", out)
+	status := "[0-9]*"
+	matchMe := regexp.MustCompile(status)
+	log.Println("find:", matchMe.FindString(out))
+	size, _ := strconv.ParseInt(matchMe.FindString(out), 10, 64)
+	return size
 }
