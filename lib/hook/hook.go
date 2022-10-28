@@ -100,8 +100,6 @@ func HookInit(host string, client *gorm.DB, level logrus.Level) *logrus.Logger {
 func hookInit(host string, client *gorm.DB, level logrus.Level) *logrus.Logger {
 	lg := logrus.New()
 	hk := NewMysqlHook(host, client, level)
-	// hk := NewAsyncMysqlHook("", client, logrus.DebugLevel)
 	lg.AddHook(hk)
-	// lg.WithFields(logrus.Fields{"name": "stb"}).Info("test")
 	return lg
 }

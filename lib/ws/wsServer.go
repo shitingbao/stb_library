@@ -35,8 +35,8 @@ var (
 	pongWaitSet = time.Now()
 )
 
-//Message 管道中的消息
-//user中为空"",则为全体发送，写入username则为指定发送，包括自己的信息
+// Message 管道中的消息
+// user中为空"",则为全体发送，写入username则为指定发送，包括自己的信息
 type Message struct {
 	User     string
 	Data     interface{}
@@ -51,7 +51,7 @@ const (
 	MessageVideo
 )
 
-//NewHub 分配一个新的Hub，使用前先获取这个hub对象
+// NewHub 分配一个新的Hub，使用前先获取这个hub对象
 func NewHub(onEvent OnMessageFunc) *Hub {
 	return &Hub{
 		Broadcast:     make(chan Message),     //包含要想向前台传递的数据，内部使用chan通道传输
@@ -63,12 +63,12 @@ func NewHub(onEvent OnMessageFunc) *Hub {
 	}
 }
 
-//OnMessageFunc 接收到消息触发的事件
+// OnMessageFunc 接收到消息触发的事件
 type OnMessageFunc func(message []byte, hub *Hub) error
 
 // Client is a middleman between the websocket connection and the hub.
-//可增加一个用户属性，用来区分不同的连接，便于在发送的时候区分发送，不走同一个频道，这样就可以分为全局频道和局部频道
-//需要登录配合，可以将用户登陆时保存在cookie中，在注册client时获取
+// 可增加一个用户属性，用来区分不同的连接，便于在发送的时候区分发送，不走同一个频道，这样就可以分为全局频道和局部频道
+// 需要登录配合，可以将用户登陆时保存在cookie中，在注册client时获取
 type Client struct {
 	hub  *Hub
 	name string
@@ -79,8 +79,8 @@ type Client struct {
 	send chan []byte
 }
 
-//Hub maintains the set of active clients and broadcasts messages to the
-//clients.
+// Hub maintains the set of active clients and broadcasts messages to the
+// clients.
 type Hub struct {
 	// Registered clients.
 	clients map[*Client]bool
@@ -180,7 +180,7 @@ func (c *Client) readPump() {
 	}
 }
 
-//Run 开始消息读写队列，无限循环，应该用go func的方式调用
+// Run 开始消息读写队列，无限循环，应该用go func的方式调用
 func (h *Hub) Run(ctx context.Context) {
 	for {
 		select {
@@ -233,7 +233,7 @@ func (h *Hub) Run(ctx context.Context) {
 	}
 }
 
-//Len 返回连接数量
+// Len 返回连接数量
 func (h *Hub) Len() int {
 	return len(h.clients)
 }
