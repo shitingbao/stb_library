@@ -32,7 +32,7 @@ func NewMqCli(url string) (*Rabbitmq, error) {
 func (r *Rabbitmq) SendMqMes() {
 	q, err := r.Channel.QueueDeclare(
 		"hello", // name
-		false,   // durable
+		false,   // durable 是否持久化，需要生产者和消费者同时开启，并使用新的通道
 		false,   // delete when unused
 		false,   // exclusive
 		false,   // no-wait
@@ -79,7 +79,7 @@ func (r *Rabbitmq) Receive() {
 	msgs, err := r.Channel.Consume(
 		q.Name, // queue
 		"",     // consumer
-		true,   // auto-ack
+		false,  // auto-ack false 关闭自动回复消息，并在处理完消息后使用 Ack 手动回收消息
 		false,  // exclusive
 		false,  // no-local
 		false,  // no-wait
@@ -95,6 +95,7 @@ func (r *Rabbitmq) Receive() {
 	go func() {
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
+			d.Ack(false)
 		}
 	}()
 
