@@ -76,7 +76,7 @@ func (r *Rabbitmq) MqMesWithTemporary() {
 		"",    // name
 		false, // durable 是否持久化，需要生产者和消费者同时开启，并使用新的通道
 		false, // delete when unused
-		true,  // exclusive , 因为他是独占
+		true,  // exclusive , 因为他是独占，临时队列需要该值为 true，因为无名称需要唯一
 		false, // no-wait
 		nil,   // arguments
 	)
