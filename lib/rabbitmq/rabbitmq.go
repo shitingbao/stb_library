@@ -131,6 +131,72 @@ func (r *Rabbitmq) MqMesWithTemporary() {
 	}
 }
 
+// 带路由的交换器生产者
+// 使用 direct 理论上就不用 queue 对象的 name 来作为 key
+// 不然和消费者的 name 对应不上，除非 key 也用这个name
+func (r *Rabbitmq) MqWithRoute() {
+	if err := r.Channel.ExchangeDeclare("log_direct", "direct", true, false, false, false, nil); err != nil {
+		return
+	}
+	ctx, canl := context.WithTimeout(context.Background(), time.Second*5)
+	defer canl()
+	num := 0
+	for {
+		r.Channel.PublishWithContext(
+			ctx,
+			"log_direct",
+			"first",
+			false,
+			false,
+			amqp.Publishing{
+				ContentType: "text/plain",
+				Body:        []byte(strconv.Itoa(num)),
+			},
+		)
+		log.Println("publish first:", num)
+		num++
+		r.Channel.PublishWithContext(
+			ctx,
+			"log_direct",
+			"second",
+			false,
+			false,
+			amqp.Publishing{
+				ContentType: "text/plain",
+				Body:        []byte(strconv.Itoa(num)),
+			},
+		)
+		log.Println("publish second:", num)
+		num++
+		time.Sleep(time.Second)
+	}
+}
+
+// 带路由的交换器消费者
+// 交换器已经在其他地方定义过就不用重新定义
+// 注意，如果用队列，就不能使用同一个channel，会出现Exception (505) Reason: "UNEXPECTED_FRAME - expected content header for class 60, got non content header frame instead"
+// 因为不同的线程复用了一个channel，这个指的是队列的channel
+// 如果重新定义一个队列会无法接收到消息，因为 name 不对应，如果用队列，需要用相同的 queue 对象的名称来作为 key
+func (r *Rabbitmq) MqWithRouteConsume() {
+	// if err := r.Channel.ExchangeDeclare("log_direct", "direct", true, false, false, false, nil); err != nil {
+	// 	return
+	// }
+	q, err := r.Channel.QueueDeclare("", true, false, false, false, nil)
+	if err != nil {
+		return
+	}
+	if err := r.Channel.QueueBind(q.Name, "first", "log_direct", false, nil); err != nil {
+		return
+	}
+	mes, err := r.Channel.Consume(q.Name, "", true, false, false, false, nil)
+	if err != nil {
+		return
+	}
+	for m := range mes {
+		log.Println("first:", string(m.Body))
+	}
+}
+
 func (r *Rabbitmq) Receive() {
 	q, err := r.Channel.QueueDeclare(
 		"hello", // name
