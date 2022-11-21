@@ -13,9 +13,9 @@ import (
 	"golang.org/x/text/transform"
 )
 
-//CreateCsvFile 新建csv文件,输入文件名，间隔字符，数据源
-//该方法生产的是utf8编码文件，需要生成gbk文件使用createGBKCsvFile方法
-//注意这里要保留去除\n的操作，防止单行数据中分裂为多行（比如excel中解析出来一个单元格中多行，字符串中就会有回车符）
+// CreateCsvFile 新建csv文件,输入文件名，间隔字符，数据源
+// 该方法生产的是utf8编码文件，需要生成gbk文件使用createGBKCsvFile方法
+// 注意这里要保留去除\n的操作，防止单行数据中分裂为多行（比如excel中解析出来一个单元格中多行，字符串中就会有回车符）
 func CreateCsvFile(fileURL, set string, data [][]string) error {
 	if set == "" {
 		set = ","
@@ -38,7 +38,7 @@ func CreateCsvFile(fileURL, set string, data [][]string) error {
 	return nil
 }
 
-//CreateGBKCsvFile 同上创建csv文件，不过这里使用了gbk编码，单独拿出来写
+// CreateGBKCsvFile 同上创建csv文件，不过这里使用了gbk编码，单独拿出来写
 func CreateGBKCsvFile(fileURL, set string, data [][]string) (err error) {
 	if set == "" {
 		set = ","
@@ -70,9 +70,9 @@ func CreateGBKCsvFile(fileURL, set string, data [][]string) (err error) {
 	return nil
 }
 
-//LoadCsvCfg 使用csv包解析csv,utf8和gbk两种都可以，通过参数控制
-//输入完整文件路径
-//format为编码格式，需要解码gbk模式时，输入内容‘GBK’，utf8默认不用输入
+// LoadCsvCfg 使用csv包解析csv,utf8和gbk两种都可以，通过参数控制
+// 输入完整文件路径
+// format为编码格式，需要解码gbk模式时，输入内容‘GBK’，utf8默认不用输入
 func LoadCsvCfg(fileURL string, format ...string) ([][]string, error) {
 	f, err := os.Open(fileURL)
 	if err != nil {
@@ -99,10 +99,10 @@ func LoadCsvCfg(fileURL string, format ...string) ([][]string, error) {
 	return records, nil
 }
 
-//PaseCscOrTxt 使用文本的形式解析csv或者txt
-//csv,txt获取行组
-//返回的key是行号
-//csv按文本形式解析时，会以最长的行为基准，短的行的列不足也会有空字符，用制表符（逗号）隔开
+// PaseCscOrTxt 使用文本的形式解析csv或者txt
+// csv,txt获取行组
+// 返回的key是行号
+// csv按文本形式解析时，会以最长的行为基准，短的行的列不足也会有空字符，用制表符（逗号）隔开
 func PaseCscOrTxt(fileURL, sep string, isGBK bool) [][]string {
 	file, err := os.Open(fileURL)
 	if err != nil {
@@ -127,7 +127,7 @@ func PaseCscOrTxt(fileURL, sep string, isGBK bool) [][]string {
 	return result
 }
 
-//切除尾部空白
+// 切除尾部空白
 func deleteStrBlank(str []string) []string {
 	for i := len(str) - 1; i >= 0; i-- {
 		if str[i] != "" {
@@ -138,7 +138,7 @@ func deleteStrBlank(str []string) []string {
 	return []string{}
 }
 
-//Lod 列对象
+// Lod 列对象
 type Lod struct {
 	Class1 string
 	Class2 string
@@ -147,7 +147,7 @@ type Lod struct {
 	Unit   string
 }
 
-//ComparisonFile 比对两个csv文件不同,输入两个文件路径
+// ComparisonFile 比对两个csv文件不同,输入两个文件路径
 func ComparisonFile(aimFilePath, contrastPath string) (*map[int]Lod, *map[int]Lod, error) {
 	recodeE := []int{}
 	recodeQ := []int{}
