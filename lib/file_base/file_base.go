@@ -1,9 +1,11 @@
 package base
 
 import (
+	"bufio"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
+	"os"
 	"os/exec"
 	"path"
 	"regexp"
@@ -16,7 +18,7 @@ import (
 // isAbsolute为true反馈当前开始的完整路径，[file/aa/aa.txt file/aa/bb/bb.txt]，为false只反馈文件名，[aa.txt bb.txt]
 func GetAllDirFile(url string, isAbsolute bool) ([]string, error) {
 	fList := []string{}
-	ft, err := ioutil.ReadDir(url)
+	ft, err := os.ReadDir(url)
 	if err != nil {
 		return fList, err
 	}
@@ -68,4 +70,33 @@ func GetFileDiskSize(url string) int64 {
 	log.Println("find:", matchMe.FindString(out))
 	size, _ := strconv.ParseInt(matchMe.FindString(out), 10, 64)
 	return size
+}
+
+// 更新某一行数据
+func updateFileLine(fileName string) error {
+	fi, err := os.OpenFile(fileName, os.O_RDWR, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	defer fi.Close()
+
+	br := bufio.NewReader(fi)
+	var pos int64 = 0
+	for {
+		line, err := br.ReadString('\n')
+		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
+			return err
+		}
+		if strings.HasPrefix(line, "lastOKBoot") {
+			fi.WriteAt([]byte("lastOKBoot=bbbbbbbb\n"), pos)
+			log.Println("ok:", line, pos)
+			break
+		}
+		pos += int64(len(line))
+		log.Println("line:", line, len(line))
+	}
+	return nil
 }
