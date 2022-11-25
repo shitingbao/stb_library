@@ -1,7 +1,18 @@
 package base
 
-import "testing"
+import (
+	"log"
+	"testing"
+)
 
-func TestUpdateFileLine(t *testing.T) {
-	updateFileLine("./hw.ini")
+func TestOpenFileLine(t *testing.T) {
+	OpenLastOk()
+}
+
+func TestCloseFileLine(t *testing.T) {
+	CloseLastOk()
+}
+
+func TestGetStatus(t *testing.T) {
+	log.Println(GetLastOkStatus("./hw.ini", "lastOKBoot"))
 }

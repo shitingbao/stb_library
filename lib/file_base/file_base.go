@@ -2,6 +2,7 @@ package base
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -72,14 +73,23 @@ func GetFileDiskSize(url string) int64 {
 	return size
 }
 
+func OpenLastOk() {
+	updateFileLine("./hw.ini", "lastOKBoot", "lastOKBoot=yes\n")
+}
+
+func CloseLastOk() {
+	updateFileLine("./hw.ini", "lastOKBoot", "lastOKBoot=no\n")
+}
+
+// 覆盖更新文件
 // 更新某一行数据
-func updateFileLine(fileName string) error {
+// 注意行结尾的制表符
+func updateFileLine(fileName, pre, bim string) error {
 	fi, err := os.OpenFile(fileName, os.O_RDWR, os.ModePerm)
 	if err != nil {
 		return err
 	}
 	defer fi.Close()
-
 	br := bufio.NewReader(fi)
 	var pos int64 = 0
 	for {
@@ -90,13 +100,33 @@ func updateFileLine(fileName string) error {
 			}
 			return err
 		}
-		if strings.HasPrefix(line, "lastOKBoot") {
-			fi.WriteAt([]byte("lastOKBoot=bbbbbbbb\n"), pos)
-			log.Println("ok:", line, pos)
+		if strings.HasPrefix(line, pre) {
+			fi.WriteAt([]byte(bim), pos)
 			break
 		}
 		pos += int64(len(line))
-		log.Println("line:", line, len(line))
 	}
 	return nil
+}
+
+func GetLastOkStatus(fileName, pre string) (string, error) {
+	fi, err := os.OpenFile(fileName, os.O_RDWR, os.ModePerm)
+	if err != nil {
+		return "", err
+	}
+	defer fi.Close()
+	br := bufio.NewReader(fi)
+	for {
+		line, err := br.ReadString('\n')
+		if err != nil {
+			return "", err
+		}
+		if strings.HasPrefix(line, pre) {
+			str := strings.Split(strings.ReplaceAll(line, "\n", ""), "=")
+			if len(str) < 2 {
+				return "", errors.New("hw.ini 文件内容错误")
+			}
+			return str[1], nil
+		}
+	}
 }
