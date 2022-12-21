@@ -229,7 +229,18 @@ func (r *Rabbitmq) Receive() {
 	go func() {
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
+			// true 为批量确认，确认本频道之前所有未确认的消息，false 单次确认
 			d.Ack(false)
+
+			// 当 multiple 为真时，在同一频道交付
+			// 当requeue为 true 时，请求服务器将这条消息投递到不同的消费者。
+			// 都为假，则消息将是丢弃或传送到服务器配置的死信队列。
+			// d.Nack(false, false)
+
+			// 当 requeue 为 true 时，将此消息排队以传递给不同通道上的消费者。
+			// 当 requeue 为 false 或服务器无法将此消息排队时，它将被丢弃。
+			// d.Reject(false)
+
 		}
 	}()
 
