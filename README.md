@@ -1,4 +1,4 @@
-# 一个以 Kratos 为基础的项目例子
+# 一个以 Kratos 为基础的技术路程
 
 官方的文档地址 : <https://go-kratos.dev/docs/>
 
