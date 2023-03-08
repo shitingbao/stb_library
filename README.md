@@ -41,7 +41,7 @@
   
 #### 3.2 调用第三方的 grpc
 
-    进行连接，也就是不是使用 kratos 写的，同时也不注册在这些服务列表内。
+    进行连接，也就是不是使用 kratos 写的，同时,也不注册在这些服务列表内。
   app/storage/internal/slog.go 中的 NewSlogServiceClient 连接了一个外部的服务，只需要将 grpc.WithEndpoint 中的内容改为 ip+port 即可；
 
 ### 4.自定义log
