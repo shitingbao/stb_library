@@ -18,7 +18,7 @@
 
 ### 2. http ，rpc ，路由，websocket
 
-#### 2.1 protoc api路由
+#### 2.1 protoc api 路由
 
     central 项目，路由定义在 api/central/v1/central.proto 中，使用 google api 定义了 SayHello 和 Healthy
 
