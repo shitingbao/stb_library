@@ -41,3 +41,5 @@ launch.json
 *.docx
 
 dist
+
+configs
