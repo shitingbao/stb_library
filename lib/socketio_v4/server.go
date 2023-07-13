@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/gin-gonic/gin"
 	"github.com/zishang520/socket.io/socket" // 支持 4 以上的其他版本
 )
 
@@ -58,4 +59,29 @@ func serverLoad() {
 	<-exit
 	io.Close(nil)
 	os.Exit(0)
+}
+
+func socketioWithGin() {
+	g := gin.Default()
+	router := http.NewServeMux()
+	io := socket.NewServer(nil, nil)
+	io.Of("/user", nil).On("connection", func(clients ...any) {
+		log.Println("connect")
+		client := clients[0].(*socket.Socket)
+		client.On("ping", func(datas ...any) {
+			log.Println("heart")
+			client.Emit("pong", "pong")
+		})
+		client.On("disconnect", func(...any) {
+			log.Println("disconnect")
+		})
+	})
+	router.Handle("/", io.ServeHandler(nil))
+
+	g.GET("/socket.io/", gin.WrapH(router))
+	g.POST("/socket.io/", gin.WrapH(router)) // it work
+	// g.GET("/socket.io/", gin.WrapH(io.ServeHandler(nil))) it can not work
+	// g.POST("/socket.io/", gin.WrapH(io.ServeHandler(nil)))
+	// because A new router must be created for gin to use
+	g.Run()
 }
