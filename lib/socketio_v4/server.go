@@ -61,9 +61,22 @@ func serverLoad() {
 	os.Exit(0)
 }
 
+func cross(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "http://localhost:3000")
+	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
+	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+	ctx.Header("Access-Control-Allow-Credentials", "true")
+	//允许类型校验
+	if ctx.Request.Method == "OPTIONS" {
+		ctx.JSON(http.StatusOK, "ok")
+		return
+	}
+	ctx.Next()
+}
+
 func socketioWithGin() {
 	g := gin.Default()
-	router := http.NewServeMux()
 	io := socket.NewServer(nil, nil)
 	io.Of("/user", nil).On("connection", func(clients ...any) {
 		log.Println("connect")
@@ -76,12 +89,9 @@ func socketioWithGin() {
 			log.Println("disconnect")
 		})
 	})
-	router.Handle("/", io.ServeHandler(nil))
-
-	g.GET("/socket.io/", gin.WrapH(router))
-	g.POST("/socket.io/", gin.WrapH(router)) // it work
-	// g.GET("/socket.io/", gin.WrapH(io.ServeHandler(nil))) it can not work
-	// g.POST("/socket.io/", gin.WrapH(io.ServeHandler(nil)))
-	// because A new router must be created for gin to use
-	g.Run()
+	sock := io.ServeHandler(nil)
+	g.Use(cross)
+	g.GET("/socket.io/", gin.WrapH(sock))
+	g.POST("/socket.io/", gin.WrapH(sock))
+	g.Run(":5005")
 }
