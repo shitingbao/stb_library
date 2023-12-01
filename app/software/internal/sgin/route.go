@@ -67,14 +67,15 @@ func (s *Sgin) setRoute() {
 }
 
 // option 过滤
+
 func cross(ctx *gin.Context) {
-	ctx.Header("Access-Control-Allow-Origin", "*")
-	// ctx.Header("Access-Control-Allow-Origin", "http://socket1.cn")
-	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization")
+	origin := ctx.Request.Header.Get("Origin")
+	ctx.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+	// ctx.Header("Access-Control-Allow-Origin", "http://localhost:3001,http://localhost:3000")
+	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization,x-device-sn,x-device-token")
 	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+	ctx.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type,x-device-sn")
 	ctx.Header("Access-Control-Allow-Credentials", "true")
-	//允许类型校验
 	if ctx.Request.Method == "OPTIONS" {
 		ctx.JSON(http.StatusOK, "ok")
 		return
