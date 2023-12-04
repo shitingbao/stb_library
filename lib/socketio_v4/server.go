@@ -62,8 +62,15 @@ func serverLoad() {
 }
 
 func cross(ctx *gin.Context) {
+	allowedOrigins := []string{"http://192.168.31.33:3001", "http://192.168.31.33:3000"}
 	origin := ctx.Request.Header.Get("Origin")
-	ctx.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+	// log.Println("origin=:", origin, " Referer:", ctx.Request.Referer()) origin or Referer
+	for _, allowedOrigin := range allowedOrigins {
+		if origin == allowedOrigin {
+			ctx.Writer.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+			break
+		}
+	}
 	// ctx.Header("Access-Control-Allow-Origin", "http://localhost:3001,http://localhost:3000")
 	ctx.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization,x-device-sn,x-device-token")
 	ctx.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
