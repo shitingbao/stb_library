@@ -31,7 +31,7 @@ func init() {
 
 }
 
-//ChatRoom 一个房间对象，包含基本信息
+// ChatRoom 一个房间对象，包含基本信息
 type ChatRoom struct {
 	RoomID     string     //房间唯一id
 	HostName   string     //房主名称，user
@@ -43,9 +43,9 @@ type ChatRoom struct {
 	Common     string //房间描述
 }
 
-//Clear 清理房间后,放回roomid以及删除对应mongo内的数据
-//cf反调函数，为了等待mongo中删除完成，以及对应锁的释放
-//如果在外部删除，可能出现的情况是，锁释放后，还没删除该roomid的数据，这时候该roomid复用并写入数据库，造成数据丢失，非线程安全
+// Clear 清理房间后,放回roomid以及删除对应mongo内的数据
+// cf反调函数，为了等待mongo中删除完成，以及对应锁的释放
+// 如果在外部删除，可能出现的情况是，锁释放后，还没删除该roomid的数据，这时候该roomid复用并写入数据库，造成数据丢失，非线程安全
 func (c *ChatRoom) Clear(cf func()) {
 	c.RoomLock.Lock()
 	defer c.RoomLock.Unlock()
