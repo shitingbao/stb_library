@@ -1,24 +1,30 @@
-FROM golang:1.18.3 AS builder
+FROM golang:1.21.6 AS stbbuildstage
 
-COPY . /src
-WORKDIR /src
+ENV GO111MODULE=on
 
-RUN GOPROXY=https://goproxy.cn make build
+ENV GOPROXY=https://goproxy.cn
 
-FROM debian:stable-slim
+WORKDIR /stb_library
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates  \
-        netbase \
-        && rm -rf /var/lib/apt/lists/ \
-        && apt-get autoremove -y && apt-get autoclean -y
+COPY . .
 
-COPY --from=builder /src/bin /app
+WORKDIR /stb_library/app/storage/cmd
 
-WORKDIR /app
+RUN go build
+
+FROM ubuntu
+# 重新构建，减少体积，这里只需要编译生成的可执行文件，配置文件，前端dist文件即可
+WORKDIR /opt
+COPY --from=stbbuildstage  /stb_library/app/storage/cmd/cmd .
+# COPY --from=stbbuildstage  /stbweb/builds/common/config.json .
+# COPY --from=stbbuildstage  /stbweb/builds/common/dist dist
+# no-install-recommends参数来避免安装非必须的文件，从而减小镜像的体积
+RUN apt-get -qq update \
+    && apt-get -qq install -y --no-install-recommends ca-certificates
 
 EXPOSE 8000
 EXPOSE 9000
-VOLUME /data/conf
 
-CMD ["./server", "-conf", "/data/conf"]
+VOLUME /opt/conf
+
+CMD ["/opt/cmd", "-conf", "/opt/conf"]
