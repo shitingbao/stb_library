@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package api.base.v1;
+
+option go_package = "stb-library/api/base/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.base.v1";
+
+service Err {
+	rpc CreateErr (CreateErrRequest) returns (CreateErrReply);
+	rpc UpdateErr (UpdateErrRequest) returns (UpdateErrReply);
+	rpc DeleteErr (DeleteErrRequest) returns (DeleteErrReply);
+	rpc GetErr (GetErrRequest) returns (GetErrReply);
+	rpc ListErr (ListErrRequest) returns (ListErrReply);
+}
+
+message CreateErrRequest {}
+message CreateErrReply {}
+
+message UpdateErrRequest {}
+message UpdateErrReply {}
+
+message DeleteErrRequest {}
+message DeleteErrReply {}
+
+message GetErrRequest {}
+message GetErrReply {}
+
+message ListErrRequest {}
+message ListErrReply {}
