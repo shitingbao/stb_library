@@ -43,3 +43,4 @@ launch.json
 dist
 
 configs
+__pycache__
