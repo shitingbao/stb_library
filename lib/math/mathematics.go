@@ -36,7 +36,7 @@ func quickSort(values []int, left, right int) {
 	}
 }
 
-//QuickSort 1
+// QuickSort 1
 func QuickSort(values []int) {
 	if len(values) <= 1 {
 		return
@@ -44,7 +44,7 @@ func QuickSort(values []int) {
 	quickSort(values, 0, len(values)-1)
 }
 
-//Quick2Sort 2
+// Quick2Sort 2
 func Quick2Sort(values []int) {
 	if len(values) <= 1 {
 		return
@@ -67,7 +67,7 @@ func Quick2Sort(values []int) {
 	Quick2Sort(values[head+1:])
 }
 
-//Quick3Sort 3
+// Quick3Sort 3
 func Quick3Sort(a []int, left int, right int) {
 	if left >= right {
 		return
@@ -86,7 +86,6 @@ func Quick3Sort(a []int, left int, right int) {
 	a[left], a[explodeIndex] = a[explodeIndex], a[left]
 	Quick3Sort(a, left, explodeIndex-1)
 	Quick3Sort(a, explodeIndex+1, right)
-
 }
 
 //快排

@@ -1,10 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
-from config import getConfig
 
-# db = mysql.connector.connect(
-#     user="root", password="4116bbDD#", host="47.99.104.79", database="mengma"
-# )
+from py.database.config import getConfig
 
 
 def getMysqlDb(user, password, host, database):
@@ -49,4 +46,4 @@ conf = getConfig("./configs/config_example.yaml")
 
 print(conf["data"]["database"])
 
-ListTsk()
+# ListTsk()
