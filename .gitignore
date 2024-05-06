@@ -44,3 +44,5 @@ dist
 
 configs
 __pycache__
+
+*.pb.go
