@@ -1,0 +1,71 @@
+services:
+  zookeeper:
+    restart: always
+    container_name: zookeeper
+    image: bitnami/zookeeper:latest
+    ports:
+      - "2181:2181"
+    volumes:
+      - ./zookeeper-data:/bitnami/zookeeper
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+      TZ: "Asia/Shanghai"
+    networks:
+      - kafka-net
+
+  kafka:
+    restart: always
+    container_name: kafka
+    image: bitnami/kafka:latest
+    extra_hosts:
+      - "host.docker.internal:0.0.0.0"
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./kafka-data:/bitnami/kafka
+    links:
+      - zookeeper
+    environment:
+      TZ: "Asia/Shanghai"
+      KAFKA_BROKER_ID: 1
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CFG_LISTENERS: PLAINTEXT://host.docker.internal:9092 # 内网的绑定地址,绑定到所有网卡
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://host.docker.internal:9092 # 注册到zookeeper中的地址，外网访问时用的地址是这个
+    networks:
+      - kafka-net
+    depends_on:
+      - zookeeper
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+  kafka-map:
+    image: dushixiang/kafka-map:latest
+    container_name: kafka-map
+    # extra_hosts:
+    #   - "host.docker.internal:172.18.248.14"
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./kafka-map-data/:/usr/local/kafka-map/data
+    environment:
+      TZ: "Asia/Shanghai"
+      DEFAULT_USERNAME: admin
+      DEFAULT_PASSWORD: admin
+    networks:
+      - kafka-net
+    depends_on:
+      - zookeeper
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+networks:
+  kafka-net:
+    external: true
