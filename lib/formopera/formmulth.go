@@ -19,7 +19,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//sendForm 发送表单数据,form内的数据，后台用key := r.PostFormValue("key")接收
+// sendForm 发送表单数据,form内的数据，后台用key := r.PostFormValue("key")接收
 func sendForm(address string) {
 	client := &http.Client{}
 	res, err := client.PostForm(address, url.Values{
@@ -31,7 +31,7 @@ func sendForm(address string) {
 	defer res.Body.Close()
 }
 
-//x-www-form-urlencoded中的值获取
+// x-www-form-urlencoded中的值获取
 func getFormKeyQuery(r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		return
@@ -40,7 +40,7 @@ func getFormKeyQuery(r *http.Request) {
 	fmt.Println("val", val)
 }
 
-//getFormQuery 解析form中的值，x-www-form-urlencoded中的值获取
+// getFormQuery 解析form中的值，x-www-form-urlencoded中的值获取
 func getFormAllQuery(r *http.Request) {
 	//这里是接收query的值，需要使用ParseForm解析
 	if err := r.ParseForm(); err != nil {
@@ -51,7 +51,7 @@ func getFormAllQuery(r *http.Request) {
 	}
 }
 
-//getFormBodyVal 接收表单中body中的form值，form-data中的值获取
+// getFormBodyVal 接收表单中body中的form值，form-data中的值获取
 func getFormBodyVal(r *http.Request) {
 	//这里是接收body中form表单内的元素值，ParseMultipartForm需要先调用，用来分配给接收到文件的大小，不然会异常
 	r.ParseMultipartForm(20 << 20)
@@ -60,9 +60,9 @@ func getFormBodyVal(r *http.Request) {
 	}
 }
 
-//GetFormOnceFile 解析出表单内的文件,form-data中的值获取
-//单文件内容解析，这里是指定获取文件对象名称为name的，这里的name不是文件名，而是和前端对应的那个name属性名（就是form-data的key）
-//如果想获取文件基本信息，需要获取FormFile的第二个参数*multipart.FileHeader，内部又filename和size，就是使用是对一步open方法而已
+// GetFormOnceFile 解析出表单内的文件,form-data中的值获取
+// 单文件内容解析，这里是指定获取文件对象名称为name的，这里的name不是文件名，而是和前端对应的那个name属性名（就是form-data的key）
+// 如果想获取文件基本信息，需要获取FormFile的第二个参数*multipart.FileHeader，内部又filename和size，就是使用是对一步open方法而已
 func GetFormOnceFile(name string, r *http.Request) (multipart.File, error) {
 	r.ParseMultipartForm(20 << 20)
 	//也需要调用ParseMultipartForm
@@ -74,7 +74,7 @@ func GetFormOnceFile(name string, r *http.Request) (multipart.File, error) {
 	return file, nil
 }
 
-//getAllFormFiles 便利获取所有文件内容,返回所有fileshand
+// getAllFormFiles 便利获取所有文件内容,返回所有fileshand
 func getAllFormFiles(r *http.Request) []*multipart.FileHeader {
 	files := []*multipart.FileHeader{}
 	r.ParseMultipartForm(20 << 20)
@@ -92,7 +92,7 @@ func getAllFormFiles(r *http.Request) []*multipart.FileHeader {
 	return files
 }
 
-//GetAllFormFiles 便利获取所有文件内容,返回所有fileshand
+// GetAllFormFiles 便利获取所有文件内容,返回所有fileshand
 func GetAllFormFiles(r *http.Request) []*multipart.FileHeader {
 	return getAllFormFiles(r)
 }
