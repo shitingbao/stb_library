@@ -11,10 +11,15 @@
 package formopera
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 
 	"github.com/sirupsen/logrus"
 )
@@ -95,4 +100,54 @@ func getAllFormFiles(r *http.Request) []*multipart.FileHeader {
 // GetAllFormFiles 便利获取所有文件内容,返回所有fileshand
 func GetAllFormFiles(r *http.Request) []*multipart.FileHeader {
 	return getAllFormFiles(r)
+}
+
+func UploadForm() {
+	url := "https://api.cloudflare.com/client/v4/accounts/97a92c44bb6ff4acf9ea84909a9056b4/images/v1"
+	method := "POST"
+
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+	file, err := os.Open("/Users/shitingbao/Downloads/aa.png")
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	part1, err := writer.CreateFormFile("file", filepath.Base("/Users/shitingbao/Downloads/aa.png"))
+	if err != nil {
+		return
+	}
+
+	if _, err := io.Copy(part1, file); err != nil {
+		return
+	}
+
+	_ = writer.WriteField("metadata", "{\"name\":\"aab\"}")
+	if err := writer.Close(); err != nil {
+		return
+	}
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	req.Header.Add("Authorization", "Bearer 0Wte06ihCQ5LpaOu0phmQpv7Zclmr7qzwYi9tKe4")
+	req.Header.Add("Content-Type", "multipart/form-data")
+	req.Header.Set("Content-Type", writer.FormDataContentType()) // 注意需要完整的form类型
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
 }
